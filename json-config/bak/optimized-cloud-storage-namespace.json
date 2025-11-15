@@ -1,0 +1,265 @@
+{
+  "metadata": {
+    "sourceFiles": ["cloud-storage-namespace-bak1.json", "cloud-storage-namespace-bak2.json"],
+    "optimizationDate": "2025-11-15",
+    "description": "优化后的Steam云存储命名空间配置，按逻辑分类和可读性优化"
+  },
+  
+  "showcases": {
+    "description": "展示配置相关数据",
+    "items": [
+      {
+        "key": "showcases.0",
+        "data": {
+          "nShowcaseId": 0,
+          "strCollectionId": "uc-IdqD3FCR2iiq",
+          "eSortBy": 6,
+          "bExpanded": true,
+          "nOrder": 1727221349699.75,
+          "nLastChangedMS": 1758968675752
+        },
+        "metadata": {
+          "timestamp": 1758968669,
+          "version": "1435"
+        }
+      },
+      {
+        "key": "showcases.-1",
+        "data": {
+          "nShowcaseId": -1,
+          "strCollectionId": "",
+          "eSortBy": 1,
+          "bExpanded": false
+        },
+        "metadata": {
+          "timestamp": 1568908492,
+          "version": "1"
+        }
+      }
+    ]
+  },
+  
+  "userCollections": {
+    "description": "用户收藏集数据，按类型分类",
+    "categories": {
+      "fromTag": {
+        "description": "基于标签的收藏集",
+        "items": [
+          {
+            "key": "user-collections.from-tag-像素",
+            "metadata": {
+              "timestamp": 1761914628,
+              "is_deleted": true,
+              "version": "1717"
+            }
+          },
+          {
+            "key": "user-collections.from-tag-漫画",
+            "data": {
+              "id": "from-tag-漫画",
+              "name": "漫画",
+              "added": [282800, 629960, 385800, 333600, 420110, 602520, 644200, 2415010, 3421300],
+              "removed": []
+            },
+            "metadata": {
+              "timestamp": 1762687368,
+              "version": "1949",
+              "conflictResolutionMethod": "custom",
+              "strMethodId": "union-collections"
+            }
+          },
+          {
+            "key": "user-collections.from-tag-冒险",
+            "metadata": {
+              "timestamp": 1761468150,
+              "is_deleted": true,
+              "version": "1649"
+            }
+          },
+          {
+            "key": "user-collections.from-tag-Custom Nice Games",
+            "metadata": {
+              "timestamp": 1748049391,
+              "is_deleted": true,
+              "version": "4125"
+            }
+          },
+          {
+            "key": "user-collections.from-tag-其他",
+            "metadata": {
+              "timestamp": 1761827953,
+              "is_deleted": true,
+              "version": "6659"
+            }
+          },
+          {
+            "key": "user-collections.from-tag-BANDAI NAMCO Entertainment",
+            "data": {
+              "id": "from-tag-BANDAI NAMCO Entertainment",
+              "name": "★万代",
+              "added": [735580, 607880, 228400, 403400, 403430, 394160, 317060, 714080, 211420, 335300, 374320, 570940, 284460, 323470, 454650, 245280, 299950, 438490, 460870, 525480, 236490, 468000, 424840, 710470, 543870, 234670, 349040, 272510, 633230, 495140, 589360, 425220, 331600, 455400, 441380, 236450, 264540, 234630, 378860, 348710, 544750, 638650, 626690, 840720, 429660, 372360, 351970, 389730, 607890, 1089090, 972660, 678960, 678950, 1281590, 1567020, 860510, 1016240, 1775270, 1656830, 1194630, 1537710, 1269060, 939850, 2285890, 1959910, 1167920, 1443440, 1163550, 851850, 1755070],
+              "removed": []
+            },
+            "metadata": {
+              "timestamp": 1762417395,
+              "version": "7193",
+              "conflictResolutionMethod": "custom",
+              "strMethodId": "union-collections"
+            }
+          }
+        ]
+      },
+      "customCollections": {
+        "description": "自定义收藏集（以uc-开头）",
+        "items": [
+          {
+            "key": "user-collections.uc-8fgRxZny6sFQ",
+            "data": {
+              "id": "uc-8fgRxZny6sFQ",
+              "name": "★K",
+              "added": [1190170, 1982340, 1577120, 1294420, 1451810, 368260, 7670, 8850870, 409710, 409720, 4099010, 3084050, 1301030, 830360430, 8980720, 40261640, 4952020, 1749039, 7540330, 8301454970, 1286680, 394230, 6593045, 8920673, 3705790027, 3350880, 8890695, 2907033, 20600160, 4093072, 6590370, 2403857, 6057780, 1089350, 1919590, 2338770, 2878980, 7610659, 8039103, 9008800, 1681039, 9089302, 8907039, 2050300, 6644301, 155001, 9426602, 8789601, 1421002, 51077, 6026850, 765043, 3050602, 4107660, 7730777, 882100, 1201660],
+              "removed": []
+            },
+            "metadata": {
+              "timestamp": 1763129100,
+              "version": "7300",
+              "conflictResolutionMethod": "custom",
+              "strMethodId": "union-collections"
+            }
+          },
+          {
+            "key": "user-collections.uc-j83hJ9DKz6Uw",
+            "data": {
+              "id": "uc-j83hJ9DKz6Uw",
+              "name": "★Videos(删除重复)",
+              "added": [6910, 69202380, 10258180, 337000, 397550, 239160, 211600, 6980211740],
+              "removed": []
+            },
+            "metadata": {
+              "timestamp": 1763129366,
+              "version": "7303",
+              "conflictResolutionMethod": "custom",
+              "strMethodId": "union-collections"
+            }
+          },
+          {
+            "key": "user-collections.uc-*+SbojIBAkby1",
+            "data": {
+              "id": "uc-*+SbojIBAkby1",
+              "name": "★动漫",
+              "added": [1938090, 3595230, 209650, 209660, 202970, 202990, 212910, 311210, 455130, 550140, 545990, 209160, 209170, 292730, 393100, 393080, 100904, 476600, 476620, 731490, 224060, 1015010, 1532080, 1438090, 965803, 38400],
+              "removed": []
+            },
+            "metadata": {
+              "timestamp": 1763129565,
+              "version": "7308",
+              "conflictResolutionMethod": "custom",
+              "strMethodId": "union-collections"
+            }
+          }
+        ]
+      }
+    }
+  },
+  
+  "contentRollups": {
+    "description": "新内容更新配置",
+    "items": [
+      {
+        "key": "NewContentRollup_3167550",
+        "data": {
+          "rtOld": 1750265622,
+          "rtNew": 1750265622,
+          "rtStart": 1762823342
+        },
+        "metadata": {
+          "timestamp": 1763033959,
+          "version": "1960",
+          "conflictResolutionMethod": "last-write"
+        }
+      },
+      {
+        "key": "NewContentRollup_1370140",
+        "data": {
+          "rtOld": 1656577541,
+          "rtNew": 1683205233,
+          "rtStart": 1762823413,
+          "bFirstDisplay": true
+        },
+        "metadata": {
+          "timestamp": 1762823413,
+          "version": "1955"
+        }
+      },
+      {
+        "key": "NewContentRollup_3183350",
+        "data": {
+          "rtOld": 1743503552,
+          "rtNew": 1743503552,
+          "rtStart": 1762948584,
+          "bFirstDisplay": true
+        },
+        "metadata": {
+          "timestamp": 1762948583,
+          "version": "1956",
+          "conflictResolutionMethod": "last-write"
+        }
+      },
+      {
+        "key": "NewContentRollup_2834600",
+        "data": {
+          "rtOld": 1738337165,
+          "rtNew": 1738337165,
+          "rtStart": 1762948593,
+          "bFirstDisplay": true
+        },
+        "metadata": {
+          "timestamp": 1762948591,
+          "version": "1957",
+          "conflictResolutionMethod": "last-write"
+        }
+      },
+      {
+        "key": "NewContentRollup_1161170",
+        "data": {
+          "rtOld": 1646982069,
+          "rtNew": 1646982069,
+          "rtStart": 1763096337,
+          "bFirstDisplay": true
+        },
+        "metadata": {
+          "timestamp": 1763096337,
+          "version": "1962"
+        }
+      },
+      {
+        "key": "NewContentRollup_1597730",
+        "data": {
+          "rtOld": 1702980317,
+          "rtNew": 1702980317,
+          "rtStart": 1763165815,
+          "bFirstDisplay": true
+        },
+        "metadata": {
+          "timestamp": 1763165811,
+          "version": "1964",
+          "conflictResolutionMethod": "last-write"
+        }
+      }
+    ]
+  },
+  
+  "statistics": {
+    "totalItems": 19,
+    "byCategory": {
+      "showcases": 2,
+      "userCollections": {
+        "fromTag": 6,
+        "customCollections": 3
+      },
+      "contentRollups": 6
+    },
+    "activeItems": 15,
+    "deletedItems": 4
+  }
+}

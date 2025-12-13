@@ -31,7 +31,7 @@ steamLoginSecure=your_real_steam_login_secure_here
 运行测试脚本验证cookies是否有效：
 
 ```bash
-python test_complete_functionality.py
+python test/test_complete_functionality.py
 ```
 
 ## 解决方案2：使用Selenium浏览器自动化

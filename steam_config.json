@@ -1,0 +1,19 @@
+{
+    "steam_api_key": "YOUR_STEAM_API_KEY_HERE",
+    "default_output_dir": "output",
+    "request_delay": 1.0,
+    "max_retries": 3,
+    "timeout": 30,
+    "user_data": {
+        "save_profile": true,
+        "save_games": true,
+        "save_friends": true,
+        "save_achievements": false,
+        "save_stats": false
+    },
+    "export_formats": {
+        "json": true,
+        "csv": true,
+        "xlsx": false
+    }
+}

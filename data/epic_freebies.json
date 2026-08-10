@@ -1,0 +1,4388 @@
+{
+  "_meta": {
+    "source": "epic-freebies-weekly-sync",
+    "version": 1,
+    "lastPromotions": []
+  },
+  "updatedAt": "2026-08-10T07:14:06.555Z",
+  "appids": [
+    7800,
+    18500,
+    21000,
+    22000,
+    22370,
+    35140,
+    35700,
+    38400,
+    38410,
+    38420,
+    40700,
+    40720,
+    40800,
+    41500,
+    48000,
+    57300,
+    108200,
+    108710,
+    115100,
+    200260,
+    200710,
+    200900,
+    201810,
+    202750,
+    204060,
+    204240,
+    206420,
+    207690,
+    208650,
+    210970,
+    212680,
+    213330,
+    214490,
+    218620,
+    220200,
+    221260,
+    221910,
+    224760,
+    225080,
+    226860,
+    232090,
+    232430,
+    233450,
+    234270,
+    236870,
+    237930,
+    239160,
+    239200,
+    241260,
+    241600,
+    242550,
+    242640,
+    242680,
+    242860,
+    243470,
+    244160,
+    244750,
+    245620,
+    250320,
+    250620,
+    251060,
+    251470,
+    251830,
+    254320,
+    255710,
+    257510,
+    257850,
+    258520,
+    261530,
+    262060,
+    264710,
+    268050,
+    268500,
+    269270,
+    271240,
+    274520,
+    275180,
+    275390,
+    281610,
+    282070,
+    282140,
+    283640,
+    285920,
+    286690,
+    287390,
+    289070,
+    290300,
+    290510,
+    290770,
+    292910,
+    295790,
+    298630,
+    300380,
+    300570,
+    301840,
+    304390,
+    304430,
+    304650,
+    305620,
+    306130,
+    306760,
+    311690,
+    313120,
+    313690,
+    313780,
+    314660,
+    317820,
+    320140,
+    322110,
+    322500,
+    323060,
+    323190,
+    323580,
+    327670,
+    330820,
+    331670,
+    331870,
+    332200,
+    334940,
+    335670,
+    337000,
+    343860,
+    346110,
+    347000,
+    352520,
+    355790,
+    356040,
+    356650,
+    357300,
+    359100,
+    359320,
+    360830,
+    361280,
+    364360,
+    368260,
+    368390,
+    368500,
+    369070,
+    371970,
+    375820,
+    379430,
+    381210,
+    383120,
+    383270,
+    384190,
+    388410,
+    388880,
+    389140,
+    391720,
+    391730,
+    397060,
+    397540,
+    398850,
+    404680,
+    418240,
+    418460,
+    421120,
+    422510,
+    427290,
+    433340,
+    433550,
+    434650,
+    435400,
+    437100,
+    437570,
+    442070,
+    445980,
+    447040,
+    447120,
+    447150,
+    448510,
+    456670,
+    459370,
+    460920,
+    462780,
+    463980,
+    464060,
+    464650,
+    464920,
+    468670,
+    469600,
+    475550,
+    480490,
+    481510,
+    484900,
+    485510,
+    488730,
+    489630,
+    491950,
+    493200,
+    493540,
+    493900,
+    496300,
+    498310,
+    500670,
+    501300,
+    503560,
+    503940,
+    504230,
+    505740,
+    508440,
+    508740,
+    514900,
+    516110,
+    517630,
+    517710,
+    518060,
+    518790,
+    521890,
+    527230,
+    529660,
+    534550,
+    535480,
+    535930,
+    543260,
+    546430,
+    548570,
+    550320,
+    555150,
+    558420,
+    559650,
+    569860,
+    572890,
+    574090,
+    574980,
+    581660,
+    582270,
+    583470,
+    584400,
+    590380,
+    593280,
+    595790,
+    596970,
+    597170,
+    598810,
+    600370,
+    601430,
+    602320,
+    606150,
+    609490,
+    610180,
+    612390,
+    612570,
+    614570,
+    617290,
+    619150,
+    621060,
+    622650,
+    627690,
+    629090,
+    629760,
+    629820,
+    632470,
+    633460,
+    635320,
+    638990,
+    640820,
+    641780,
+    641990,
+    645630,
+    648350,
+    651660,
+    655350,
+    657000,
+    666140,
+    667810,
+    671440,
+    673880,
+    675010,
+    684450,
+    686810,
+    688420,
+    692850,
+    699130,
+    705120,
+    711660,
+    728880,
+    738520,
+    742420,
+    752590,
+    755470,
+    757310,
+    760060,
+    761030,
+    763250,
+    764790,
+    774861,
+    779340,
+    780290,
+    782940,
+    787860,
+    788100,
+    793460,
+    795420,
+    800270,
+    807120,
+    813630,
+    820520,
+    826940,
+    828740,
+    839870,
+    844260,
+    844890,
+    846870,
+    852300,
+    857980,
+    858710,
+    865360,
+    870780,
+    873940,
+    874390,
+    877810,
+    878670,
+    883360,
+    887450,
+    909470,
+    914710,
+    915810,
+    917720,
+    919410,
+    920210,
+    921800,
+    922050,
+    927350,
+    934700,
+    940680,
+    941570,
+    945360,
+    953330,
+    953880,
+    960090,
+    961200,
+    964440,
+    968870,
+    970830,
+    973580,
+    976590,
+    978300,
+    979070,
+    984800,
+    990080,
+    993790,
+    994500,
+    996770,
+    998740,
+    999220,
+    999660,
+    1000030,
+    1011670,
+    1016920,
+    1018010,
+    1020470,
+    1024380,
+    1029890,
+    1031460,
+    1036240,
+    1037020,
+    1042380,
+    1042490,
+    1042780,
+    1046790,
+    1049280,
+    1049320,
+    1055540,
+    1057800,
+    1062140,
+    1069160,
+    1070790,
+    1075190,
+    1079830,
+    1080020,
+    1080750,
+    1085220,
+    1088850,
+    1092660,
+    1096690,
+    1097800,
+    1099410,
+    1100290,
+    1100600,
+    1107300,
+    1110910,
+    1112890,
+    1119980,
+    1120810,
+    1123050,
+    1124300,
+    1135260,
+    1136370,
+    1137350,
+    1138660,
+    1139280,
+    1139900,
+    1140290,
+    1144770,
+    1148590,
+    1148700,
+    1158940,
+    1160220,
+    1162130,
+    1164250,
+    1167450,
+    1172650,
+    1174460,
+    1190460,
+    1194750,
+    1205450,
+    1206060,
+    1206370,
+    1213700,
+    1216060,
+    1222730,
+    1225330,
+    1227690,
+    1235754,
+    1236930,
+    1237950,
+    1243690,
+    1244460,
+    1245430,
+    1248080,
+    1248130,
+    1252330,
+    1266840,
+    1267910,
+    1271400,
+    1271700,
+    1282590,
+    1282730,
+    1286680,
+    1288610,
+    1291010,
+    1294660,
+    1298480,
+    1307580,
+    1309710,
+    1318690,
+    1321440,
+    1323540,
+    1325040,
+    1330470,
+    1336120,
+    1337010,
+    1345890,
+    1359090,
+    1368820,
+    1370140,
+    1374840,
+    1382070,
+    1385100,
+    1386780,
+    1388870,
+    1398910,
+    1402110,
+    1408610,
+    1419290,
+    1424710,
+    1425350,
+    1432910,
+    1434540,
+    1436920,
+    1445790,
+    1449280,
+    1458100,
+    1465560,
+    1475810,
+    1480560,
+    1492360,
+    1522080,
+    1522820,
+    1543240,
+    1544020,
+    1544360,
+    1546400,
+    1556790,
+    1562430,
+    1574580,
+    1579380,
+    1582290,
+    1587130,
+    1602080,
+    1614270,
+    1620720,
+    1622770,
+    1627840,
+    1630960,
+    1634150,
+    1666250,
+    1669420,
+    1679210,
+    1712840,
+    1714180,
+    1721530,
+    1726120,
+    1755830,
+    1766750,
+    1771980,
+    1794680,
+    1796580,
+    1799930,
+    1812090,
+    1812560,
+    1817800,
+    1824220,
+    1839940,
+    1880610,
+    1920490,
+    1924490,
+    1927720,
+    1927740,
+    1928980,
+    1939970,
+    1942280,
+    1944430,
+    1959390,
+    1966900,
+    1970580,
+    1978150,
+    1985960,
+    2019810,
+    2020710,
+    2056210,
+    2060870,
+    2097230,
+    2138710,
+    2140510,
+    2144740,
+    2195410,
+    2229940,
+    2252570,
+    2266420,
+    2407830,
+    2414270,
+    2439780,
+    2478970,
+    2591280,
+    2596420,
+    2633950,
+    2638370,
+    2694420,
+    2820820,
+    2869440,
+    2933130,
+    3089420,
+    3211120,
+    3445830,
+    3504780
+  ],
+  "games": [
+    {
+      "appid": 7800,
+      "name": "Stubbs the Zombie",
+      "enName": "Stubbs the Zombie",
+      "freeDate": "2021-10-14",
+      "note": ""
+    },
+    {
+      "appid": 18500,
+      "name": "Defense Grid: The Awakening",
+      "enName": "Defense Grid: The Awakening",
+      "freeDate": "2021-7-22",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 21000,
+      "name": "LEGO Batman: The Videogame",
+      "enName": "LEGO Batman: The Videogame",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 22000,
+      "name": "World of Goo",
+      "enName": "World of Goo",
+      "freeDate": "2019-5-2",
+      "note": ""
+    },
+    {
+      "appid": 22370,
+      "name": "辐射3：年度版",
+      "enName": "Fallout 3: Game of the Year Edition",
+      "freeDate": "2023-12-24",
+      "note": "假日特卖第5弹，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 35140,
+      "name": "Batman: Arkham Asylum - GOTY",
+      "enName": "Batman: Arkham Asylum - GOTY",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 35700,
+      "name": "三位一体经典合集",
+      "enName": "Trine",
+      "freeDate": "2025-12-31",
+      "note": "假日特卖第14弹，限时24小时"
+    },
+    {
+      "appid": 38400,
+      "name": "辐射",
+      "enName": "Fallout",
+      "freeDate": "2022-12-23",
+      "note": "假日特卖第8天，限时24小时"
+    },
+    {
+      "appid": 38410,
+      "name": "辐射2",
+      "enName": "Fallout 2",
+      "freeDate": "2022-12-23",
+      "note": "假日特卖第8天，限时24小时"
+    },
+    {
+      "appid": 38420,
+      "name": "辐射：钢铁兄弟会",
+      "enName": "Fallout Tactics: Brotherhood of Steel",
+      "freeDate": "2022-12-23",
+      "note": "假日特卖第8天，限时24小时"
+    },
+    {
+      "appid": 40700,
+      "name": "机械迷城",
+      "enName": "Machinarium",
+      "freeDate": "2025-8-28",
+      "note": ""
+    },
+    {
+      "appid": 40720,
+      "name": "银河历险记2",
+      "enName": "Samorost 2",
+      "freeDate": "2025-9-18",
+      "note": ""
+    },
+    {
+      "appid": 40800,
+      "name": "Super Meat Boy",
+      "enName": "Super Meat Boy",
+      "freeDate": "2018-12-29",
+      "note": ""
+    },
+    {
+      "appid": 41500,
+      "name": "Torchlight",
+      "enName": "Torchlight",
+      "freeDate": "2019-7-11",
+      "note": ""
+    },
+    {
+      "appid": 48000,
+      "name": "地狱边境",
+      "enName": "LIMBO",
+      "freeDate": "2025-5-29",
+      "note": "年中特卖神秘游戏 | 第二次赠送"
+    },
+    {
+      "appid": 57300,
+      "name": "Amnesia: The Dark Descent",
+      "enName": "Amnesia: The Dark Descent",
+      "freeDate": "2020-4-30",
+      "note": ""
+    },
+    {
+      "appid": 108200,
+      "name": "Ticket to Ride",
+      "enName": "Ticket to Ride",
+      "freeDate": "2020-2-7",
+      "note": ""
+    },
+    {
+      "appid": 108710,
+      "name": "Alan Wake",
+      "enName": "Alan Wake",
+      "freeDate": "2019-8-2",
+      "note": ""
+    },
+    {
+      "appid": 115100,
+      "name": "Costume Quest",
+      "enName": "Costume Quest",
+      "freeDate": "2019-10-31",
+      "note": ""
+    },
+    {
+      "appid": 200260,
+      "name": "Batman: Arkham City - GOTY",
+      "enName": "Batman: Arkham City - GOTY",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 200710,
+      "name": "Torchlight II",
+      "enName": "Torchlight II",
+      "freeDate": "2020-12-31",
+      "note": "假日特卖第14天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 200900,
+      "name": "洞窟物语+",
+      "enName": "Cave Story+",
+      "freeDate": "2023-8-31",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 201810,
+      "name": "德军总部：新秩序",
+      "enName": "Wolfenstein: The New Order",
+      "freeDate": "2022-12-21",
+      "note": "假日特卖第6天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 202750,
+      "name": "Alan Wake's American Nightmare",
+      "enName": "Alan Wake's American Nightmare",
+      "freeDate": "2019-10-17",
+      "note": ""
+    },
+    {
+      "appid": 204060,
+      "name": "Superbrothers: Sword & Sworcery EP",
+      "enName": "Superbrothers: Sword & Sworcery EP",
+      "freeDate": "2020-7-30",
+      "note": ""
+    },
+    {
+      "appid": 204240,
+      "name": "桥",
+      "enName": "The Bridge",
+      "freeDate": "2024-3-14",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 206420,
+      "name": "黑道圣徒4",
+      "enName": "Saints Row IV",
+      "freeDate": "2022-12-9",
+      "note": ""
+    },
+    {
+      "appid": 207690,
+      "name": "植物精灵",
+      "enName": "Botanicula",
+      "freeDate": "2025-4-17",
+      "note": ""
+    },
+    {
+      "appid": 208650,
+      "name": "Batman: Arkham Knight",
+      "enName": "Batman: Arkham Knight",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 210970,
+      "name": "The Witness",
+      "enName": "The Witness",
+      "freeDate": "2019-4-4",
+      "note": ""
+    },
+    {
+      "appid": 212680,
+      "name": "FTL: Faster Than Light",
+      "enName": "FTL: Faster Than Light",
+      "freeDate": "2019-12-27",
+      "note": "圣诞活动第 8 日，限时24小时"
+    },
+    {
+      "appid": 213330,
+      "name": "LEGO Batman 2: DC Super Heroes",
+      "enName": "LEGO Batman 2: DC Super Heroes",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 214490,
+      "name": "Alien: Isolation",
+      "enName": "Alien: Isolation",
+      "freeDate": "2021-4-22",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 218620,
+      "name": "收获日2",
+      "enName": "PAYDAY 2",
+      "freeDate": "2023-6-8",
+      "note": "年中特卖神秘游戏第四弹"
+    },
+    {
+      "appid": 220200,
+      "name": "坎巴拉太空计划",
+      "enName": "Kerbal Space Program",
+      "freeDate": "2023-1-6",
+      "note": ""
+    },
+    {
+      "appid": 221260,
+      "name": "Little Inferno",
+      "enName": "Little Inferno",
+      "freeDate": "2019-12-23",
+      "note": "圣诞活动第 4 日，限时24小时"
+    },
+    {
+      "appid": 221910,
+      "name": "The Stanley Parable",
+      "enName": "The Stanley Parable",
+      "freeDate": "2020-3-19",
+      "note": ""
+    },
+    {
+      "appid": 224760,
+      "name": "FEZ",
+      "enName": "FEZ",
+      "freeDate": "2019-8-22",
+      "note": ""
+    },
+    {
+      "appid": 225080,
+      "name": "Brothers - A Tale of Two Sons",
+      "enName": "Brothers - A Tale of Two Sons",
+      "freeDate": "2022-2-18",
+      "note": ""
+    },
+    {
+      "appid": 226860,
+      "name": "Galactic Civilizations III",
+      "enName": "Galactic Civilizations III",
+      "freeDate": "2022-1-14",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 232090,
+      "name": "杀戮空间2",
+      "enName": "Killing Floor 2",
+      "freeDate": "2022-7-7",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 232430,
+      "name": "Gone Home",
+      "enName": "Gone Home",
+      "freeDate": "2020-4-2",
+      "note": ""
+    },
+    {
+      "appid": 233450,
+      "name": "Prison Architect",
+      "enName": "Prison Architect",
+      "freeDate": "2021-12-10",
+      "note": ""
+    },
+    {
+      "appid": 234270,
+      "name": "Ken Follett's The Pillars of the Earth",
+      "enName": "Ken Follett's The Pillars of the Earth",
+      "freeDate": "2021-4-15",
+      "note": ""
+    },
+    {
+      "appid": 236870,
+      "name": "HITMAN™",
+      "enName": "HITMAN™",
+      "freeDate": "2020-8-27",
+      "note": "已下架"
+    },
+    {
+      "appid": 237930,
+      "name": "Transistor",
+      "enName": "Transistor",
+      "freeDate": "2019-4-18",
+      "note": ""
+    },
+    {
+      "appid": 239160,
+      "name": "神偷",
+      "enName": "Thief",
+      "freeDate": "2024-4-4",
+      "note": ""
+    },
+    {
+      "appid": 239200,
+      "name": "Amnesia: A Machine for Pigs",
+      "enName": "Amnesia: A Machine for Pigs",
+      "freeDate": "2020-10-15",
+      "note": ""
+    },
+    {
+      "appid": 241260,
+      "name": "Sherlock Holmes: Crimes and Punishments",
+      "enName": "Sherlock Holmes: Crimes and Punishments",
+      "freeDate": "2020-4-9",
+      "note": ""
+    },
+    {
+      "appid": 241600,
+      "name": "盗贼遗产",
+      "enName": "Rogue Legacy",
+      "freeDate": "2022-4-7",
+      "note": ""
+    },
+    {
+      "appid": 242550,
+      "name": "Rayman Legends",
+      "enName": "Rayman Legends",
+      "freeDate": "2019-11-30",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 242640,
+      "name": "冥河：暗影大师",
+      "enName": "Styx: Master of Shadows",
+      "freeDate": "2026-1-16",
+      "note": ""
+    },
+    {
+      "appid": 242680,
+      "name": "Nuclear Throne",
+      "enName": "Nuclear Throne",
+      "freeDate": "2019-11-8",
+      "note": ""
+    },
+    {
+      "appid": 242860,
+      "name": "Verdun",
+      "enName": "Verdun",
+      "freeDate": "2021-7-22",
+      "note": ""
+    },
+    {
+      "appid": 243470,
+      "name": "Watch_Dogs",
+      "enName": "Watch_Dogs",
+      "freeDate": "2020-3-19",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 244160,
+      "name": "家园重制版合集",
+      "enName": "Homeworld Remastered Collection",
+      "freeDate": "2023-7-27",
+      "note": ""
+    },
+    {
+      "appid": 244750,
+      "name": "Aztez",
+      "enName": "Aztez",
+      "freeDate": "2020-2-14",
+      "note": ""
+    },
+    {
+      "appid": 245620,
+      "name": "Tropico 5",
+      "enName": "Tropico 5",
+      "freeDate": "2020-12-24",
+      "note": "假日特卖第7天，限时24小时"
+    },
+    {
+      "appid": 250320,
+      "name": "The Wolf Among Us",
+      "enName": "The Wolf Among Us",
+      "freeDate": "2019-12-13",
+      "note": ""
+    },
+    {
+      "appid": 250620,
+      "name": "Among the Sleep - Enhanced Edition",
+      "enName": "Among the Sleep - Enhanced Edition",
+      "freeDate": "2021-10-21",
+      "note": ""
+    },
+    {
+      "appid": 251060,
+      "name": "Wargame: Red Dragon",
+      "enName": "Wargame: Red Dragon",
+      "freeDate": "2021-3-5",
+      "note": ""
+    },
+    {
+      "appid": 251470,
+      "name": "TowerFall Ascension",
+      "enName": "TowerFall Ascension",
+      "freeDate": "2019-12-21",
+      "note": "圣诞活动第 2 日，限时24小时"
+    },
+    {
+      "appid": 251830,
+      "name": "Stick it to The Man!",
+      "enName": "Stick it to The Man!",
+      "freeDate": "2020-9-17",
+      "note": ""
+    },
+    {
+      "appid": 254320,
+      "name": "宇宙黄昏",
+      "enName": "Duskers",
+      "freeDate": "2023-2-24",
+      "note": ""
+    },
+    {
+      "appid": 255710,
+      "name": "Cities: Skylines",
+      "enName": "Cities: Skylines",
+      "freeDate": "2022-3-11",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 257510,
+      "name": "The Talos Principle",
+      "enName": "The Talos Principle",
+      "freeDate": "2019-12-30",
+      "note": "圣诞活动第 11 日，限时24小时"
+    },
+    {
+      "appid": 257850,
+      "name": "Hyper Light Drifter",
+      "enName": "Hyper Light Drifter",
+      "freeDate": "2019-12-28",
+      "note": "圣诞活动第 9 日，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 258520,
+      "name": "伊森·卡特的消失",
+      "enName": "The Vanishing of Ethan Carter",
+      "freeDate": "2022-4-7",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 261530,
+      "name": "Lifeless Planet Premier Edition",
+      "enName": "Lifeless Planet Premier Edition",
+      "freeDate": "2020-7-9",
+      "note": ""
+    },
+    {
+      "appid": 262060,
+      "name": "Darkest Dungeon",
+      "enName": "Darkest Dungeon",
+      "freeDate": "2020-12-26",
+      "note": "假日特卖第9天，限时24小时"
+    },
+    {
+      "appid": 264710,
+      "name": "Subnautica",
+      "enName": "Subnautica",
+      "freeDate": "2018-12-15",
+      "note": ""
+    },
+    {
+      "appid": 268050,
+      "name": "恶灵附身",
+      "enName": "The Evil Within",
+      "freeDate": "2023-10-19",
+      "note": ""
+    },
+    {
+      "appid": 268500,
+      "name": "幽浮2",
+      "enName": "XCOM® 2",
+      "freeDate": "2022-4-14",
+      "note": ""
+    },
+    {
+      "appid": 269270,
+      "name": "爱逞强",
+      "enName": "LOVE",
+      "freeDate": "2024-1-19",
+      "note": ""
+    },
+    {
+      "appid": 271240,
+      "name": "Offworld Trading Company",
+      "enName": "Offworld Trading Company",
+      "freeDate": "2021-7-15",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 274520,
+      "name": "阴暗森林",
+      "enName": "Darkwood",
+      "freeDate": "2022-10-13",
+      "note": ""
+    },
+    {
+      "appid": 275180,
+      "name": "万圣节大作战2",
+      "enName": "Costume Quest 2",
+      "freeDate": "2022-12-18",
+      "note": "假日特卖第3天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 275390,
+      "name": "墨西哥英雄大混战！",
+      "enName": "Guacamelee!",
+      "freeDate": "2023-6-15",
+      "note": ""
+    },
+    {
+      "appid": 281610,
+      "name": "家园：卡拉克沙漠",
+      "enName": "Homeworld: Deserts of Kharak",
+      "freeDate": "2023-8-24",
+      "note": ""
+    },
+    {
+      "appid": 282070,
+      "name": "This War of Mine",
+      "enName": "This War of Mine",
+      "freeDate": "2019-7-25",
+      "note": ""
+    },
+    {
+      "appid": 282140,
+      "name": "SOMA",
+      "enName": "SOMA",
+      "freeDate": "2019-10-31",
+      "note": ""
+    },
+    {
+      "appid": 283640,
+      "name": "Salt and Sanctuary",
+      "enName": "Salt and Sanctuary",
+      "freeDate": "2021-12-30",
+      "note": "假日特卖第14天，限时24小时"
+    },
+    {
+      "appid": 285920,
+      "name": "泰拉科技",
+      "enName": "TerraTech",
+      "freeDate": "2024-12-22",
+      "note": "假日特卖第4弹，限时24小时"
+    },
+    {
+      "appid": 286690,
+      "name": "Metro 2033 Redux",
+      "enName": "Metro 2033 Redux",
+      "freeDate": "2020-12-23",
+      "note": "假日特卖第6天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 287390,
+      "name": "地铁：最后的曙光重制版",
+      "enName": "Metro: Last Light Redux",
+      "freeDate": "2022-12-25",
+      "note": "假日特卖第10天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 289070,
+      "name": "Sid Meier’s Civilization® VI",
+      "enName": "Sid Meier’s Civilization® VI",
+      "freeDate": "2020-5-21",
+      "note": "年中特卖神秘游戏第二弹"
+    },
+    {
+      "appid": 290300,
+      "name": "Rebel Galaxy",
+      "enName": "Rebel Galaxy",
+      "freeDate": "2021-8-12",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 290510,
+      "name": "GNOG",
+      "enName": "GNOG",
+      "freeDate": "2019-8-8",
+      "note": ""
+    },
+    {
+      "appid": 290770,
+      "name": "The Fall",
+      "enName": "The Fall",
+      "freeDate": "2021-3-18",
+      "note": ""
+    },
+    {
+      "appid": 292910,
+      "name": "Deponia: The Complete Journey",
+      "enName": "Deponia: The Complete Journey",
+      "freeDate": "2021-4-15",
+      "note": ""
+    },
+    {
+      "appid": 295790,
+      "name": "永不孤单",
+      "enName": "Never Alone",
+      "freeDate": "2023-4-20",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 298630,
+      "name": "The Escapists",
+      "enName": "The Escapists",
+      "freeDate": "2021-9-23",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 300380,
+      "name": "公路救赎",
+      "enName": "Road Redemption",
+      "freeDate": "2025-8-7",
+      "note": ""
+    },
+    {
+      "appid": 300570,
+      "name": "无限工厂",
+      "enName": "Infinifactory",
+      "freeDate": "2024-1-26",
+      "note": ""
+    },
+    {
+      "appid": 301840,
+      "name": "黄铜之城",
+      "enName": "City of Brass",
+      "freeDate": "2022-3-31",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 304390,
+      "name": "FOR HONOR",
+      "enName": "FOR HONOR",
+      "freeDate": "2019-8-2",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 304430,
+      "name": "INSIDE",
+      "enName": "INSIDE",
+      "freeDate": "2020-12-25",
+      "note": "假日特卖第8天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 304650,
+      "name": "SUNLESS SEA",
+      "enName": "SUNLESS SEA",
+      "freeDate": "2021-2-26",
+      "note": ""
+    },
+    {
+      "appid": 305620,
+      "name": "The Long Dark",
+      "enName": "The Long Dark",
+      "freeDate": "2020-12-20",
+      "note": "假日特卖第3天，限时24小时"
+    },
+    {
+      "appid": 306130,
+      "name": "上古卷轴Online",
+      "enName": "The Elder Scrolls Online",
+      "freeDate": "2023-7-20",
+      "note": ""
+    },
+    {
+      "appid": 306760,
+      "name": "Obduction",
+      "enName": "Obduction",
+      "freeDate": "2021-7-15",
+      "note": ""
+    },
+    {
+      "appid": 311690,
+      "name": "Enter the Gungeon",
+      "enName": "Enter the Gungeon",
+      "freeDate": "2020-8-20",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 313120,
+      "name": "Stranded Deep",
+      "enName": "Stranded Deep",
+      "freeDate": "2020-12-29",
+      "note": "假日特卖第12天，限时24小时"
+    },
+    {
+      "appid": 313690,
+      "name": "LEGO Batman 3: Beyond Gotham",
+      "enName": "LEGO Batman 3: Beyond Gotham",
+      "freeDate": "2019-9-19",
+      "note": ""
+    },
+    {
+      "appid": 313780,
+      "name": "Conarium",
+      "enName": "Conarium",
+      "freeDate": "2019-9-12",
+      "note": ""
+    },
+    {
+      "appid": 314660,
+      "name": "Oddworld: New 'n' Tasty",
+      "enName": "Oddworld: New 'n' Tasty",
+      "freeDate": "2020-12-19",
+      "note": "假日特卖第2天，限时24小时"
+    },
+    {
+      "appid": 317820,
+      "name": "Guild of Dungeoneering",
+      "enName": "Guild of Dungeoneering",
+      "freeDate": "2021-11-19",
+      "note": "Epic送的是经典版不是终极版"
+    },
+    {
+      "appid": 320140,
+      "name": "Absolute Drift",
+      "enName": "Absolute Drift",
+      "freeDate": "2021-2-19",
+      "note": ""
+    },
+    {
+      "appid": 322110,
+      "name": "20XX",
+      "enName": "20XX",
+      "freeDate": "2020-7-30",
+      "note": ""
+    },
+    {
+      "appid": 322500,
+      "name": "SUPERHOT",
+      "enName": "SUPERHOT",
+      "freeDate": "2019-12-22",
+      "note": "圣诞活动第 3 日，限时24小时"
+    },
+    {
+      "appid": 323060,
+      "name": "Tharsis",
+      "enName": "Tharsis",
+      "freeDate": "2021-9-16",
+      "note": ""
+    },
+    {
+      "appid": 323190,
+      "name": "Frostpunk",
+      "enName": "Frostpunk",
+      "freeDate": "2021-6-3",
+      "note": "年中特卖神秘游戏第三弹"
+    },
+    {
+      "appid": 323580,
+      "name": "巨人约顿",
+      "enName": "Jotun: Valhalla Edition",
+      "freeDate": "2022-5-12",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 327670,
+      "name": "Ironcast",
+      "enName": "Ironcast",
+      "freeDate": "2021-7-8",
+      "note": ""
+    },
+    {
+      "appid": 330820,
+      "name": "2064: Read Only Memories",
+      "enName": "2064: Read Only Memories",
+      "freeDate": "2021-9-28",
+      "note": "限免领取时间仅1天"
+    },
+    {
+      "appid": 331670,
+      "name": "The Jackbox Party Pack",
+      "enName": "The Jackbox Party Pack",
+      "freeDate": "2019-1-25",
+      "note": ""
+    },
+    {
+      "appid": 331870,
+      "name": "AER Memories of Old",
+      "enName": "AER Memories of Old",
+      "freeDate": "2020-6-25",
+      "note": ""
+    },
+    {
+      "appid": 332200,
+      "name": "Axiom Verge",
+      "enName": "Axiom Verge",
+      "freeDate": "2019-11-30",
+      "note": "第二次赠送，国区特供"
+    },
+    {
+      "appid": 334940,
+      "name": "Yoku's Island Express",
+      "enName": "Yoku's Island Express",
+      "freeDate": "2021-9-2",
+      "note": ""
+    },
+    {
+      "appid": 335670,
+      "name": "莉莎：决定版",
+      "enName": "LISA",
+      "freeDate": "2024-4-25",
+      "note": ""
+    },
+    {
+      "appid": 337000,
+      "name": "杀出重围：人类分裂",
+      "enName": "Deus Ex: Mankind Divided",
+      "freeDate": "2024-3-14",
+      "note": ""
+    },
+    {
+      "appid": 343860,
+      "name": "Tacoma",
+      "enName": "Tacoma",
+      "freeDate": "2020-7-23",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 346110,
+      "name": "方舟：生存进化",
+      "enName": "ARK: Survival Evolved",
+      "freeDate": "2022-9-22",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 347000,
+      "name": "InnerSpace",
+      "enName": "InnerSpace",
+      "freeDate": "2020-2-28",
+      "note": ""
+    },
+    {
+      "appid": 352520,
+      "name": "沉默年代",
+      "enName": "The Silent Age",
+      "freeDate": "2023-3-30",
+      "note": ""
+    },
+    {
+      "appid": 355790,
+      "name": "冥河：黑暗碎片",
+      "enName": "Styx: Shards of Darkness",
+      "freeDate": "2026-1-16",
+      "note": ""
+    },
+    {
+      "appid": 356040,
+      "name": "Sheltered",
+      "enName": "Sheltered",
+      "freeDate": "2021-9-9",
+      "note": ""
+    },
+    {
+      "appid": 356650,
+      "name": "亡灵诡计：来世",
+      "enName": "Death's Gambit: Afterlife",
+      "freeDate": "2024-8-15",
+      "note": ""
+    },
+    {
+      "appid": 357300,
+      "name": "贪吃鸟完整版",
+      "enName": "Snakebird",
+      "freeDate": "2024-11-15",
+      "note": ""
+    },
+    {
+      "appid": 359100,
+      "name": "Q.U.B.E. 2",
+      "enName": "Q.U.B.E. 2",
+      "freeDate": "2019-10-24",
+      "note": ""
+    },
+    {
+      "appid": 359320,
+      "name": "Elite Dangerous",
+      "enName": "Elite Dangerous",
+      "freeDate": "2020-11-20",
+      "note": ""
+    },
+    {
+      "appid": 360830,
+      "name": "Yooka-Laylee",
+      "enName": "Yooka-Laylee",
+      "freeDate": "2021-8-19",
+      "note": ""
+    },
+    {
+      "appid": 361280,
+      "name": "动荡",
+      "enName": "Turmoil",
+      "freeDate": "2025-1-10",
+      "note": ""
+    },
+    {
+      "appid": 364360,
+      "name": "全面战争：战锤",
+      "enName": "Total War: WARHAMMER",
+      "freeDate": "2022-3-31",
+      "note": ""
+    },
+    {
+      "appid": 368260,
+      "name": "漫威暗夜之子",
+      "enName": "Marvel's Midnight Suns",
+      "freeDate": "2024-6-6",
+      "note": "年中特卖神秘游戏第四弹"
+    },
+    {
+      "appid": 368390,
+      "name": "黑暗侦探",
+      "enName": "The Darkside Detective",
+      "freeDate": "2025-12-5",
+      "note": ""
+    },
+    {
+      "appid": 368500,
+      "name": "Assassin's Creed Syndicate",
+      "enName": "Assassin's Creed Syndicate",
+      "freeDate": "2020-2-21",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 369070,
+      "name": "弑杀：地狱归来",
+      "enName": "Slain: Back from Hell",
+      "freeDate": "2022-10-6",
+      "note": ""
+    },
+    {
+      "appid": 371970,
+      "name": "Barony",
+      "enName": "Barony",
+      "freeDate": "2020-7-30",
+      "note": ""
+    },
+    {
+      "appid": 375820,
+      "name": "程序员升职记",
+      "enName": "Human Resource Machine",
+      "freeDate": "2023-12-27",
+      "note": "假日特卖第8弹，限时24小时"
+    },
+    {
+      "appid": 379430,
+      "name": "天国：拯救",
+      "enName": "Kingdom Come: Deliverance",
+      "freeDate": "2025-1-2",
+      "note": "假日特卖第15弹，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 381210,
+      "name": "Dead by Daylight",
+      "enName": "Dead by Daylight",
+      "freeDate": "2021-12-3",
+      "note": ""
+    },
+    {
+      "appid": 383120,
+      "name": "帝国霸业 - 银河生存",
+      "enName": "Empyrion - Galactic Survival",
+      "freeDate": "2024-10-10",
+      "note": ""
+    },
+    {
+      "appid": 383270,
+      "name": "Hue",
+      "enName": "Hue",
+      "freeDate": "2020-7-2",
+      "note": ""
+    },
+    {
+      "appid": 384190,
+      "name": "ABZU",
+      "enName": "ABZU",
+      "freeDate": "2020-10-8",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 388410,
+      "name": "Darksiders II Deathinitive Edition",
+      "enName": "Darksiders II Deathinitive Edition",
+      "freeDate": "2020-1-2",
+      "note": "圣诞活动第 14 日，限时一周"
+    },
+    {
+      "appid": 388880,
+      "name": "Oxenfree",
+      "enName": "Oxenfree",
+      "freeDate": "2019-3-21",
+      "note": ""
+    },
+    {
+      "appid": 389140,
+      "name": "追逐地平线Turbo",
+      "enName": "Horizon Chase Turbo",
+      "freeDate": "2023-5-4",
+      "note": "第三次赠送"
+    },
+    {
+      "appid": 391720,
+      "name": "Layers of Fear",
+      "enName": "Layers of Fear",
+      "freeDate": "2019-10-24",
+      "note": ""
+    },
+    {
+      "appid": 391730,
+      "name": "Crashlands",
+      "enName": "Crashlands",
+      "freeDate": "2020-4-30",
+      "note": ""
+    },
+    {
+      "appid": 397060,
+      "name": "Faeria",
+      "enName": "Faeria",
+      "freeDate": "2020-2-21",
+      "note": ""
+    },
+    {
+      "appid": 397540,
+      "name": "无主之地3",
+      "enName": "Borderlands 3",
+      "freeDate": "2022-5-19",
+      "note": "年中特卖神秘游戏第一弹"
+    },
+    {
+      "appid": 398850,
+      "name": "纸境奇缘 - 文字大冒险",
+      "enName": "Epistory - Typing Chronicles",
+      "freeDate": "2023-1-20",
+      "note": ""
+    },
+    {
+      "appid": 404680,
+      "name": "Hob",
+      "enName": "Hob",
+      "freeDate": "2020-4-2",
+      "note": ""
+    },
+    {
+      "appid": 418240,
+      "name": "影子战术：将军之刃",
+      "enName": "Shadow Tactics: Blades of the Shogun",
+      "freeDate": "2022-11-11",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 418460,
+      "name": "风起云涌2：越南",
+      "enName": "Rising Storm 2: Vietnam",
+      "freeDate": "2022-11-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 421120,
+      "name": "银河历险记3",
+      "enName": "Samorost 3",
+      "freeDate": "2025-10-16",
+      "note": ""
+    },
+    {
+      "appid": 422510,
+      "name": "恶魔弹珠",
+      "enName": "DEMON'S TILT",
+      "freeDate": "2022-3-24",
+      "note": ""
+    },
+    {
+      "appid": 427290,
+      "name": "Vampyr",
+      "enName": "Vampyr",
+      "freeDate": "2021-12-24",
+      "note": "假日特卖第8天，限时24小时"
+    },
+    {
+      "appid": 433340,
+      "name": "Slime Rancher",
+      "enName": "Slime Rancher",
+      "freeDate": "2019-3-8",
+      "note": ""
+    },
+    {
+      "appid": 433550,
+      "name": "DARQ: Complete Edition",
+      "enName": "DARQ: Complete Edition",
+      "freeDate": "2021-10-28",
+      "note": ""
+    },
+    {
+      "appid": 434650,
+      "name": "失落城堡",
+      "enName": "Lost Castle",
+      "freeDate": "2024-2-9",
+      "note": ""
+    },
+    {
+      "appid": 435400,
+      "name": "躲藏的家伙",
+      "enName": "Hidden Folks",
+      "freeDate": "2025-8-14",
+      "note": ""
+    },
+    {
+      "appid": 437100,
+      "name": "我的夜间工作",
+      "enName": "My Night Job",
+      "freeDate": "2026-2-27",
+      "note": ""
+    },
+    {
+      "appid": 437570,
+      "name": "GoNNER",
+      "enName": "GoNNER",
+      "freeDate": "2020-3-6",
+      "note": ""
+    },
+    {
+      "appid": 442070,
+      "name": "Drawful 2",
+      "enName": "Drawful 2",
+      "freeDate": "2020-3-28",
+      "note": ""
+    },
+    {
+      "appid": 445980,
+      "name": "传说法师",
+      "enName": "Wizard of Legend",
+      "freeDate": "2024-12-23",
+      "note": "假日特卖第5弹，限时24小时"
+    },
+    {
+      "appid": 447040,
+      "name": "Watch_Dogs 2",
+      "enName": "Watch_Dogs 2",
+      "freeDate": "2020-9-17",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 447120,
+      "name": "Where the Water Tastes Like Wine",
+      "enName": "Where the Water Tastes Like Wine",
+      "freeDate": "2020-9-10",
+      "note": ""
+    },
+    {
+      "appid": 447150,
+      "name": "APE OUT",
+      "enName": "APE OUT",
+      "freeDate": "2019-12-24",
+      "note": "圣诞活动第 5 日，限时24小时"
+    },
+    {
+      "appid": 448510,
+      "name": "Overcooked",
+      "enName": "Overcooked",
+      "freeDate": "2020-6-4",
+      "note": "年中特卖神秘游戏第四弹，第二次赠送"
+    },
+    {
+      "appid": 456670,
+      "name": "Hand of Fate 2",
+      "enName": "Hand of Fate 2",
+      "freeDate": "2021-4-22",
+      "note": ""
+    },
+    {
+      "appid": 459370,
+      "name": "河畔之乡",
+      "enName": "Riverbond",
+      "freeDate": "2022-4-21",
+      "note": ""
+    },
+    {
+      "appid": 460920,
+      "name": "Steep",
+      "enName": "Steep",
+      "freeDate": "2020-1-2",
+      "note": "圣诞活动第 14 日，限时一周，国区不能领"
+    },
+    {
+      "appid": 462780,
+      "name": "Darksiders Warmastered Edition",
+      "enName": "Darksiders Warmastered Edition",
+      "freeDate": "2020-1-2",
+      "note": "圣诞活动第 14 日，限时一周"
+    },
+    {
+      "appid": 463980,
+      "name": "Solitairica",
+      "enName": "Solitairica",
+      "freeDate": "2020-12-30",
+      "note": "假日特卖第13天，限时24小时"
+    },
+    {
+      "appid": 464060,
+      "name": "RUINER",
+      "enName": "RUINER",
+      "freeDate": "2019-11-8",
+      "note": ""
+    },
+    {
+      "appid": 464650,
+      "name": "虹色战士",
+      "enName": "Runbow",
+      "freeDate": "2022-9-29",
+      "note": ""
+    },
+    {
+      "appid": 464920,
+      "name": "Surviving Mars",
+      "enName": "Surviving Mars",
+      "freeDate": "2021-3-12",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 468670,
+      "name": "Speed Brawl",
+      "enName": "Speed Brawl",
+      "freeDate": "2021-9-16",
+      "note": ""
+    },
+    {
+      "appid": 469600,
+      "name": "军团战争2",
+      "enName": "Legion TD 2",
+      "freeDate": "2025-7-24",
+      "note": ""
+    },
+    {
+      "appid": 475550,
+      "name": "旁观者",
+      "enName": "Beholder",
+      "freeDate": "2024-11-22",
+      "note": ""
+    },
+    {
+      "appid": 480490,
+      "name": "掠食",
+      "enName": "Prey",
+      "freeDate": "2022-5-12",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 481510,
+      "name": "Night in the Woods",
+      "enName": "Night in the Woods",
+      "freeDate": "2020-12-28",
+      "note": "假日特卖第11天，限时24小时"
+    },
+    {
+      "appid": 484900,
+      "name": "Aven Colony",
+      "enName": "Aven Colony",
+      "freeDate": "2021-11-4",
+      "note": ""
+    },
+    {
+      "appid": 485510,
+      "name": "Nioh: Complete Edition",
+      "enName": "Nioh: Complete Edition",
+      "freeDate": "2021-9-9",
+      "note": ""
+    },
+    {
+      "appid": 488730,
+      "name": "God's Trigger",
+      "enName": "God's Trigger",
+      "freeDate": "2020-8-20",
+      "note": ""
+    },
+    {
+      "appid": 489630,
+      "name": "战锤40K：格雷迪厄斯 - 遗迹之战",
+      "enName": "Warhammer 40,000: Gladius - Relics of War",
+      "freeDate": "2024-5-24",
+      "note": "厂商活动 | 第二次赠送"
+    },
+    {
+      "appid": 491950,
+      "name": "奥威尔：无所遁形",
+      "enName": "Orwell: Keeping an Eye On You",
+      "freeDate": "2023-8-10",
+      "note": ""
+    },
+    {
+      "appid": 493200,
+      "name": "RiME",
+      "enName": "RiME",
+      "freeDate": "2019-5-23",
+      "note": ""
+    },
+    {
+      "appid": 493540,
+      "name": "虚构世界",
+      "enName": "Figment",
+      "freeDate": "2025-7-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 493900,
+      "name": "Dungeons 3",
+      "enName": "Dungeons 3",
+      "freeDate": "2020-11-6",
+      "note": ""
+    },
+    {
+      "appid": 496300,
+      "name": "Kingdom: New Lands",
+      "enName": "Kingdom: New Lands",
+      "freeDate": "2020-10-15",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 498310,
+      "name": "RPG集成盒",
+      "enName": "RPG in a Box",
+      "freeDate": "2022-12-2",
+      "note": ""
+    },
+    {
+      "appid": 500670,
+      "name": "Tormentor❌Punisher",
+      "enName": "Tormentor❌Punisher",
+      "freeDate": "2020-3-26",
+      "note": ""
+    },
+    {
+      "appid": 501300,
+      "name": "What Remains of Edith Finch",
+      "enName": "What Remains of Edith Finch",
+      "freeDate": "2019-1-11",
+      "note": ""
+    },
+    {
+      "appid": 503560,
+      "name": "911接线员",
+      "enName": "911 Operator",
+      "freeDate": "2023-9-14",
+      "note": ""
+    },
+    {
+      "appid": 503940,
+      "name": "Railway Empire",
+      "enName": "Railway Empire",
+      "freeDate": "2020-9-10",
+      "note": ""
+    },
+    {
+      "appid": 504230,
+      "name": "Celeste",
+      "enName": "Celeste",
+      "freeDate": "2019-12-25",
+      "note": "圣诞活动第 6 日，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 505740,
+      "name": "精英队：夺取前线",
+      "enName": "Eximius: Seize the Frontline",
+      "freeDate": "2022-12-30",
+      "note": ""
+    },
+    {
+      "appid": 508440,
+      "name": "Totally Accurate Battle Simulator",
+      "enName": "Totally Accurate Battle Simulator",
+      "freeDate": "2019-12-26",
+      "note": "圣诞活动第 7 日，限时24小时"
+    },
+    {
+      "appid": 508740,
+      "name": "Wheels of Aurelia",
+      "enName": "Wheels of Aurelia",
+      "freeDate": "2020-4-16",
+      "note": ""
+    },
+    {
+      "appid": 514900,
+      "name": ">observer_",
+      "enName": ">observer_",
+      "freeDate": "2019-10-17",
+      "note": "Observer: System Redux 推出后，原版均已下架"
+    },
+    {
+      "appid": 516110,
+      "name": "外星双傻：找回状态！",
+      "enName": "ToeJam & Earl: Back in the Groove!",
+      "freeDate": "2022-10-13",
+      "note": ""
+    },
+    {
+      "appid": 517630,
+      "name": "Just Cause 4 Reloaded",
+      "enName": "Just Cause 4 Reloaded",
+      "freeDate": "2020-4-16",
+      "note": ""
+    },
+    {
+      "appid": 517710,
+      "name": "红视",
+      "enName": "Redout: Enhanced Edition",
+      "freeDate": "2022-5-12",
+      "note": ""
+    },
+    {
+      "appid": 518060,
+      "name": "终极国际象棋",
+      "enName": "Chess Ultra",
+      "freeDate": "2023-3-23",
+      "note": ""
+    },
+    {
+      "appid": 518790,
+      "name": "猎人：荒野的召唤",
+      "enName": "theHunter: Call of the Wild™",
+      "freeDate": "2023-6-22",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 521890,
+      "name": "Hello Neighbor",
+      "enName": "Hello Neighbor",
+      "freeDate": "2019-12-31",
+      "note": "圣诞活动第 12 日，限时24小时"
+    },
+    {
+      "appid": 527230,
+      "name": "For The King",
+      "enName": "For The King",
+      "freeDate": "2021-2-5",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 529660,
+      "name": "秘奥法师",
+      "enName": "Mages of Mystralia",
+      "freeDate": "2025-2-28",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 534550,
+      "name": "墨西哥英雄大混战！2",
+      "enName": "Guacamelee! 2",
+      "freeDate": "2023-6-15",
+      "note": ""
+    },
+    {
+      "appid": 535480,
+      "name": "Sundered: Eldritch Edition",
+      "enName": "Sundered: Eldritch Edition",
+      "freeDate": "2020-1-10",
+      "note": ""
+    },
+    {
+      "appid": 535930,
+      "name": "双点医院",
+      "enName": "Two Point Hospital",
+      "freeDate": "2025-6-12",
+      "note": ""
+    },
+    {
+      "appid": 543260,
+      "name": "神奇小子：龙之陷阱",
+      "enName": "Wonder Boy: The Dragon's Trap",
+      "freeDate": "2022-7-14",
+      "note": ""
+    },
+    {
+      "appid": 546430,
+      "name": "Pathway",
+      "enName": "Pathway",
+      "freeDate": "2020-6-18",
+      "note": ""
+    },
+    {
+      "appid": 548570,
+      "name": "RAGE 2",
+      "enName": "RAGE 2",
+      "freeDate": "2021-2-19",
+      "note": ""
+    },
+    {
+      "appid": 550320,
+      "name": "拉力赛艺术",
+      "enName": "art of rally",
+      "freeDate": "2023-12-23",
+      "note": "假日特卖第4弹，限时24小时"
+    },
+    {
+      "appid": 555150,
+      "name": "The First Tree",
+      "enName": "The First Tree",
+      "freeDate": "2021-4-15",
+      "note": ""
+    },
+    {
+      "appid": 558420,
+      "name": "Stories Untold",
+      "enName": "Stories Untold",
+      "freeDate": "2019-5-16",
+      "note": ""
+    },
+    {
+      "appid": 559650,
+      "name": "女巫来了",
+      "enName": "Witch It",
+      "freeDate": "2024-10-31",
+      "note": ""
+    },
+    {
+      "appid": 569860,
+      "name": "Thimbleweed Park",
+      "enName": "Thimbleweed Park",
+      "freeDate": "2019-2-22",
+      "note": ""
+    },
+    {
+      "appid": 572890,
+      "name": "Pikuniku",
+      "enName": "Pikuniku",
+      "freeDate": "2020-10-1",
+      "note": ""
+    },
+    {
+      "appid": 574090,
+      "name": "MOTHERGUNSHIP",
+      "enName": "MOTHERGUNSHIP",
+      "freeDate": "2021-7-29",
+      "note": ""
+    },
+    {
+      "appid": 574980,
+      "name": "蹄斗族群",
+      "enName": "Them's Fightin' Herds",
+      "freeDate": "2025-3-7",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 581660,
+      "name": "超级食肉男孩 永恒",
+      "enName": "Super Meat Boy Forever",
+      "freeDate": "2024-2-23",
+      "note": ""
+    },
+    {
+      "appid": 582270,
+      "name": "Everything",
+      "enName": "Everything",
+      "freeDate": "2019-9-26",
+      "note": ""
+    },
+    {
+      "appid": 583470,
+      "name": "The End Is Nigh",
+      "enName": "The End Is Nigh",
+      "freeDate": "2019-9-5",
+      "note": ""
+    },
+    {
+      "appid": 584400,
+      "name": "Sonic Mania",
+      "enName": "Sonic Mania",
+      "freeDate": "2021-6-24",
+      "note": ""
+    },
+    {
+      "appid": 590380,
+      "name": "Into the Breach",
+      "enName": "Into the Breach",
+      "freeDate": "2020-9-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 593280,
+      "name": "喵咪斗恶龙",
+      "enName": "Cat Quest",
+      "freeDate": "2025-3-27",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 595790,
+      "name": "Hell is Other Demons",
+      "enName": "Hell is Other Demons",
+      "freeDate": "2021-6-17",
+      "note": ""
+    },
+    {
+      "appid": 596970,
+      "name": "无光之空：君主版",
+      "enName": "Sunless Skies: Sovereign Edition",
+      "freeDate": "2024-6-27",
+      "note": ""
+    },
+    {
+      "appid": 597170,
+      "name": "克隆机器人角斗场",
+      "enName": "Clone Drone in the Danger Zone",
+      "freeDate": "2026-4-2",
+      "note": ""
+    },
+    {
+      "appid": 598810,
+      "name": "Carcassonne - Tiles & Tactics",
+      "enName": "Carcassonne - Tiles & Tactics",
+      "freeDate": "2020-2-7",
+      "note": ""
+    },
+    {
+      "appid": 600370,
+      "name": "范本",
+      "enName": "Paradigm",
+      "freeDate": "2022-4-28",
+      "note": ""
+    },
+    {
+      "appid": 601430,
+      "name": "恶灵附身2",
+      "enName": "The Evil Within 2",
+      "freeDate": "2023-10-26",
+      "note": ""
+    },
+    {
+      "appid": 602320,
+      "name": "火车山谷2",
+      "enName": "Train Valley 2",
+      "freeDate": "2023-7-13",
+      "note": ""
+    },
+    {
+      "appid": 606150,
+      "name": "Moonlighter",
+      "enName": "Moonlighter",
+      "freeDate": "2019-7-25",
+      "note": ""
+    },
+    {
+      "appid": 609490,
+      "name": "Minit",
+      "enName": "Minit",
+      "freeDate": "2021-8-5",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 610180,
+      "name": "杰克盒子的派对游戏包4",
+      "enName": "The Jackbox Party Pack 4",
+      "freeDate": "2025-12-5",
+      "note": ""
+    },
+    {
+      "appid": 612390,
+      "name": "Dandara: Trials of Fear Edition",
+      "enName": "Dandara: Trials of Fear Edition",
+      "freeDate": "2021-1-29",
+      "note": ""
+    },
+    {
+      "appid": 612570,
+      "name": "凯旋堡",
+      "enName": "Fort Triumph",
+      "freeDate": "2022-12-2",
+      "note": ""
+    },
+    {
+      "appid": 614570,
+      "name": "耻辱：界外魔之死",
+      "enName": "Dishonored®: Death of the Outsider™",
+      "freeDate": "2023-2-3",
+      "note": ""
+    },
+    {
+      "appid": 617290,
+      "name": "Remnant: From the Ashes",
+      "enName": "Remnant: From the Ashes",
+      "freeDate": "2021-12-19",
+      "note": "假日特卖第3天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 619150,
+      "name": "while True: learn()",
+      "enName": "while True: learn()",
+      "freeDate": "2021-12-3",
+      "note": ""
+    },
+    {
+      "appid": 621060,
+      "name": "PC Building Simulator",
+      "enName": "PC Building Simulator",
+      "freeDate": "2021-10-7",
+      "note": ""
+    },
+    {
+      "appid": 622650,
+      "name": "班迪与油印机",
+      "enName": "Bendy and the Ink Machine",
+      "freeDate": "2025-10-30",
+      "note": ""
+    },
+    {
+      "appid": 627690,
+      "name": "遗忘国度之闲置冠军",
+      "enName": "Idle Champions of the Forgotten Realms",
+      "freeDate": "2024-6-13",
+      "note": ""
+    },
+    {
+      "appid": 629090,
+      "name": "Horace",
+      "enName": "Horace",
+      "freeDate": "2020-1-17",
+      "note": ""
+    },
+    {
+      "appid": 629760,
+      "name": "雷霆一击",
+      "enName": "MORDHAU",
+      "freeDate": "2023-4-13",
+      "note": ""
+    },
+    {
+      "appid": 629820,
+      "name": "食人鲨",
+      "enName": "Maneater",
+      "freeDate": "2022-6-9",
+      "note": "年中特卖神秘游戏第四弹"
+    },
+    {
+      "appid": 632470,
+      "name": "极乐迪斯科 - 最终剪辑版",
+      "enName": "Disco Elysium - The Final Cut",
+      "freeDate": "2025-12-26",
+      "note": "假日特卖第9弹，限时24小时"
+    },
+    {
+      "appid": 633460,
+      "name": "坦能堡",
+      "enName": "Tannenberg",
+      "freeDate": "2022-7-21",
+      "note": ""
+    },
+    {
+      "appid": 635320,
+      "name": "Last Day of June",
+      "enName": "Last Day of June",
+      "freeDate": "2019-6-27",
+      "note": ""
+    },
+    {
+      "appid": 638990,
+      "name": "苏醒之路",
+      "enName": "UNDYING",
+      "freeDate": "2025-1-31",
+      "note": ""
+    },
+    {
+      "appid": 640820,
+      "name": "Pathfinder: Kingmaker - Enhanced Plus Edition",
+      "enName": "Pathfinder: Kingmaker - Enhanced Plus Edition",
+      "freeDate": "2021-12-25",
+      "note": "假日特卖第9天，限时24小时"
+    },
+    {
+      "appid": 641780,
+      "name": "无人机竞速联盟模拟器",
+      "enName": "The Drone Racing League Simulator",
+      "freeDate": "2022-9-29",
+      "note": ""
+    },
+    {
+      "appid": 641990,
+      "name": "The Escapists 2",
+      "enName": "The Escapists 2",
+      "freeDate": "2020-7-9",
+      "note": ""
+    },
+    {
+      "appid": 645630,
+      "name": "汽车修理工模拟器2018",
+      "enName": "Car Mechanic Simulator 2018",
+      "freeDate": "2022-6-23",
+      "note": ""
+    },
+    {
+      "appid": 648350,
+      "name": "Jurassic World Evolution",
+      "enName": "Jurassic World Evolution",
+      "freeDate": "2021-1-1",
+      "note": "假日特卖第15天，限时一周"
+    },
+    {
+      "appid": 651660,
+      "name": "Halcyon 6: Lightspeed Edition",
+      "enName": "Halcyon 6: Lightspeed Edition",
+      "freeDate": "2021-2-12",
+      "note": ""
+    },
+    {
+      "appid": 655350,
+      "name": "星间大乱斗2",
+      "enName": "Astro Duel 2",
+      "freeDate": "2024-3-8",
+      "note": ""
+    },
+    {
+      "appid": 657000,
+      "name": "杀戮之源",
+      "enName": "Rising Hell",
+      "freeDate": "2022-10-6",
+      "note": ""
+    },
+    {
+      "appid": 666140,
+      "name": "My Time At Portia",
+      "enName": "My Time At Portia",
+      "freeDate": "2020-12-27",
+      "note": "假日特卖第10天，限时24小时"
+    },
+    {
+      "appid": 667810,
+      "name": "Next Up Hero",
+      "enName": "Next Up Hero",
+      "freeDate": "2020-7-23",
+      "note": ""
+    },
+    {
+      "appid": 671440,
+      "name": "工业崛起",
+      "enName": "Rise of Industry",
+      "freeDate": "2023-3-3",
+      "note": ""
+    },
+    {
+      "appid": 673880,
+      "name": "战锤40K：机械神教",
+      "enName": "Warhammer 40,000: Mechanicus",
+      "freeDate": "2022-10-27",
+      "note": ""
+    },
+    {
+      "appid": 675010,
+      "name": "MudRunner",
+      "enName": "MudRunner",
+      "freeDate": "2020-11-27",
+      "note": ""
+    },
+    {
+      "appid": 684450,
+      "name": "末日求生",
+      "enName": "Surviving the Aftermath",
+      "freeDate": "2023-11-17",
+      "note": ""
+    },
+    {
+      "appid": 686810,
+      "name": "人间地狱",
+      "enName": "Hell Let Loose",
+      "freeDate": "2025-1-3",
+      "note": "假日特卖第16弹，限时一周"
+    },
+    {
+      "appid": 688420,
+      "name": "Bad North: Jotunn Edition",
+      "enName": "Bad North: Jotunn Edition",
+      "freeDate": "2019-11-22",
+      "note": ""
+    },
+    {
+      "appid": 692850,
+      "name": "赤痕：夜之仪式",
+      "enName": "Bloodstained: Ritual of the Night",
+      "freeDate": "2025-12-24",
+      "note": "假日特卖第7弹，限时24小时"
+    },
+    {
+      "appid": 699130,
+      "name": "僵尸世界大战",
+      "enName": "World War Z",
+      "freeDate": "2020-3-26",
+      "note": ""
+    },
+    {
+      "appid": 705120,
+      "name": "Death Coming",
+      "enName": "Death Coming",
+      "freeDate": "2020-5-7",
+      "note": ""
+    },
+    {
+      "appid": 711660,
+      "name": "毛线先生",
+      "enName": "CHUCHEL",
+      "freeDate": "2025-4-24",
+      "note": ""
+    },
+    {
+      "appid": 728880,
+      "name": "Overcooked! 2",
+      "enName": "Overcooked! 2",
+      "freeDate": "2021-6-17",
+      "note": ""
+    },
+    {
+      "appid": 738520,
+      "name": "呼吸边缘",
+      "enName": "Breathedge",
+      "freeDate": "2023-4-27",
+      "note": ""
+    },
+    {
+      "appid": 742420,
+      "name": "黑道圣徒重启版",
+      "enName": "Saints Row",
+      "freeDate": "2023-12-31",
+      "note": "假日特卖第12弹，限时24小时"
+    },
+    {
+      "appid": 752590,
+      "name": "瘟疫传说：无罪",
+      "enName": "A Plague Tale: Innocence",
+      "freeDate": "2024-1-4",
+      "note": "假日特卖第16弹，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 755470,
+      "name": "The World Next Door",
+      "enName": "The World Next Door",
+      "freeDate": "2020-11-20",
+      "note": ""
+    },
+    {
+      "appid": 757310,
+      "name": "沙贝",
+      "enName": "Sable",
+      "freeDate": "2025-6-26",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 760060,
+      "name": "Mutant Year Zero: Road to Eden",
+      "enName": "Mutant Year Zero: Road to Eden",
+      "freeDate": "2021-12-23",
+      "note": "假日特卖第7天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 761030,
+      "name": "沉睡的大地",
+      "enName": "EARTHLOCK",
+      "freeDate": "2023-11-17",
+      "note": ""
+    },
+    {
+      "appid": 763250,
+      "name": "The Spectrum Retreat",
+      "enName": "The Spectrum Retreat",
+      "freeDate": "2021-7-1",
+      "note": ""
+    },
+    {
+      "appid": 764790,
+      "name": "The Messenger",
+      "enName": "The Messenger",
+      "freeDate": "2019-11-15",
+      "note": ""
+    },
+    {
+      "appid": 774861,
+      "name": "冬日计划",
+      "enName": "Project Winter",
+      "freeDate": "2025-9-18",
+      "note": ""
+    },
+    {
+      "appid": 779340,
+      "name": "全面战争：三国",
+      "enName": "Total War: THREE KINGDOMS",
+      "freeDate": "2026-1-2",
+      "note": "假日特卖第16弹，限时一周"
+    },
+    {
+      "appid": 780290,
+      "name": "幽港迷城",
+      "enName": "Gloomhaven",
+      "freeDate": "2022-9-22",
+      "note": ""
+    },
+    {
+      "appid": 782940,
+      "name": "餐桌大战：食物斗士竞技场",
+      "enName": "RAWMEN: Food Fighter Arena 🍜",
+      "freeDate": "2024-8-1",
+      "note": ""
+    },
+    {
+      "appid": 787860,
+      "name": "Farming Simulator 19",
+      "enName": "Farming Simulator 19",
+      "freeDate": "2020-1-31",
+      "note": ""
+    },
+    {
+      "appid": 788100,
+      "name": "Neon Abyss",
+      "enName": "Neon Abyss",
+      "freeDate": "2021-12-18",
+      "note": "假日特卖第2天，限时24小时"
+    },
+    {
+      "appid": 793460,
+      "name": "112接线员",
+      "enName": "112 Operator",
+      "freeDate": "2025-8-7",
+      "note": ""
+    },
+    {
+      "appid": 795420,
+      "name": "黑暗侦探：黑暗中的摸索",
+      "enName": "The Darkside Detective: A Fumble in the Dark",
+      "freeDate": "2026-2-13",
+      "note": ""
+    },
+    {
+      "appid": 800270,
+      "name": "改造火星",
+      "enName": "Terraforming Mars",
+      "freeDate": "2022-5-5",
+      "note": ""
+    },
+    {
+      "appid": 807120,
+      "name": "伊拉图斯：死之主",
+      "enName": "Iratus: Lord of the Dead",
+      "freeDate": "2022-6-30",
+      "note": ""
+    },
+    {
+      "appid": 813630,
+      "name": "超级领地",
+      "enName": "Supraland",
+      "freeDate": "2022-6-16",
+      "note": ""
+    },
+    {
+      "appid": 820520,
+      "name": "欺骗公司",
+      "enName": "Deceive Inc.",
+      "freeDate": "2024-11-8",
+      "note": ""
+    },
+    {
+      "appid": 826940,
+      "name": "斯盖尔之女",
+      "enName": "Maid of Sker",
+      "freeDate": "2024-7-18",
+      "note": ""
+    },
+    {
+      "appid": 828740,
+      "name": "Tales of the Neon Sea",
+      "enName": "Tales of the Neon Sea",
+      "freeDate": "2021-4-1",
+      "note": ""
+    },
+    {
+      "appid": 839870,
+      "name": "Wilmot's Warehouse",
+      "enName": "Wilmot's Warehouse",
+      "freeDate": "2020-8-6",
+      "note": ""
+    },
+    {
+      "appid": 844260,
+      "name": "骏马大盗",
+      "enName": "Rustler",
+      "freeDate": "2026-1-23",
+      "note": ""
+    },
+    {
+      "appid": 844890,
+      "name": "战舰世界 - 新手包：石锤号",
+      "enName": "World of Warships — Starter Pack: Ishizuchi",
+      "freeDate": "2023-3-23",
+      "note": ""
+    },
+    {
+      "appid": 846870,
+      "name": "Yooka-Laylee and the Impossible Lair",
+      "enName": "Yooka-Laylee and the Impossible Lair",
+      "freeDate": "2022-2-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 852300,
+      "name": "Creature in the Well",
+      "enName": "Creature in the Well",
+      "freeDate": "2021-3-25",
+      "note": ""
+    },
+    {
+      "appid": 857980,
+      "name": "Void Bastards",
+      "enName": "Void Bastards",
+      "freeDate": "2021-8-19",
+      "note": ""
+    },
+    {
+      "appid": 858710,
+      "name": "重力回路",
+      "enName": "Gravity Circuit",
+      "freeDate": "2025-10-9",
+      "note": ""
+    },
+    {
+      "appid": 865360,
+      "name": "我们曾一起在这里",
+      "enName": "We Were Here Together",
+      "freeDate": "2025-12-27",
+      "note": "假日特卖第10弹，限时24小时"
+    },
+    {
+      "appid": 870780,
+      "name": "Control Standard Edition",
+      "enName": "Control Standard Edition",
+      "freeDate": "2021-12-27",
+      "note": "假日特卖第11天，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 873940,
+      "name": "Crying Suns",
+      "enName": "Crying Suns",
+      "freeDate": "2021-1-8",
+      "note": ""
+    },
+    {
+      "appid": 874390,
+      "name": "低模之战",
+      "enName": "The Battle of Polytopia",
+      "freeDate": "2025-9-11",
+      "note": ""
+    },
+    {
+      "appid": 877810,
+      "name": "Anodyne 2: Return to Dust",
+      "enName": "Anodyne 2: Return to Dust",
+      "freeDate": "2020-3-12",
+      "note": ""
+    },
+    {
+      "appid": 878670,
+      "name": "Shenmue III",
+      "enName": "Shenmue III",
+      "freeDate": "2021-12-17",
+      "note": "假日特卖第1天，限时24小时"
+    },
+    {
+      "appid": 883360,
+      "name": "超越蔚蓝",
+      "enName": "Beyond Blue",
+      "freeDate": "2025-2-7",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 887450,
+      "name": "密林传奇",
+      "enName": "Tunche",
+      "freeDate": "2023-3-30",
+      "note": ""
+    },
+    {
+      "appid": 909470,
+      "name": "指尖传说",
+      "enName": "Touch Type Tale",
+      "freeDate": "2025-5-8",
+      "note": ""
+    },
+    {
+      "appid": 914710,
+      "name": "喵咪斗恶龙2",
+      "enName": "Cat Quest II",
+      "freeDate": "2025-4-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 915810,
+      "name": "午夜猎魂",
+      "enName": "Midnight Ghost Hunt",
+      "freeDate": "2023-6-1",
+      "note": "年中特卖神秘游戏第三弹"
+    },
+    {
+      "appid": 917720,
+      "name": "骇游侠探",
+      "enName": "Gamedec - Definitive Edition",
+      "freeDate": "2023-1-13",
+      "note": ""
+    },
+    {
+      "appid": 919410,
+      "name": "死神菲利克斯",
+      "enName": "Felix The Reaper",
+      "freeDate": "2025-11-7",
+      "note": ""
+    },
+    {
+      "appid": 920210,
+      "name": "乐高星球大战：天行者传奇",
+      "enName": "LEGO® Star Wars™: The Skywalker Saga",
+      "freeDate": "2025-5-4",
+      "note": "第二次赠送，星战日厂商活动，仅一天"
+    },
+    {
+      "appid": 921800,
+      "name": "圆顶",
+      "enName": "Encased",
+      "freeDate": "2022-12-24",
+      "note": "假日特卖第9天，限时24小时"
+    },
+    {
+      "appid": 922050,
+      "name": "厄运之刃",
+      "enName": "DOOMBLADE",
+      "freeDate": "2026-4-23",
+      "note": ""
+    },
+    {
+      "appid": 927350,
+      "name": "绿林侠盗：亡命之徒与传奇",
+      "enName": "Hood: Outlaws & Legends",
+      "freeDate": "2022-6-30",
+      "note": ""
+    },
+    {
+      "appid": 934700,
+      "name": "死亡岛2",
+      "enName": "Dead Island 2",
+      "freeDate": "2025-5-15",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 940680,
+      "name": "The Textorcist: The Story of Ray Bibbia",
+      "enName": "The Textorcist: The Story of Ray Bibbia",
+      "freeDate": "2020-11-13",
+      "note": ""
+    },
+    {
+      "appid": 941570,
+      "name": "Relicta",
+      "enName": "Relicta",
+      "freeDate": "2022-1-21",
+      "note": ""
+    },
+    {
+      "appid": 945360,
+      "name": "Among Us",
+      "enName": "Among Us",
+      "freeDate": "2021-5-27",
+      "note": "年中特卖神秘游戏第二弹"
+    },
+    {
+      "appid": 953330,
+      "name": "超级梯队",
+      "enName": "Hyper Echelon",
+      "freeDate": "2026-3-26",
+      "note": ""
+    },
+    {
+      "appid": 953880,
+      "name": "头等舱危机",
+      "enName": "First Class Trouble",
+      "freeDate": "2023-1-13",
+      "note": ""
+    },
+    {
+      "appid": 960090,
+      "name": "气球塔防6",
+      "enName": "Bloons TD 6",
+      "freeDate": "2026-1-9",
+      "note": "第三次赠送"
+    },
+    {
+      "appid": 961200,
+      "name": "先驱",
+      "enName": "Predecessor",
+      "freeDate": "2023-12-8",
+      "note": ""
+    },
+    {
+      "appid": 964440,
+      "name": "他人即地狱",
+      "enName": "Hell is Others",
+      "freeDate": "2023-1-27",
+      "note": ""
+    },
+    {
+      "appid": 968870,
+      "name": "Close to the Sun",
+      "enName": "Close to the Sun",
+      "freeDate": "2020-4-9",
+      "note": ""
+    },
+    {
+      "appid": 970830,
+      "name": "纳赫鲁博王国地下城：混沌护符",
+      "enName": "The Dungeon Of Naheulbeuk: The Amulet Of Chaos",
+      "freeDate": "2023-6-29",
+      "note": ""
+    },
+    {
+      "appid": 973580,
+      "name": "狙击手 幽灵战士契约",
+      "enName": "Sniper Ghost Warrior Contracts",
+      "freeDate": "2024-9-5",
+      "note": ""
+    },
+    {
+      "appid": 976590,
+      "name": "模拟巴士21 下一站",
+      "enName": "Bus Simulator 21 Next Stop",
+      "freeDate": "2024-12-6",
+      "note": ""
+    },
+    {
+      "appid": 978300,
+      "name": "Saints Row®: The Third™ Remastered",
+      "enName": "Saints Row®: The Third™ Remastered",
+      "freeDate": "2021-8-26",
+      "note": ""
+    },
+    {
+      "appid": 979070,
+      "name": "模拟老大爷",
+      "enName": "Just Die Already",
+      "freeDate": "2022-4-28",
+      "note": ""
+    },
+    {
+      "appid": 984800,
+      "name": "Automachef",
+      "enName": "Automachef",
+      "freeDate": "2021-8-26",
+      "note": ""
+    },
+    {
+      "appid": 990080,
+      "name": "霍格沃茨之遗",
+      "enName": "Hogwarts Legacy",
+      "freeDate": "2025-12-12",
+      "note": "假日特卖第1弹，限时一周"
+    },
+    {
+      "appid": 993790,
+      "name": "远古敌人",
+      "enName": "Ancient Enemy",
+      "freeDate": "2022-7-7",
+      "note": ""
+    },
+    {
+      "appid": 994500,
+      "name": "星空网球",
+      "enName": "Sky Racket",
+      "freeDate": "2025-7-10",
+      "note": ""
+    },
+    {
+      "appid": 996770,
+      "name": "胡闹搬家",
+      "enName": "Moving Out",
+      "freeDate": "2024-10-24",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 998740,
+      "name": "苦痛之环",
+      "enName": "Ring of Pain",
+      "freeDate": "2022-8-25",
+      "note": ""
+    },
+    {
+      "appid": 999220,
+      "name": "失忆症：重生",
+      "enName": "Amnesia: Rebirth",
+      "freeDate": "2022-4-21",
+      "note": ""
+    },
+    {
+      "appid": 999660,
+      "name": "SAMURAI SHODOWN NEOGEO COLLECTION",
+      "enName": "SAMURAI SHODOWN NEOGEO COLLECTION",
+      "freeDate": "2020-6-11",
+      "note": ""
+    },
+    {
+      "appid": 1000030,
+      "name": "烹调、上菜、美味！3？！",
+      "enName": "Cook, Serve, Delicious! 3?!",
+      "freeDate": "2022-8-11",
+      "note": ""
+    },
+    {
+      "appid": 1011670,
+      "name": "完全可靠快递服务",
+      "enName": "Totally Reliable Delivery Service",
+      "freeDate": "2025-8-14",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1016920,
+      "name": "一起开火车！",
+      "enName": "Unrailed!",
+      "freeDate": "2022-8-4",
+      "note": ""
+    },
+    {
+      "appid": 1018010,
+      "name": "恶魔城周年纪念合集",
+      "enName": "Castlevania Anniversary Collection",
+      "freeDate": "2024-11-15",
+      "note": "KONAMI 首发限免 | 国区不能领"
+    },
+    {
+      "appid": 1020470,
+      "name": "进化之地传奇版",
+      "enName": "Evoland Legendary Edition",
+      "freeDate": "2022-10-20",
+      "note": ""
+    },
+    {
+      "appid": 1024380,
+      "name": "二次灭绝",
+      "enName": "Second Extinction",
+      "freeDate": "2023-4-13",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1029890,
+      "name": "Layers of Fear 2",
+      "enName": "Layers of Fear 2",
+      "freeDate": "2020-10-22",
+      "note": ""
+    },
+    {
+      "appid": 1031460,
+      "name": "扬帆起航",
+      "enName": "Sail Forth",
+      "freeDate": "2024-1-12",
+      "note": ""
+    },
+    {
+      "appid": 1036240,
+      "name": "绝对不是炸鸡",
+      "enName": "Definitely Not Fried Chicken",
+      "freeDate": "2026-1-30",
+      "note": ""
+    },
+    {
+      "appid": 1037020,
+      "name": "灾厄逆刃",
+      "enName": "ScourgeBringer",
+      "freeDate": "2025-11-14",
+      "note": ""
+    },
+    {
+      "appid": 1042380,
+      "name": "酿造物语",
+      "enName": "Hundred Days",
+      "freeDate": "2022-9-8",
+      "note": ""
+    },
+    {
+      "appid": 1042490,
+      "name": "海之呼唤",
+      "enName": "Call of the Sea",
+      "freeDate": "2023-3-10",
+      "note": ""
+    },
+    {
+      "appid": 1042780,
+      "name": "Pine",
+      "enName": "Pine",
+      "freeDate": "2021-5-6",
+      "note": ""
+    },
+    {
+      "appid": 1046790,
+      "name": "无穷时线",
+      "enName": "Eternal Threads",
+      "freeDate": "2023-10-19",
+      "note": ""
+    },
+    {
+      "appid": 1049280,
+      "name": "朝圣者",
+      "enName": "Pilgrims",
+      "freeDate": "2025-7-31",
+      "note": ""
+    },
+    {
+      "appid": 1049320,
+      "name": "热血少女",
+      "enName": "River City Girls",
+      "freeDate": "2025-4-10",
+      "note": ""
+    },
+    {
+      "appid": 1055540,
+      "name": "A Short Hike",
+      "enName": "A Short Hike",
+      "freeDate": "2020-3-12",
+      "note": ""
+    },
+    {
+      "appid": 1057800,
+      "name": "软盘骑士",
+      "enName": "Floppy Knights",
+      "freeDate": "2024-7-11",
+      "note": ""
+    },
+    {
+      "appid": 1062140,
+      "name": "花园故事",
+      "enName": "Garden Story",
+      "freeDate": "2025-2-21",
+      "note": ""
+    },
+    {
+      "appid": 1069160,
+      "name": "SKALD：攻打黑修院",
+      "enName": "SKALD: Against the Black Priory",
+      "freeDate": "2025-12-29",
+      "note": "假日特卖第12弹，限时24小时"
+    },
+    {
+      "appid": 1070790,
+      "name": "新鲜糖霜",
+      "enName": "Freshly Frosted",
+      "freeDate": "2024-6-20",
+      "note": ""
+    },
+    {
+      "appid": 1075190,
+      "name": "权力的游戏：桌游数字版",
+      "enName": "A Game of Thrones: The Board Game",
+      "freeDate": "2022-6-23",
+      "note": ""
+    },
+    {
+      "appid": 1079830,
+      "name": "Cris Tales",
+      "enName": "Cris Tales",
+      "freeDate": "2022-2-25",
+      "note": ""
+    },
+    {
+      "appid": 1080020,
+      "name": "电工模拟器",
+      "enName": "Electrician Simulator",
+      "freeDate": "2026-3-19",
+      "note": ""
+    },
+    {
+      "appid": 1080750,
+      "name": "Mutazione",
+      "enName": "Mutazione",
+      "freeDate": "2020-3-12",
+      "note": ""
+    },
+    {
+      "appid": 1085220,
+      "name": "虚构世界2：信条谷",
+      "enName": "Figment 2: Creed Valley",
+      "freeDate": "2025-7-10",
+      "note": ""
+    },
+    {
+      "appid": 1088850,
+      "name": "漫威银河护卫队",
+      "enName": "Marvel's Guardians of the Galaxy",
+      "freeDate": "2024-1-5",
+      "note": "假日特卖第17弹，限时一周"
+    },
+    {
+      "appid": 1092660,
+      "name": "Blair Witch",
+      "enName": "Blair Witch",
+      "freeDate": "2020-10-29",
+      "note": ""
+    },
+    {
+      "appid": 1096690,
+      "name": "极限战斗联盟",
+      "enName": "Mighty Fight Federation",
+      "freeDate": "2023-12-1",
+      "note": ""
+    },
+    {
+      "appid": 1097800,
+      "name": "Stranger Things 3: The Game",
+      "enName": "Stranger Things 3: The Game",
+      "freeDate": "2020-6-25",
+      "note": ""
+    },
+    {
+      "appid": 1099410,
+      "name": "Total War Saga: TROY",
+      "enName": "Total War Saga: TROY",
+      "freeDate": "2020-8-13",
+      "note": "限时24小时"
+    },
+    {
+      "appid": 1100290,
+      "name": "超级太空俱乐部",
+      "enName": "Super Space Club",
+      "freeDate": "2025-5-1",
+      "note": ""
+    },
+    {
+      "appid": 1100600,
+      "name": "Football Manager 2020",
+      "enName": "Football Manager 2020",
+      "freeDate": "2020-9-17",
+      "note": ""
+    },
+    {
+      "appid": 1107300,
+      "name": "逃出百慕大",
+      "enName": "Down in Bermuda",
+      "freeDate": "2026-5-21",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1110910,
+      "name": "致命躯壳",
+      "enName": "Mortal Shell",
+      "freeDate": "2025-3-13",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1112890,
+      "name": "撸猫模拟器",
+      "enName": "Calico",
+      "freeDate": "2026-5-28",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1119980,
+      "name": "响灵冥思",
+      "enName": "In Sound Mind",
+      "freeDate": "2022-3-17",
+      "note": ""
+    },
+    {
+      "appid": 1120810,
+      "name": "斩妖行",
+      "enName": "Eastern Exorcist",
+      "freeDate": "2025-9-25",
+      "note": ""
+    },
+    {
+      "appid": 1123050,
+      "name": "尘埃异变",
+      "enName": "GRIME",
+      "freeDate": "2023-7-6",
+      "note": ""
+    },
+    {
+      "appid": 1124300,
+      "name": "人类",
+      "enName": "HUMAN",
+      "freeDate": "2025-2-7",
+      "note": ""
+    },
+    {
+      "appid": 1135260,
+      "name": "空战猎鹰",
+      "enName": "The Falconeer",
+      "freeDate": "2024-7-4",
+      "note": ""
+    },
+    {
+      "appid": 1136370,
+      "name": "熊与早餐",
+      "enName": "Bear and Breakfast",
+      "freeDate": "2024-10-3",
+      "note": ""
+    },
+    {
+      "appid": 1137350,
+      "name": "钨丝",
+      "enName": "Filament",
+      "freeDate": "2022-11-3",
+      "note": ""
+    },
+    {
+      "appid": 1138660,
+      "name": "黑书",
+      "enName": "Black Book",
+      "freeDate": "2023-8-17",
+      "note": ""
+    },
+    {
+      "appid": 1139280,
+      "name": "诈欺娇娃",
+      "enName": "The Big Con",
+      "freeDate": "2024-4-18",
+      "note": ""
+    },
+    {
+      "appid": 1139900,
+      "name": "幽灵行者",
+      "enName": "Ghostrunner",
+      "freeDate": "2024-4-11",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1140290,
+      "name": "数字谋杀案",
+      "enName": "Murder by Numbers",
+      "freeDate": "2023-7-20",
+      "note": ""
+    },
+    {
+      "appid": 1144770,
+      "name": "Sludge Life",
+      "enName": "Sludge Life",
+      "freeDate": "2020-5-28",
+      "note": "限免一年，至 2021/5/28。将于2021/6/3 在Steam发行"
+    },
+    {
+      "appid": 1148590,
+      "name": "毁灭战士64",
+      "enName": "DOOM 64",
+      "freeDate": "2022-8-18",
+      "note": ""
+    },
+    {
+      "appid": 1148700,
+      "name": "亡时卫队",
+      "enName": "Deadtime Defenders",
+      "freeDate": "2025-5-8",
+      "note": ""
+    },
+    {
+      "appid": 1158940,
+      "name": "炽焰之帆",
+      "enName": "Blazing Sails",
+      "freeDate": "2023-10-12",
+      "note": ""
+    },
+    {
+      "appid": 1160220,
+      "name": "天堂岛杀手",
+      "enName": "Paradise Killer",
+      "freeDate": "2025-12-23",
+      "note": "假日特卖第6弹，限时24小时"
+    },
+    {
+      "appid": 1162130,
+      "name": "Windbound",
+      "enName": "Windbound",
+      "freeDate": "2022-2-11",
+      "note": ""
+    },
+    {
+      "appid": 1164250,
+      "name": "胶佬模拟器",
+      "enName": "Model Builder",
+      "freeDate": "2023-9-28",
+      "note": "随游戏更新免费升级为完整版"
+    },
+    {
+      "appid": 1167450,
+      "name": "DAEMON X MACHINA",
+      "enName": "DAEMON X MACHINA",
+      "freeDate": "2022-1-28",
+      "note": ""
+    },
+    {
+      "appid": 1172650,
+      "name": "工业区",
+      "enName": "INDUSTRIA",
+      "freeDate": "2024-4-25",
+      "note": ""
+    },
+    {
+      "appid": 1174460,
+      "name": "扑克俱乐部",
+      "enName": "Poker Club",
+      "freeDate": "2023-4-27",
+      "note": ""
+    },
+    {
+      "appid": 1190460,
+      "name": "死亡搁浅",
+      "enName": "DEATH STRANDING",
+      "freeDate": "2023-5-18",
+      "note": "年中特卖神秘游戏第一弹，第二次赠送"
+    },
+    {
+      "appid": 1194750,
+      "name": "猫咪幽灵，跳跃！",
+      "enName": "Neko Ghost, Jump!",
+      "freeDate": "2025-3-27",
+      "note": ""
+    },
+    {
+      "appid": 1205450,
+      "name": "大头菜小子偷税记",
+      "enName": "Turnip Boy Commits Tax Evasion",
+      "freeDate": "2023-11-2",
+      "note": ""
+    },
+    {
+      "appid": 1206060,
+      "name": "快乐游戏",
+      "enName": "Happy Game",
+      "freeDate": "2025-5-15",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1206370,
+      "name": "外卡橄榄球",
+      "enName": "Wild Card Football",
+      "freeDate": "2024-8-29",
+      "note": ""
+    },
+    {
+      "appid": 1213700,
+      "name": "北方之灵",
+      "enName": "Spirit of the North",
+      "freeDate": "2022-9-15",
+      "note": ""
+    },
+    {
+      "appid": 1216060,
+      "name": "地下城与勇士 决斗",
+      "enName": "DNF Duel",
+      "freeDate": "2024-8-8",
+      "note": "第二次赠送，国区不能领"
+    },
+    {
+      "appid": 1222730,
+      "name": "星球大战：战机中队",
+      "enName": "STAR WARS™: Squadrons",
+      "freeDate": "2022-11-25",
+      "note": ""
+    },
+    {
+      "appid": 1225330,
+      "name": "NBA 2K21",
+      "enName": "NBA 2K21",
+      "freeDate": "2021-5-20",
+      "note": "年中特卖神秘游戏第一弹，已下架"
+    },
+    {
+      "appid": 1227690,
+      "name": "断钢",
+      "enName": "Severed Steel",
+      "freeDate": "2023-7-27",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1235754,
+      "name": "模拟人生4冒险生活同捆包",
+      "enName": "豪华派对",
+      "freeDate": "2023-5-11",
+      "note": ""
+    },
+    {
+      "appid": 1236930,
+      "name": "幸存者：苦难",
+      "enName": "Outliver: Tribulation",
+      "freeDate": "2024-10-10",
+      "note": ""
+    },
+    {
+      "appid": 1237950,
+      "name": "STAR WARS™ Battlefront™ II",
+      "enName": "STAR WARS™ Battlefront™ II",
+      "freeDate": "2021-1-15",
+      "note": ""
+    },
+    {
+      "appid": 1243690,
+      "name": "Gods Will Fall",
+      "enName": "Gods Will Fall",
+      "freeDate": "2022-1-7",
+      "note": ""
+    },
+    {
+      "appid": 1244460,
+      "name": "侏罗纪世界：进化2",
+      "enName": "Jurassic World Evolution 2",
+      "freeDate": "2025-3-20",
+      "note": ""
+    },
+    {
+      "appid": 1245430,
+      "name": "金色的光芒",
+      "enName": "Golden Light",
+      "freeDate": "2023-11-10",
+      "note": ""
+    },
+    {
+      "appid": 1248080,
+      "name": "天鹅座 - 火力全开",
+      "enName": "CYGNI: All Guns Blazing",
+      "freeDate": "2024-8-8",
+      "note": "KONAMI 首发限免 | 国区不能领"
+    },
+    {
+      "appid": 1248130,
+      "name": "模拟农场22",
+      "enName": "Farming Simulator 22",
+      "freeDate": "2024-5-23",
+      "note": "年中特卖神秘游戏第二弹"
+    },
+    {
+      "appid": 1252330,
+      "name": "死亡循环",
+      "enName": "DEATHLOOP",
+      "freeDate": "2025-6-5",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1266840,
+      "name": "最后的战役：劫后余生",
+      "enName": "The Last Stand: Aftermath",
+      "freeDate": "2024-9-19",
+      "note": ""
+    },
+    {
+      "appid": 1267910,
+      "name": "梅尔沃放置",
+      "enName": "Melvor Idle",
+      "freeDate": "2023-12-22",
+      "note": "假日特卖第3弹，限时24小时"
+    },
+    {
+      "appid": 1271400,
+      "name": "再见",
+      "enName": "Adios",
+      "freeDate": "2023-1-27",
+      "note": ""
+    },
+    {
+      "appid": 1271700,
+      "name": "风火轮 爆发",
+      "enName": "HOT WHEELS UNLEASHED",
+      "freeDate": "2024-12-28",
+      "note": "假日特卖第10弹，限时24小时"
+    },
+    {
+      "appid": 1282590,
+      "name": "Train Sim World® 2",
+      "enName": "Train Sim World® 2",
+      "freeDate": "2021-7-29",
+      "note": ""
+    },
+    {
+      "appid": 1282730,
+      "name": "循环勇者",
+      "enName": "Loop Hero",
+      "freeDate": "2023-8-3",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1286680,
+      "name": "小缇娜的奇幻之地",
+      "enName": "Tiny Tina's Wonderlands",
+      "freeDate": "2025-5-29",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1288610,
+      "name": "暴走枪姬",
+      "enName": "Wildcat Gun Machine",
+      "freeDate": "2022-12-9",
+      "note": ""
+    },
+    {
+      "appid": 1291010,
+      "name": "小兵大战",
+      "enName": "Warpips",
+      "freeDate": "2023-2-17",
+      "note": ""
+    },
+    {
+      "appid": 1294660,
+      "name": "神圣一击",
+      "enName": "Divine Knockout",
+      "freeDate": "2023-1-13",
+      "note": "已转为免费游戏"
+    },
+    {
+      "appid": 1298480,
+      "name": "卡牌之王",
+      "enName": "Kardboard Kings",
+      "freeDate": "2024-10-17",
+      "note": ""
+    },
+    {
+      "appid": 1307580,
+      "name": "TOEM：摄影冒险",
+      "enName": "TOEM: A Photo Adventure",
+      "freeDate": "2024-9-19",
+      "note": ""
+    },
+    {
+      "appid": 1309710,
+      "name": "疯狂之石",
+      "enName": "The Stone of Madness",
+      "freeDate": "2026-4-16",
+      "note": ""
+    },
+    {
+      "appid": 1318690,
+      "name": "异形工厂",
+      "enName": "shapez",
+      "freeDate": "2023-4-6",
+      "note": ""
+    },
+    {
+      "appid": 1321440,
+      "name": "磁带妖怪",
+      "enName": "Cassette Beasts",
+      "freeDate": "2025-12-28",
+      "note": "假日特卖第11弹，限时24小时"
+    },
+    {
+      "appid": 1323540,
+      "name": "空中骑士的永不屈服",
+      "enName": "Aerial_Knight's Never Yield",
+      "freeDate": "2024-3-1",
+      "note": ""
+    },
+    {
+      "appid": 1325040,
+      "name": "锁音之匣",
+      "enName": "Keylocker",
+      "freeDate": "2025-7-31",
+      "note": ""
+    },
+    {
+      "appid": 1330470,
+      "name": "暗影火炬城",
+      "enName": "F.I.S.T.: Forged In Shadow Torch",
+      "freeDate": "2024-7-25",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1336120,
+      "name": "Bridge Constructor: The Walking Dead",
+      "enName": "Bridge Constructor: The Walking Dead",
+      "freeDate": "2021-7-8",
+      "note": ""
+    },
+    {
+      "appid": 1337010,
+      "name": "阿尔芭 - 野生动物冒险",
+      "enName": "Alba: A Wildlife Adventure",
+      "freeDate": "2022-11-11",
+      "note": ""
+    },
+    {
+      "appid": 1345890,
+      "name": "火星孤征",
+      "enName": "Deliver Us Mars",
+      "freeDate": "2023-11-24",
+      "note": ""
+    },
+    {
+      "appid": 1359090,
+      "name": "关键时刻",
+      "enName": "Zero Hour",
+      "freeDate": "2025-11-14",
+      "note": ""
+    },
+    {
+      "appid": 1368820,
+      "name": "RollerCoaster Tycoon 3: Complete Edition",
+      "enName": "RollerCoaster Tycoon 3: Complete Edition",
+      "freeDate": "2020-9-24",
+      "note": ""
+    },
+    {
+      "appid": 1370140,
+      "name": "袋鼠闯天关",
+      "enName": "Kao the Kangaroo",
+      "freeDate": "2023-5-4",
+      "note": ""
+    },
+    {
+      "appid": 1374840,
+      "name": "晦暗神祇",
+      "enName": "Dark Deity",
+      "freeDate": "2022-11-18",
+      "note": ""
+    },
+    {
+      "appid": 1382070,
+      "name": "取景器",
+      "enName": "Viewfinder",
+      "freeDate": "2025-12-30",
+      "note": "假日特卖第13弹，限时24小时"
+    },
+    {
+      "appid": 1385100,
+      "name": "孤山难越",
+      "enName": "Insurmountable",
+      "freeDate": "2022-4-14",
+      "note": ""
+    },
+    {
+      "appid": 1386780,
+      "name": "黑帮之城",
+      "enName": "City of Gangsters",
+      "freeDate": "2023-2-3",
+      "note": ""
+    },
+    {
+      "appid": 1388870,
+      "name": "街机乐园",
+      "enName": "Arcade Paradise",
+      "freeDate": "2024-7-18",
+      "note": ""
+    },
+    {
+      "appid": 1398910,
+      "name": "乔雷尔的兄弟与银河系最重要的游戏",
+      "enName": "Jorel’s Brother and The Most Important Game of the Galaxy",
+      "freeDate": "2025-9-25",
+      "note": ""
+    },
+    {
+      "appid": 1402110,
+      "name": "永夜",
+      "enName": "Eternights",
+      "freeDate": "2025-12-20",
+      "note": "假日特卖第3弹，限时24小时"
+    },
+    {
+      "appid": 1408610,
+      "name": "荒野的召唤：垂钓者",
+      "enName": "Call of the Wild: The Angler",
+      "freeDate": "2024-3-21",
+      "note": ""
+    },
+    {
+      "appid": 1419290,
+      "name": "边界之外",
+      "enName": "Out of Line",
+      "freeDate": "2023-9-21",
+      "note": ""
+    },
+    {
+      "appid": 1424710,
+      "name": "基因制造1 - 诱变剂",
+      "enName": "Geneforge 1 - Mutagen",
+      "freeDate": "2022-6-30",
+      "note": ""
+    },
+    {
+      "appid": 1425350,
+      "name": "波坦尼庄园",
+      "enName": "Botany Manor",
+      "freeDate": "2026-2-6",
+      "note": ""
+    },
+    {
+      "appid": 1432910,
+      "name": "宇宙汉堡王",
+      "enName": "Godlike Burger",
+      "freeDate": "2023-10-5",
+      "note": ""
+    },
+    {
+      "appid": 1434540,
+      "name": "星咏之诗",
+      "enName": "Zoeti",
+      "freeDate": "2025-11-21",
+      "note": ""
+    },
+    {
+      "appid": 1436920,
+      "name": "艾玛和泰迪熊：影子历险记",
+      "enName": "Tandem: a tale of shadows",
+      "freeDate": "2023-10-26",
+      "note": ""
+    },
+    {
+      "appid": 1445790,
+      "name": "搭建赛道",
+      "enName": "Make Way",
+      "freeDate": "2025-8-28",
+      "note": ""
+    },
+    {
+      "appid": 1449280,
+      "name": "Ghostbusters: The Video Game Remastered",
+      "enName": "Ghostbusters: The Video Game Remastered",
+      "freeDate": "2020-10-29",
+      "note": ""
+    },
+    {
+      "appid": 1458100,
+      "name": "和睦森林",
+      "enName": "Cozy Grove",
+      "freeDate": "2026-3-12",
+      "note": ""
+    },
+    {
+      "appid": 1465560,
+      "name": "突破万难",
+      "enName": "Against All Odds",
+      "freeDate": "2023-5-4",
+      "note": ""
+    },
+    {
+      "appid": 1475810,
+      "name": "幽灵线：东京",
+      "enName": "Ghostwire: Tokyo",
+      "freeDate": "2024-10-31",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1480560,
+      "name": "割草模拟器",
+      "enName": "Lawn Mowing Simulator",
+      "freeDate": "2022-7-28",
+      "note": ""
+    },
+    {
+      "appid": 1492360,
+      "name": "灾难菜谱",
+      "enName": "Recipe for Disaster",
+      "freeDate": "2023-2-10",
+      "note": ""
+    },
+    {
+      "appid": 1522080,
+      "name": "柔术小队",
+      "enName": "Jitsu Squad",
+      "freeDate": "2023-12-1",
+      "note": ""
+    },
+    {
+      "appid": 1522820,
+      "name": "兽人必须死！3",
+      "enName": "Orcs Must Die! 3",
+      "freeDate": "2024-12-30",
+      "note": "假日特卖第12弹，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 1543240,
+      "name": "巨兽浩劫",
+      "enName": "Gigapocalypse",
+      "freeDate": "2025-5-22",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 1544020,
+      "name": "木卫四协议",
+      "enName": "The Callisto Protocol",
+      "freeDate": "2025-12-25",
+      "note": "假日特卖第8弹，限时24小时"
+    },
+    {
+      "appid": 1544360,
+      "name": "乐高建造者之旅",
+      "enName": "LEGO® Builder's Journey",
+      "freeDate": "2022-12-22",
+      "note": "假日特卖第7天，限时24小时"
+    },
+    {
+      "appid": 1546400,
+      "name": "巨击大乱斗",
+      "enName": "GigaBash",
+      "freeDate": "2023-12-8",
+      "note": ""
+    },
+    {
+      "appid": 1556790,
+      "name": "伊松佐河",
+      "enName": "Isonzo",
+      "freeDate": "2026-3-12",
+      "note": ""
+    },
+    {
+      "appid": 1562430,
+      "name": "渔帆暗涌",
+      "enName": "DREDGE",
+      "freeDate": "2024-12-25",
+      "note": "假日特卖第7弹，限时24小时"
+    },
+    {
+      "appid": 1574580,
+      "name": "奇异园艺",
+      "enName": "Strange Horticulture",
+      "freeDate": "2025-8-21",
+      "note": ""
+    },
+    {
+      "appid": 1579380,
+      "name": "影子战术 - 爱子的选择",
+      "enName": "Shadow Tactics: Blades of the Shogun - Aiko's Choice",
+      "freeDate": "2023-1-6",
+      "note": ""
+    },
+    {
+      "appid": 1582290,
+      "name": "伐木熊杰克",
+      "enName": "LumbearJack",
+      "freeDate": "2024-8-1",
+      "note": ""
+    },
+    {
+      "appid": 1587130,
+      "name": "血色西部",
+      "enName": "Blood West",
+      "freeDate": "2025-12-21",
+      "note": "假日特卖第4弹，限时24小时"
+    },
+    {
+      "appid": 1602080,
+      "name": "灵魂之魂",
+      "enName": "Soulstice",
+      "freeDate": "2023-9-28",
+      "note": ""
+    },
+    {
+      "appid": 1614270,
+      "name": "淹没之城：汪洋深处",
+      "enName": "Submerged: Hidden Depths",
+      "freeDate": "2022-9-1",
+      "note": ""
+    },
+    {
+      "appid": 1620720,
+      "name": "森林四重奏",
+      "enName": "The Forest Quartet",
+      "freeDate": "2023-9-21",
+      "note": ""
+    },
+    {
+      "appid": 1622770,
+      "name": "门扉 - 悖论",
+      "enName": "Doors: Paradox",
+      "freeDate": "2024-2-2",
+      "note": ""
+    },
+    {
+      "appid": 1627840,
+      "name": "宇宙待售",
+      "enName": "Universe For Sale",
+      "freeDate": "2025-11-28",
+      "note": ""
+    },
+    {
+      "appid": 1630960,
+      "name": "Centipede: Recharged",
+      "enName": "Centipede: Recharged",
+      "freeDate": "2022-3-4",
+      "note": ""
+    },
+    {
+      "appid": 1634150,
+      "name": "倾听画语：最美好的景色",
+      "enName": "Behind the Frame: The Finest Scenery",
+      "freeDate": "2025-1-24",
+      "note": ""
+    },
+    {
+      "appid": 1666250,
+      "name": "电气马戏团",
+      "enName": "Circus Electrique",
+      "freeDate": "2024-5-9",
+      "note": ""
+    },
+    {
+      "appid": 1669420,
+      "name": "小岛",
+      "enName": "Islets",
+      "freeDate": "2024-3-28",
+      "note": ""
+    },
+    {
+      "appid": 1679210,
+      "name": "雷灵与老鼠",
+      "enName": "The Spirit and the Mouse",
+      "freeDate": "2024-9-26",
+      "note": ""
+    },
+    {
+      "appid": 1712840,
+      "name": "Tiny Tina's Assault on Dragon Keep: A Wonderlands One-shot Adventure",
+      "enName": "Tiny Tina's Assault on Dragon Keep: A Wonderlands One-shot Adventure",
+      "freeDate": "2021-11-10",
+      "note": ""
+    },
+    {
+      "appid": 1714180,
+      "name": "Black Widow: Recharged",
+      "enName": "Black Widow: Recharged",
+      "freeDate": "2022-3-4",
+      "note": ""
+    },
+    {
+      "appid": 1721530,
+      "name": "船长",
+      "enName": "The Captain",
+      "freeDate": "2022-9-15",
+      "note": ""
+    },
+    {
+      "appid": 1726120,
+      "name": "诅咒高尔夫",
+      "enName": "Cursed to Golf",
+      "freeDate": "2023-12-28",
+      "note": "假日特卖第9弹，限时24小时"
+    },
+    {
+      "appid": 1755830,
+      "name": "阿斯特赖亚：六面先知",
+      "enName": "Astrea: Six-Sided Oracles",
+      "freeDate": "2024-12-21",
+      "note": "假日特卖第3弹，限时24小时"
+    },
+    {
+      "appid": 1766750,
+      "name": "咒语浪人",
+      "enName": "Spelldrifter",
+      "freeDate": "2023-9-7",
+      "note": ""
+    },
+    {
+      "appid": 1771980,
+      "name": "接线疑云",
+      "enName": "The Operator",
+      "freeDate": "2025-6-19",
+      "note": ""
+    },
+    {
+      "appid": 1794680,
+      "name": "吸血鬼幸存者",
+      "enName": "Vampire Survivors",
+      "freeDate": "2024-12-20",
+      "note": "假日特卖第2弹，限时24小时"
+    },
+    {
+      "appid": 1796580,
+      "name": "对不起我们关门了",
+      "enName": "Sorry We're Closed",
+      "freeDate": "2025-12-22",
+      "note": "假日特卖第5弹，限时24小时"
+    },
+    {
+      "appid": 1799930,
+      "name": "红视2",
+      "enName": "Redout 2",
+      "freeDate": "2024-6-13",
+      "note": ""
+    },
+    {
+      "appid": 1812090,
+      "name": "逃脱学院",
+      "enName": "Escape Academy",
+      "freeDate": "2025-1-17",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1812560,
+      "name": "超疯狂节奏城堡",
+      "enName": "SUPER CRAZY RHYTHM CASTLE",
+      "freeDate": "2024-9-12",
+      "note": "国区不能领"
+    },
+    {
+      "appid": 1817800,
+      "name": "火花奇遇记：自动化冒险",
+      "enName": "Oddsparks: An Automation Adventure",
+      "freeDate": "2026-4-30",
+      "note": ""
+    },
+    {
+      "appid": 1824220,
+      "name": "骑士精神2",
+      "enName": "Chivalry 2",
+      "freeDate": "2026-1-1",
+      "note": "假日特卖第15弹，限时24小时，第二次赠送"
+    },
+    {
+      "appid": 1839940,
+      "name": "达喀尔沙漠拉力赛",
+      "enName": "Dakar Desert Rally",
+      "freeDate": "2024-2-16",
+      "note": ""
+    },
+    {
+      "appid": 1880610,
+      "name": "绝递必达",
+      "enName": "Deliver At All Costs",
+      "freeDate": "2025-5-22",
+      "note": "年中特卖神秘游戏 | KONAMI 首发限免 | 国区不能领"
+    },
+    {
+      "appid": 1920490,
+      "name": "天外世界：太空人之选版",
+      "enName": "The Outer Worlds: Spacer's Choice Edition",
+      "freeDate": "2024-4-4",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 1924490,
+      "name": "巨兽战争：狂暴版",
+      "enName": "Gigantic: Rampage Edition",
+      "freeDate": "2024-8-22",
+      "note": ""
+    },
+    {
+      "appid": 1927720,
+      "name": "纪念碑谷",
+      "enName": "Monument Valley",
+      "freeDate": "2025-9-4",
+      "note": ""
+    },
+    {
+      "appid": 1927740,
+      "name": "纪念碑谷2",
+      "enName": "Monument Valley 2",
+      "freeDate": "2025-9-11",
+      "note": ""
+    },
+    {
+      "appid": 1928980,
+      "name": "夜莺传说",
+      "enName": "Nightingale",
+      "freeDate": "2025-10-2",
+      "note": ""
+    },
+    {
+      "appid": 1939970,
+      "name": "无人愿死",
+      "enName": "Nobody Wants to Die",
+      "freeDate": "2026-2-13",
+      "note": ""
+    },
+    {
+      "appid": 1942280,
+      "name": "土豆兄弟",
+      "enName": "Brotato",
+      "freeDate": "2024-11-29",
+      "note": ""
+    },
+    {
+      "appid": 1944430,
+      "name": "失忆症：地堡",
+      "enName": "Amnesia: The Bunker",
+      "freeDate": "2025-10-16",
+      "note": ""
+    },
+    {
+      "appid": 1959390,
+      "name": "恐怖聚光灯",
+      "enName": "Fear the Spotlight",
+      "freeDate": "2025-10-23",
+      "note": ""
+    },
+    {
+      "appid": 1966900,
+      "name": "黎明前20分钟",
+      "enName": "20 Minutes Till Dawn",
+      "freeDate": "2024-1-3",
+      "note": "假日特卖第15弹，限时24小时"
+    },
+    {
+      "appid": 1970580,
+      "name": "背包英雄",
+      "enName": "Backpack Hero",
+      "freeDate": "2025-7-3",
+      "note": ""
+    },
+    {
+      "appid": 1978150,
+      "name": "世蛙桃源",
+      "enName": "Kamaeru",
+      "freeDate": "2025-8-21",
+      "note": ""
+    },
+    {
+      "appid": 1985960,
+      "name": "奥咕与秘密森林",
+      "enName": "Ogu and the Secret Forest",
+      "freeDate": "2025-6-5",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 2019810,
+      "name": "盒子：丢失的碎片",
+      "enName": "Boxes: Lost Fragments",
+      "freeDate": "2026-2-27",
+      "note": ""
+    },
+    {
+      "appid": 2020710,
+      "name": "海港物语",
+      "enName": "Havendock",
+      "freeDate": "2026-3-26",
+      "note": ""
+    },
+    {
+      "appid": 2056210,
+      "name": "孤星猎人",
+      "enName": "LONESTAR",
+      "freeDate": "2026-5-28",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 2060870,
+      "name": "无敌少侠：原子伊芙",
+      "enName": "Invincible Presents: Atom Eve",
+      "freeDate": "2024-10-17",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 2097230,
+      "name": "大头菜小子抢银行",
+      "enName": "Turnip Boy Robs a Bank",
+      "freeDate": "2026-3-6",
+      "note": ""
+    },
+    {
+      "appid": 2138710,
+      "name": "师父",
+      "enName": "Sifu",
+      "freeDate": "2025-5-22",
+      "note": "年中特卖神秘游戏 | 第二次赠送"
+    },
+    {
+      "appid": 2140510,
+      "name": "塞勒姆镇2",
+      "enName": "Town of Salem 2",
+      "freeDate": "2024-4-18",
+      "note": ""
+    },
+    {
+      "appid": 2144740,
+      "name": "幽灵行者2",
+      "enName": "Ghostrunner 2",
+      "freeDate": "2025-9-11",
+      "note": "第二次赠送"
+    },
+    {
+      "appid": 2195410,
+      "name": "寂静之歌",
+      "enName": "Songs Of Silence",
+      "freeDate": "2025-11-14",
+      "note": ""
+    },
+    {
+      "appid": 2229940,
+      "name": "[REDACTED]",
+      "enName": "[REDACTED]",
+      "freeDate": "2024-12-31",
+      "note": "假日特卖第13弹，限时24小时"
+    },
+    {
+      "appid": 2252570,
+      "name": "足球经理2024",
+      "enName": "Football Manager 2024",
+      "freeDate": "2024-9-5",
+      "note": ""
+    },
+    {
+      "appid": 2266420,
+      "name": "命运2：传承收藏",
+      "enName": "Destiny 2: Legacy Collection (2023)",
+      "freeDate": "2023-12-14",
+      "note": "假日特卖第1弹，限时一周"
+    },
+    {
+      "appid": 2407830,
+      "name": "变废为宝哥布林",
+      "enName": "Trash Goblin",
+      "freeDate": "2026-5-7",
+      "note": ""
+    },
+    {
+      "appid": 2414270,
+      "name": "破碎族裔",
+      "enName": "Sunderfolk",
+      "freeDate": "2026-5-14",
+      "note": "年中特卖神秘游戏 | 国区不能领"
+    },
+    {
+      "appid": 2439780,
+      "name": "哥斯拉体素战争",
+      "enName": "Godzilla Voxel Wars",
+      "freeDate": "2025-11-21",
+      "note": ""
+    },
+    {
+      "appid": 2478970,
+      "name": "古墓丽影1-3重制版",
+      "enName": "Tomb Raider I-III Remastered Starring Lara Croft",
+      "freeDate": "2026-5-21",
+      "note": "年中特卖神秘游戏"
+    },
+    {
+      "appid": 2591280,
+      "name": "F1车队经理2024",
+      "enName": "F1® Manager 2024",
+      "freeDate": "2025-2-14",
+      "note": ""
+    },
+    {
+      "appid": 2596420,
+      "name": "排布者：角色解谜冒险",
+      "enName": "Arranger: A Role-Puzzling Adventure",
+      "freeDate": "2026-5-7",
+      "note": ""
+    },
+    {
+      "appid": 2633950,
+      "name": "淘气小兵兵：游戏乐园历险记",
+      "enName": "Rugrats: Adventures in Gameland",
+      "freeDate": "2024-9-12",
+      "note": ""
+    },
+    {
+      "appid": 2638370,
+      "name": "玩具熊的五夜惊魂：陷落球池",
+      "enName": "Five Nights at Freddy's: Into the Pit",
+      "freeDate": "2025-10-30",
+      "note": ""
+    },
+    {
+      "appid": 2694420,
+      "name": "射戮骑士",
+      "enName": "KILL KNIGHT",
+      "freeDate": "2024-12-29",
+      "note": "假日特卖第11弹，限时24小时"
+    },
+    {
+      "appid": 2820820,
+      "name": "巨人杀手：暗黑之潮",
+      "enName": "Jotunnslayer: Hordes of Hel",
+      "freeDate": "2025-12-19",
+      "note": "假日特卖第2弹，限时24小时"
+    },
+    {
+      "appid": 2869440,
+      "name": "像素枪3D - 剧毒复古套装",
+      "enName": "Pixel Gun 3D - Poison Retro Set",
+      "freeDate": "2026-2-6",
+      "note": ""
+    },
+    {
+      "appid": 2933130,
+      "name": "指环王：重返摩瑞亚",
+      "enName": "The Lord of the Rings: Return to Moria™",
+      "freeDate": "2024-12-13",
+      "note": "假日特卖第1弹，限时一周"
+    },
+    {
+      "appid": 3089420,
+      "name": "道具相扑",
+      "enName": "Prop Sumo",
+      "freeDate": "2026-4-9",
+      "note": ""
+    },
+    {
+      "appid": 3211120,
+      "name": "越来越黑暗 - 传奇身份",
+      "enName": "Dark and Darker - Legendary Status",
+      "freeDate": "2024-12-24",
+      "note": "假日特卖第6弹，限时24小时"
+    },
+    {
+      "appid": 3445830,
+      "name": "归入尘埃",
+      "enName": "Return to Ash",
+      "freeDate": "2026-2-20",
+      "note": ""
+    },
+    {
+      "appid": 3504780,
+      "name": "无主星渊",
+      "enName": "Wildgate",
+      "freeDate": "2026-1-2",
+      "note": "假日特卖第16弹，限时一周"
+    }
+  ]
+}

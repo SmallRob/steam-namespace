@@ -1,0 +1,85 @@
+{
+  "_meta": {
+    "source": "epic-freebies-weekly-sync",
+    "version": 1,
+    "lastPromotions": [
+      {
+        "title": "Beacon Pines",
+        "freeStart": "2026-08-06T15:00:00.000Z",
+        "freeEnd": "2026-08-13T15:00:00.000Z",
+        "id": "871cc4ff18444059890a4d28653a62d5"
+      },
+      {
+        "title": "Them's Fightin' Herds",
+        "freeStart": "",
+        "freeEnd": "",
+        "id": "1f723b00df58467998c4984ca39915ad"
+      },
+      {
+        "title": "Model Builder: Complete Edition",
+        "freeStart": "",
+        "freeEnd": "",
+        "id": "d3e5b556640144bfa5de2d5d3b283d68"
+      },
+      {
+        "title": "Eternal Threads",
+        "freeStart": "",
+        "freeEnd": "",
+        "id": "921e40c4c69f4d728914ca2a4f0aa407"
+      },
+      {
+        "title": "《幽灵行者 2》",
+        "freeStart": "2026-09-10T17:00:00.000Z",
+        "freeEnd": "2026-09-24T17:00:00.000Z",
+        "id": "be5600439b434624802764f704755cde"
+      },
+      {
+        "title": "失落城堡: 遗迹守护者",
+        "freeStart": "2026-08-30T01:00:00.000Z",
+        "freeEnd": "2026-09-13T23:59:00.000Z",
+        "id": "4a88d0dc64114b20b67339c74543f859"
+      },
+      {
+        "title": "《LISA: Definitive Edition》",
+        "freeStart": "2026-09-17T15:00:00.000Z",
+        "freeEnd": "2026-10-02T05:59:00.000Z",
+        "id": "944b5b5d646d46bc92bc33edfe983d26"
+      },
+      {
+        "title": "Caravan SandWitch",
+        "freeStart": "2026-08-13T15:00:00.000Z",
+        "freeEnd": "2026-08-20T15:00:00.000Z",
+        "id": "0e44600a079e419abbb291ccf5af9ee7"
+      },
+      {
+        "title": "纪念碑谷（Monument Valley）",
+        "freeStart": "2026-09-03T15:00:00.000Z",
+        "freeEnd": "2026-09-17T15:00:00.000Z",
+        "id": "f967cff9761c4198b4e972cfd71e40d7"
+      },
+      {
+        "title": "We Were Here Together",
+        "freeStart": "2026-08-06T15:00:00.000Z",
+        "freeEnd": "2026-08-13T15:00:00.000Z",
+        "id": "231e8f6d250a453f9c44c0adf3a34656"
+      }
+    ]
+  },
+  "updatedAt": "2026-08-10T05:43:09.628Z",
+  "appids": [
+    15300,
+    243470,
+    298110,
+    447040,
+    460930,
+    573830,
+    573831,
+    573832,
+    832700,
+    1866130,
+    2231380,
+    2231410,
+    3159330
+  ],
+  "games": []
+}

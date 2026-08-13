@@ -1,0 +1,134 @@
+{
+  "4306710": {
+    "app_id": 4306710,
+    "type": "dlc",
+    "name": "PatriotMemoirs-Digital upgraded version",
+    "is_free": false
+  },
+  "4306700": {
+    "app_id": 4306700,
+    "type": "dlc",
+    "name": "PatriotMemoirs 4K",
+    "is_free": true
+  },
+  "2303601": {
+    "app_id": 2303601,
+    "type": "dlc",
+    "name": "Not For Broadcast: The Timeloop",
+    "is_free": false
+  },
+  "2303600": {
+    "app_id": 2303600,
+    "type": "dlc",
+    "name": "Not For Broadcast: Bits of Your Life",
+    "is_free": false
+  },
+  "2199310": {
+    "app_id": 2199310,
+    "type": "dlc",
+    "name": "Not For Broadcast: Live & Spooky",
+    "is_free": false
+  },
+  "1201400": {
+    "app_id": 1201400,
+    "type": "game",
+    "name": "Not For Broadcast: Prologue",
+    "is_free": true
+  },
+  "2257770": {
+    "app_id": 2257770,
+    "type": "game",
+    "name": "Not For Broadcast VR",
+    "is_free": false
+  },
+  "2303602": {
+    "app_id": 2303602,
+    "type": "dlc",
+    "name": "Not For Broadcast Season Pass",
+    "is_free": false
+  },
+  "3480210": {
+    "app_id": 3480210,
+    "type": "demo",
+    "name": "Trilogy of the Moon Demo",
+    "is_free": true
+  },
+  "3478200": {
+    "app_id": 3478200,
+    "type": "game",
+    "name": "Trilogy of the Moon",
+    "is_free": false
+  },
+  "2774960": {
+    "app_id": 2774960,
+    "type": "demo",
+    "name": "Seven Lovers In The House",
+    "is_free": true
+  },
+  "2774830": {
+    "app_id": 2774830,
+    "type": "game",
+    "name": "Seven Lovers In The House",
+    "is_free": false
+  },
+  "1937520": {
+    "app_id": 1937520,
+    "type": "dlc",
+    "name": "Underdog Detective-Episode 6 to 17",
+    "is_free": false
+  },
+  "2099930": {
+    "app_id": 2099930,
+    "type": "dlc",
+    "name": "Breakout 13 : Fight",
+    "is_free": false
+  },
+  "2690730": {
+    "app_id": 2690730,
+    "type": "music",
+    "name": "TELEFORUM - Supporter Pack",
+    "is_free": false
+  },
+  "2802560": {
+    "app_id": 2802560,
+    "type": "game",
+    "name": "完蛋！我被美女包围了！-房间里的心跳VR花絮",
+    "is_free": false
+  },
+  "2677810": {
+    "app_id": 2677810,
+    "type": "dlc",
+    "name": "Simon the Sorcerer Origins - \"PONY\" DLC",
+    "is_free": false
+  },
+  "3823920": {
+    "app_id": 3823920,
+    "type": "dlc",
+    "name": "Simon the Sorcerer Origins - History Artbook",
+    "is_free": false
+  },
+  "4161480": {
+    "app_id": 4161480,
+    "type": "game",
+    "name": "你好！我们还有场恋爱没谈-番外篇",
+    "is_free": false
+  },
+  "3668590": {
+    "app_id": 3668590,
+    "type": "dlc",
+    "name": "Trilogy of the Moon - The First Fate",
+    "is_free": false
+  },
+  "1835020": {
+    "app_id": 1835020,
+    "type": "game",
+    "name": "BornWild • Versus S1 - Prologue",
+    "is_free": true
+  },
+  "3828820": {
+    "app_id": 3828820,
+    "type": "demo",
+    "name": "Don't Stop, Girlypop! Lite",
+    "is_free": true
+  }
+}

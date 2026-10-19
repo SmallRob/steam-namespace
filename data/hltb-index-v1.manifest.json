@@ -1,0 +1,119 @@
+{
+  "v": 1,
+  "builtAt": "2026-10-19T23:53:49.072Z",
+  "shards": 8,
+  "mode": "appid",
+  "shardRule": "appid>>1",
+  "entries": 35272,
+  "coverage": {
+    "matched": 35272,
+    "total": 64627,
+    "pct": 0.546
+  },
+  "files": [
+    {
+      "shard": 0,
+      "count": 4421,
+      "bytes": 71582
+    },
+    {
+      "shard": 1,
+      "count": 4378,
+      "bytes": 70749
+    },
+    {
+      "shard": 2,
+      "count": 4487,
+      "bytes": 72641
+    },
+    {
+      "shard": 3,
+      "count": 4359,
+      "bytes": 70564
+    },
+    {
+      "shard": 4,
+      "count": 4374,
+      "bytes": 70874
+    },
+    {
+      "shard": 5,
+      "count": 4457,
+      "bytes": 72149
+    },
+    {
+      "shard": 6,
+      "count": 4499,
+      "bytes": 72703
+    },
+    {
+      "shard": 7,
+      "count": 4297,
+      "bytes": 69476
+    }
+  ],
+  "reference": {
+    "source": "hltb-unmatched",
+    "total": 35158,
+    "eraDist": [
+      {
+        "key": "pre04",
+        "count": 11671,
+        "pct": 33.2
+      },
+      {
+        "key": "04-14",
+        "count": 9469,
+        "pct": 26.9
+      },
+      {
+        "key": "15-24",
+        "count": 10770,
+        "pct": 30.6
+      },
+      {
+        "key": "25+",
+        "count": 1348,
+        "pct": 3.8
+      }
+    ],
+    "storyDist": [
+      {
+        "key": "none",
+        "count": 16098,
+        "pct": 45.8
+      },
+      {
+        "key": "lt1",
+        "count": 4925,
+        "pct": 14
+      },
+      {
+        "key": "1-5",
+        "count": 7142,
+        "pct": 20.3
+      },
+      {
+        "key": "5-10",
+        "count": 3170,
+        "pct": 9
+      },
+      {
+        "key": "10-20",
+        "count": 2019,
+        "pct": 5.7
+      },
+      {
+        "key": "20-40",
+        "count": 1265,
+        "pct": 3.6
+      },
+      {
+        "key": "40+",
+        "count": 539,
+        "pct": 1.5
+      }
+    ],
+    "note": "未匹配记录（主机独占等）的年代/剧情分布 —— 用作匹配部分的偏差对照"
+  }
+}

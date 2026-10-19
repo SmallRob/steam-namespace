@@ -1,18 +1,26 @@
 /* =====================================================================
- * 【分发副本】Steam AI Agent —— 游戏热点模块（saa-game-news.lib.js）
- * ---------------------------------------------------------------------
- * 本文件是 steam-userscripts 仓库中同名文件的**分发副本**，
- * 放在公开仓库以供 @require 通过 CDN 加载。
- *   源文件：https://github.com/SmallRob/steam-userscripts
- *           → steam-ai-agent/libs/saa-game-news.lib.js
- * 修改流程：先改 steam-userscripts 里的源文件，跑通其单测，
- *           再同步覆盖本副本（本副本不参与 steam-userscripts 的测试）。
+ * Steam AI Agent —— 游戏热点模块（saa-game-news.lib.js）
+ * =====================================================================
+ * 职责：聚合专业游戏资讯站头条 + 热点浮窗 UI（居中弹窗，入口按钮由宿主面板头部提供）。
+ * 设计原则：**与主脚本的 AI Agent 逻辑完全解耦**——本库不引用主脚本任何变量，
+ *          只通过 window.SAAGameNews 暴露 API；主脚本侧仅做 loader + 薄工具注册。
+ *
+ * 导出 API（window.SAAGameNews）：
+ *   SOURCES            当前启用的源定义（可运行时增删，便于扩展）
+ *   addSource(src)     运行时追加一个源（无需改主脚本）
+ *   fetchSource(src)   抓取单个源 → {id,label,items,error}
+ *   getDigest(opts)    聚合全部源（带 TTL 缓存 + 并发去重）
+ *   clearCache()       清空聚合缓存
+ *   mountButton()      [已弃用 v1.1.0] 旧版页面悬浮入口，保留仅为兼容；入口现由宿主面板头部按钮提供
+ *   unmountButton()    卸载入口与浮窗
+ *   VERSION            库版本
+ *
+ * 依赖：仅需宿主提供 GM_xmlhttpRequest（与主脚本同一沙箱）。
  * ===================================================================== */
-
 (function (root) {
     'use strict';
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
     const STORAGE_KEY = 'saa_game_news_sources_v1';   // 用户自定义源（GM 存储键，宿主注入）
 
     const DEFAULTS = {
@@ -274,6 +282,10 @@
     function clearCache() { _cache = null; _srcCache.clear(); }
 
     /* ---------------- 浮窗 UI ---------------- */
+    // 滚动链要点：overlay(遮罩,居中) → modal(flex column,定高) → body-holder(flex:1,min-height:0)
+    //   → body(flex:1,min-height:0,overflow-y:auto)。
+    // 旧版「不能滚动」的根因：holder 是无约束 block，内容把 modal 撑爆后被 overflow:hidden 裁切，
+    //   内层 overflow-y:auto 因高度不受限而永远不触发。
     const CSS = `
 #sa-news-btn{position:fixed;top:80px;right:16px;z-index:1000002!important;display:flex;align-items:center;gap:6px;
 padding:7px 13px;border-radius:20px;cursor:pointer;background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(59,130,246,.9))!important;
@@ -283,34 +295,86 @@ transition:transform .15s ease,box-shadow .15s ease;user-select:none}
 #sa-news-btn svg{width:15px!important;height:15px!important;pointer-events:none}
 #sa-news-btn .sa-news-dot{width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:sa-news-pulse 1.8s ease-in-out infinite}
 @keyframes sa-news-pulse{0%,100%{opacity:1}50%{opacity:.25}}
-.sa-news-overlay{position:fixed;inset:0;z-index:1000006!important;background:rgba(0,0,0,.55)!important;display:none;
-align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(3px)}
+
+/* ---- 遮罩：全屏居中 ---- */
+.sa-news-overlay{position:fixed;inset:0;z-index:1000006!important;background:rgba(2,6,23,.62)!important;display:none;
+align-items:center;justify-content:center;padding:28px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .sa-news-overlay.sa-show{display:flex}
-.sa-news-modal{margin:76px 16px 16px 0;background:rgba(15,23,42,.97)!important;border:1px solid rgba(139,92,246,.25)!important;
-border-radius:16px;width:460px;max-width:92vw;max-height:78vh;display:flex;flex-direction:column;overflow:hidden;
-box-shadow:0 24px 70px rgba(0,0,0,.6)!important;backdrop-filter:blur(20px) saturate(160%)!important;
--webkit-backdrop-filter:blur(20px) saturate(160%)!important;animation:sa-news-in .18s ease}
-@keyframes sa-news-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.sa-news-head{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid rgba(139,92,246,.15);flex-shrink:0}
-.sa-news-head-title{font-size:14px;font-weight:700;color:#f1f5f9;flex:1;display:flex;align-items:center;gap:7px}
-.sa-news-head-title svg{width:16px!important;height:16px!important;color:#a78bfa}
-.sa-news-refresh{padding:4px 9px;font-size:11px}
-.sa-news-meta{padding:8px 16px;font-size:11px;color:#64748b;border-bottom:1px solid rgba(139,92,246,.1);flex-shrink:0}
-.sa-news-body{flex:1;overflow-y:auto;padding:10px 12px 14px}
-.sa-news-body::-webkit-scrollbar{width:5px}
+
+/* ---- 弹窗：定高 + flex column，滚动才有稳定高度 ---- */
+.sa-news-modal{background:#0b1120!important;border:1px solid rgba(139,92,246,.28)!important;
+border-radius:16px;width:min(640px,94vw);height:min(720px,88vh);display:flex;flex-direction:column;overflow:hidden;
+box-shadow:0 32px 90px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.4),0 0 46px rgba(139,92,246,.14)!important;
+animation:sa-news-in .2s cubic-bezier(.16,1,.3,1)}
+@keyframes sa-news-in{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ---- 头部 ---- */
+.sa-news-head{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;flex-shrink:0;
+background:linear-gradient(180deg,rgba(139,92,246,.14),rgba(139,92,246,0));
+border-bottom:1px solid rgba(139,92,246,.18)}
+.sa-news-head-badge{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.4)}
+.sa-news-head-badge svg{width:18px!important;height:18px!important}
+.sa-news-head-title{font-size:15px;font-weight:700;color:#f1f5f9;flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.sa-news-head-title small{font-size:11px;font-weight:400;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sa-news-refresh{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:9px;cursor:pointer;flex-shrink:0;
+font-size:12px;font-weight:600;color:#c4b5fd;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);
+transition:background .15s ease,border-color .15s ease,color .15s ease}
+.sa-news-refresh:hover{background:rgba(139,92,246,.24);border-color:rgba(139,92,246,.5);color:#ede9fe}
+.sa-news-refresh svg{width:13px!important;height:13px!important;transition:transform .3s ease}
+.sa-news-refresh.is-loading{opacity:.65;pointer-events:none}
+.sa-news-refresh.is-loading svg{animation:sa-news-spin .8s linear infinite}
+@keyframes sa-news-spin{to{transform:rotate(360deg)}}
+.sa-news-close{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.15);color:#94a3b8;cursor:pointer;
+transition:background .15s ease,color .15s ease,border-color .15s ease}
+.sa-news-close:hover{background:rgba(248,113,113,.15);border-color:rgba(248,113,113,.4);color:#f87171}
+.sa-news-close svg{width:14px!important;height:14px!important}
+
+/* ---- 滚动区骨架：holder 接管剩余高度并分配 ---- */
+.sa-news-body-holder{display:flex;flex-direction:column;flex:1;min-height:0}
+.sa-news-meta{padding:9px 16px;font-size:11px;color:#64748b;border-bottom:1px solid rgba(139,92,246,.1);flex-shrink:0;
+display:flex;align-items:center;gap:6px}
+.sa-news-meta svg{width:11px!important;height:11px!important;flex-shrink:0}
+.sa-news-warn{margin:10px 14px 0;padding:7px 10px;border-radius:8px;font-size:11px;flex-shrink:0;line-height:1.5;
+background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:#fbbf24}
+
+/* ---- 列表体：唯一滚动容器 ---- */
+.sa-news-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 14px 16px;scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.35) transparent}
+.sa-news-body::-webkit-scrollbar{width:6px}
+.sa-news-body::-webkit-scrollbar-track{background:transparent}
 .sa-news-body::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:3px}
-.sa-news-src{margin-bottom:14px}
-.sa-news-src-title{font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.sa-news-src-title .sa-news-src-n{color:#64748b;font-weight:400}
-.sa-news-src-title .sa-news-lang{font-size:9px;padding:1px 5px;border-radius:8px;background:rgba(148,163,184,.14);color:#94a3b8;font-weight:400}
-.sa-news-item{display:block;padding:7px 9px;margin-bottom:4px;border-radius:8px;color:#cbd5e1;text-decoration:none!important;
-font-size:12.5px;line-height:1.5;border:1px solid transparent;transition:background .12s ease}
-.sa-news-item:hover{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.22);color:#f1f5f9}
-.sa-news-item-title{display:block}
-.sa-news-item-sum{display:block;font-size:11px;color:#64748b;margin-top:3px;line-height:1.45}
-.sa-news-empty,.sa-news-loading{padding:30px 16px;text-align:center;color:#64748b;font-size:12px}
-.sa-news-warn{margin:0 12px 8px;padding:7px 10px;border-radius:8px;font-size:11px;background:rgba(251,191,36,.08);
-border:1px solid rgba(251,191,36,.2);color:#fbbf24}
+.sa-news-body::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,.5)}
+
+/* ---- 来源分组 ---- */
+.sa-news-src{margin-bottom:16px}
+.sa-news-src:last-child{margin-bottom:2px}
+.sa-news-src-title{font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.sa-news-src-title::before{content:'';width:3px;height:12px;border-radius:2px;background:linear-gradient(180deg,#8b5cf6,#3b82f6);flex-shrink:0}
+.sa-news-src-title .sa-news-src-n{font-size:10px;font-weight:600;color:#94a3b8;padding:1px 7px;border-radius:9px;
+background:rgba(148,163,184,.12)}
+.sa-news-src-title .sa-news-lang{font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(148,163,184,.14);color:#94a3b8;font-weight:400}
+
+/* ---- 条目卡片 ---- */
+.sa-news-item{display:block;padding:9px 11px;margin-bottom:5px;border-radius:10px;color:#cbd5e1;text-decoration:none!important;
+font-size:12.5px;line-height:1.55;background:rgba(148,163,184,.05);border:1px solid rgba(148,163,184,.08);
+transition:background .13s ease,border-color .13s ease,transform .13s ease}
+.sa-news-item:hover{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.35);color:#f1f5f9;transform:translateX(2px)}
+.sa-news-item-title{display:block;font-weight:500}
+.sa-news-item-sum{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+font-size:11px;color:#64748b;margin-top:4px;line-height:1.5}
+
+/* ---- 空态 / 加载态 ---- */
+.sa-news-empty,.sa-news-loading{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+padding:40px 16px;text-align:center;color:#64748b;font-size:12.5px}
+.sa-news-loading .sa-news-loader{width:26px;height:26px;border-radius:50%;
+border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-news-spin .8s linear infinite}
+
+/* ---- 窄屏：全屏化 ---- */
+@media (max-width:640px){
+.sa-news-overlay{padding:0}
+.sa-news-modal{width:100%;height:100%;max-height:none;border-radius:0;border:none}
+}
 `;
 
     let _btn = null, _overlay = null, _styleInjected = false;
@@ -322,6 +386,7 @@ border:1px solid rgba(251,191,36,.2);color:#fbbf24}
     const ICON_GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>';
     const ICON_REFRESH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
     const ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    const ICON_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
 
     function ensureStyle() {
         if (_styleInjected) return;
@@ -340,7 +405,7 @@ border:1px solid rgba(251,191,36,.2);color:#fbbf24}
         const failed = bundle.sources.filter(s => s.error);
         const zhTotal = bundle.sources.reduce((n, s) => n + (s.items || []).filter(i => isChinese(i.title)).length, 0);
         holder.innerHTML = `
-            <div class="sa-news-meta">${total} 条（中文 ${zhTotal}） · ${new Date(bundle.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} 更新${ageMin > 0 ? `（${ageMin} 分钟前）` : ''}</div>
+            <div class="sa-news-meta">${ICON_CLOCK}<span>${total} 条（中文 ${zhTotal}） · ${new Date(bundle.at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} 更新${ageMin > 0 ? `（${ageMin} 分钟前）` : ''}</span></div>
             ${failed.length ? `<div class="sa-news-warn">${failed.map(s => `${esc(s.label)}：${esc(s.error)}`).join('；')}</div>` : ''}
             <div class="sa-news-body">
                 ${bundle.sources.filter(s => s.items && s.items.length).map(s => {
@@ -364,11 +429,17 @@ border:1px solid rgba(251,191,36,.2);color:#fbbf24}
     async function refreshWindow(force) {
         if (!_overlay) return;
         const holder = _overlay.querySelector('.sa-news-body-holder');
-        if (holder) holder.innerHTML = '<div class="sa-news-loading">正在聚合游戏资讯站…</div>';
-        const bundle = await getDigest({ force });
-        if (!_overlay || !_overlay.classList.contains('sa-show')) return;
-        renderBody(holder, bundle);
-        if (_btn && !force) { const dot = _btn.querySelector('.sa-news-dot'); if (dot) dot.style.display = 'none'; }
+        if (holder) holder.innerHTML = '<div class="sa-news-loading"><span class="sa-news-loader"></span>正在聚合游戏资讯站…</div>';
+        const refreshBtn = _overlay.querySelector('.sa-news-refresh');
+        if (force && refreshBtn) refreshBtn.classList.add('is-loading');
+        try {
+            const bundle = await getDigest({ force });
+            if (!_overlay || !_overlay.classList.contains('sa-show')) return;
+            renderBody(holder, bundle);
+            if (_btn && !force) { const dot = _btn.querySelector('.sa-news-dot'); if (dot) dot.style.display = 'none'; }
+        } finally {
+            if (refreshBtn) refreshBtn.classList.remove('is-loading');
+        }
     }
 
     function openWindow() {
@@ -380,11 +451,12 @@ border:1px solid rgba(251,191,36,.2);color:#fbbf24}
             _overlay.innerHTML = `
                 <div class="sa-news-modal">
                     <div class="sa-news-head">
-                        <div class="sa-news-head-title">${ICON_GLOBE} 游戏热点</div>
-                        <button class="sa-news-refresh" title="强制刷新" style="padding:4px 9px;font-size:11px;cursor:pointer">${ICON_REFRESH} 刷新</button>
-                        <button class="sa-news-close" title="关闭" style="background:none;border:none;color:#94a3b8;cursor:pointer;padding:4px">${ICON_CLOSE}</button>
+                        <div class="sa-news-head-badge">${ICON_GLOBE}</div>
+                        <div class="sa-news-head-title">游戏热点<small>${esc(getSources().map(s => s.label).join(' / '))}</small></div>
+                        <button class="sa-news-refresh" title="跳过 30 分钟缓存，强制重新抓取">${ICON_REFRESH} 刷新</button>
+                        <button class="sa-news-close" title="关闭 (Esc)">${ICON_CLOSE}</button>
                     </div>
-                    <div class="sa-news-body-holder"><div class="sa-news-loading">正在聚合游戏资讯站…</div></div>
+                    <div class="sa-news-body-holder"><div class="sa-news-loading"><span class="sa-news-loader"></span>正在聚合游戏资讯站…</div></div>
                 </div>`;
             _overlay.addEventListener('click', (e) => { if (e.target === _overlay) closeWindow(); });
             _overlay.querySelector('.sa-news-close').addEventListener('click', closeWindow);
@@ -396,6 +468,8 @@ border:1px solid rgba(251,191,36,.2);color:#fbbf24}
     }
     function closeWindow() { if (_overlay) _overlay.classList.remove('sa-show'); }
 
+    /** [已弃用 v1.1.0] 旧版把入口挂成页面右上角悬浮胶囊，现入口由宿主面板头部按钮提供。
+     *  保留仅为向后兼容（第三方调用不受影响）。 */
     function mountButton() {
         if (!document.body) return false;
         ensureStyle();

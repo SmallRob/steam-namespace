@@ -1,0 +1,333 @@
+{
+  "v": 1,
+  "updatedAt": "2026-10-20T00:20:00Z",
+  "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。",
+  "registry": {
+    "mechanism": "indexedDB",
+    "db": "sglv_plugin_host_storage",
+    "store": "kv",
+    "prefix": "shared:plugin:",
+    "record": {
+      "id": "插件唯一标识（小写字母/数字/连字符）",
+      "name": "显示名",
+      "family": "所属分组（见 families）",
+      "version": "版本号（自动取自脚本头部 @version，永不漂移）",
+      "versionSource": "spec（显式传）| GM_info（自动取）",
+      "capabilities": "可选，能力标记",
+      "ts": "注册时刻（ms）—— 超过 7 天未刷新视为「装过但很久没运行」"
+    },
+    "writer": "shared/sglv-plugin-host.lib.js → __PLUGIN_HOST__.registerPlugin({id, name, family})",
+    "reader": "steam-ai-agent → getInstalledPlugins 工具",
+    "hostLib": {
+      "source": "SmallRob/steam-userscripts（私有）shared/sglv-plugin-host.lib.js",
+      "cdn": "https://cdn.jsdelivr.net/gh/SmallRob/steam-namespace@main/libs/sglv-plugin-host.lib.js",
+      "version": "0.3.0"
+    },
+    "notes": [
+      "GM 存储按脚本沙箱隔离 → 跨脚本读不到别人的 GM 值 → 版本必须靠 registerPlugin 显式注册",
+      "IndexedDB 同源全脚本共享 → registerPlugin 写的键对 AI Agent 直接可读",
+      "未接入 registerPlugin 的插件：只能靠 detect 信号判断「装没装」，版本显示为「未知」"
+    ]
+  },
+  "families": {
+    "core": {
+      "label": "核心三件套",
+      "desc": "游戏库展示 + 愿望单侧边栏 + 家庭组分析"
+    },
+    "social": {
+      "label": "好友系",
+      "desc": "好友管理器 + 好友监控系列"
+    },
+    "market": {
+      "label": "市场系",
+      "desc": "社区市场增强"
+    },
+    "account": {
+      "label": "账户系",
+      "desc": "许可分类 + 消费历史分类"
+    },
+    "badge": {
+      "label": "徽章系",
+      "desc": "徽章卡牌视图"
+    },
+    "utility": {
+      "label": "工具系",
+      "desc": "点数商店 / 货币换算 / SteamDB 等"
+    },
+    "ai": {
+      "label": "AI 系",
+      "desc": "Steam AI Agent"
+    }
+  },
+  "plugins": [
+    {
+      "id": "sglv",
+      "name": "Steam 游戏库展示",
+      "family": "core",
+      "minVersion": "2.22.0",
+      "required": true,
+      "registry": true,
+      "source": "steam-game-library-viewer/steam-game-library-viewer.user.js",
+      "detect": [
+        {
+          "type": "idb",
+          "db": "sglv_kv",
+          "store": "kv"
+        }
+      ]
+    },
+    {
+      "id": "swe",
+      "name": "Steam 愿望单侧边栏",
+      "family": "core",
+      "minVersion": "1.4.0",
+      "required": true,
+      "registry": true,
+      "source": "steam-wishlist-exporter/Steam-Wishlist-Sidebar.user.js",
+      "detect": [
+        {
+          "type": "idb",
+          "db": "swe_wishlist_v2_db",
+          "store": "items"
+        },
+        {
+          "type": "localStorage",
+          "prefix": "swe_wishlist_v2_"
+        }
+      ]
+    },
+    {
+      "id": "fa",
+      "name": "Steam 家庭组游戏分析",
+      "family": "core",
+      "minVersion": "2.26.0",
+      "required": true,
+      "registry": true,
+      "source": "steam-family-analysis/steam-family-game-analysis.user.js",
+      "detect": [
+        {
+          "type": "idb",
+          "db": "sffa_kv",
+          "store": "kv"
+        }
+      ]
+    },
+    {
+      "id": "sfd",
+      "name": "Steam 好友管理器",
+      "family": "social",
+      "minVersion": "1.5.3",
+      "required": false,
+      "registry": true,
+      "source": "steam-friend-manager/steam-friend-manager.user.js",
+      "detect": [
+        {
+          "type": "idb",
+          "db": "sfd_storage",
+          "store": "kv"
+        }
+      ]
+    },
+    {
+      "id": "sme",
+      "name": "Steam 社区市场增强",
+      "family": "market",
+      "minVersion": "1.6.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-market-enhancer/steam-market-enhancer.user.js",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "sme_"
+        }
+      ]
+    },
+    {
+      "id": "sbc",
+      "name": "Steam 徽章卡片视图",
+      "family": "badge",
+      "minVersion": "1.10.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-badges-card-view/steam-badges-card-view.user.js",
+      "detect": [
+        {
+          "type": "idb",
+          "db": "sbc_pro_cache",
+          "store": "gameData"
+        }
+      ]
+    },
+    {
+      "id": "slc",
+      "name": "Steam 许可分类器",
+      "family": "account",
+      "minVersion": "2.6.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-account-history/Steam-License-Classifier/Steam-License-Classifier.user.js",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "slc_"
+        }
+      ]
+    },
+    {
+      "id": "spending",
+      "name": "Steam 消费历史分类器",
+      "family": "account",
+      "minVersion": "2.3.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-account-history/Steam-Spending-History-Classifier/Steam-Spending-History-Classifier.user.js",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "__saa_bridge_spend__"
+        }
+      ]
+    },
+    {
+      "id": "points-shop",
+      "name": "Steam 点数商店增强",
+      "family": "utility",
+      "minVersion": "2.3.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-points-shop-enhancer/steam-points-shop-enhancer.user.js",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "__saa_bridge_pts__"
+        }
+      ]
+    },
+    {
+      "id": "ai-agent",
+      "name": "Steam AI Agent 对话智能体",
+      "family": "ai",
+      "minVersion": "1.24.0",
+      "required": false,
+      "registry": true,
+      "source": "steam-ai-agent/steam-ai-agent.user.js",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "__saa_presence_aiagent"
+        }
+      ],
+      "note": "v1.24.0 起提供 getInstalledPlugins 工具（版本清单查询）"
+    },
+    {
+      "id": "sac",
+      "name": "Steam 好友数排行（社交中心）",
+      "family": "social",
+      "minVersion": null,
+      "required": false,
+      "registry": false,
+      "detect": [
+        {
+          "type": "idb",
+          "db": "steam_social_db",
+          "store": "kv"
+        }
+      ]
+    },
+    {
+      "id": "saf",
+      "name": "Steam 好友动态",
+      "family": "social",
+      "minVersion": null,
+      "required": false,
+      "registry": false,
+      "detect": [
+        {
+          "type": "idb",
+          "db": "sf_activity_db",
+          "store": "kv"
+        }
+      ]
+    },
+    {
+      "id": "friend-days",
+      "name": "Steam 好友天数增强",
+      "family": "social",
+      "minVersion": "4.2.0",
+      "required": false,
+      "registry": false,
+      "source": "steam-friend-monitor/steam-friend-days-enhancer.user.js",
+      "detect": [],
+      "detectNote": "仅用 GM 存储（跨脚本不可见）→ 只能靠 registerPlugin 上报"
+    },
+    {
+      "id": "friend-tools",
+      "name": "Steam 好友工具合集",
+      "family": "social",
+      "minVersion": "2.0.0",
+      "required": false,
+      "registry": false,
+      "source": "steam-friend-monitor/Steam Friends Tools Merged.user.js",
+      "detect": [],
+      "detectNote": "仅用 GM 存储 → 只能靠 registerPlugin 上报"
+    },
+    {
+      "id": "friend-checker",
+      "name": "Steam 好友监控 Checker",
+      "family": "social",
+      "minVersion": "1.3.7",
+      "required": false,
+      "registry": false,
+      "source": "steam-friend-monitor/Steam Friends Checker.user.js",
+      "detect": [],
+      "detectNote": "仅用 GM 存储 → 只能靠 registerPlugin 上报"
+    },
+    {
+      "id": "price-converter",
+      "name": "通用货币转 CNY",
+      "family": "utility",
+      "minVersion": "2.0.0",
+      "required": false,
+      "registry": false,
+      "source": "steam-price-converter/steam-price-converter.user.js",
+      "detect": []
+    },
+    {
+      "id": "steamdb",
+      "name": "SteamDB 免费包排序",
+      "family": "utility",
+      "minVersion": "1.0.3",
+      "required": false,
+      "registry": false,
+      "source": "steamdb-freepackages-enhancer/steamdb-freepackages-sorter.user.js",
+      "detect": []
+    },
+    {
+      "id": "cloud-save",
+      "name": "一键下载 Steam 云存档",
+      "family": "utility",
+      "minVersion": "1.1.1",
+      "required": false,
+      "registry": false,
+      "source": "steam-account-cloud/steam-account-cloud-save.user.js",
+      "detect": []
+    }
+  ],
+  "distribution": {
+    "scriptcat": {
+      "note": "用户安装渠道（脚本猫管理）",
+      "users": [
+        "https://scriptcat.org/zh-CN/users/210788",
+        "https://scriptcat.org/zh-CN/users/211169"
+      ]
+    },
+    "steamCommunity": "Steam 社区「用户脚本 10+ 件套」发布帖",
+    "cdn": {
+      "note": "lib 与 data 的分发副本（公开仓 SmallRob/steam-namespace），jsDelivr 加速",
+      "libs": "https://cdn.jsdelivr.net/gh/SmallRob/steam-namespace@main/libs/",
+      "data": "https://cdn.jsdelivr.net/gh/SmallRob/steam-namespace@main/data/",
+      "pinNote": "需要立即生效时把 @main 换成 commit SHA（@main 有最长 12h 的 CDN 缓存）"
+    }
+  }
+}

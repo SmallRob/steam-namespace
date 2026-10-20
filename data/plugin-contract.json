@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updatedAt": "2026-10-20T01:00:00Z",
+  "updatedAt": "2026-10-20T01:30:00Z",
   "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。",
   "registry": {
     "mechanism": "indexedDB",
@@ -209,7 +209,7 @@
       "id": "ai-agent",
       "name": "Steam AI Agent 对话智能体",
       "family": "ai",
-      "minVersion": "1.24.0",
+      "minVersion": "1.25.0",
       "required": false,
       "registry": true,
       "source": "steam-ai-agent/steam-ai-agent.user.js",
@@ -219,7 +219,7 @@
           "prefix": "__saa_presence_aiagent"
         }
       ],
-      "note": "v1.24.0 起提供 getInstalledPlugins 工具（版本清单查询）"
+      "note": "v1.24.0 起提供 getInstalledPlugins 工具；v1.25.0 起提供「设置 → 数据源」授权页"
     },
     {
       "id": "sac",

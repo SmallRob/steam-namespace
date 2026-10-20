@@ -209,7 +209,7 @@
       "id": "ai-agent",
       "name": "Steam AI Agent 对话智能体",
       "family": "ai",
-      "minVersion": "1.25.0",
+      "minVersion": "1.26.0",
       "required": false,
       "registry": true,
       "source": "steam-ai-agent/steam-ai-agent.user.js",

@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updatedAt": "2026-10-20T00:20:00Z",
+  "updatedAt": "2026-10-20T01:00:00Z",
   "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。",
   "registry": {
     "mechanism": "indexedDB",
@@ -27,7 +27,8 @@
       "GM 存储按脚本沙箱隔离 → 跨脚本读不到别人的 GM 值 → 版本必须靠 registerPlugin 显式注册",
       "IndexedDB 同源全脚本共享 → registerPlugin 写的键对 AI Agent 直接可读",
       "未接入 registerPlugin 的插件：只能靠 detect 信号判断「装没装」，版本显示为「未知」"
-    ]
+    ],
+    "note": "18 个插件全部已接入 registerPlugin（共享宿主 v0.3.0）→ 运行时有精确版本号。detect 段保留作为兜底（万一某插件未注册或注册表被清空，仍能判断「装了没」）。"
   },
   "families": {
     "core": {
@@ -226,7 +227,7 @@
       "family": "social",
       "minVersion": null,
       "required": false,
-      "registry": false,
+      "registry": true,
       "detect": [
         {
           "type": "idb",
@@ -241,7 +242,7 @@
       "family": "social",
       "minVersion": null,
       "required": false,
-      "registry": false,
+      "registry": true,
       "detect": [
         {
           "type": "idb",
@@ -256,10 +257,9 @@
       "family": "social",
       "minVersion": "4.2.0",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steam-friend-monitor/steam-friend-days-enhancer.user.js",
-      "detect": [],
-      "detectNote": "仅用 GM 存储（跨脚本不可见）→ 只能靠 registerPlugin 上报"
+      "detect": []
     },
     {
       "id": "friend-tools",
@@ -267,10 +267,9 @@
       "family": "social",
       "minVersion": "2.0.0",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steam-friend-monitor/Steam Friends Tools Merged.user.js",
-      "detect": [],
-      "detectNote": "仅用 GM 存储 → 只能靠 registerPlugin 上报"
+      "detect": []
     },
     {
       "id": "friend-checker",
@@ -278,10 +277,9 @@
       "family": "social",
       "minVersion": "1.3.7",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steam-friend-monitor/Steam Friends Checker.user.js",
-      "detect": [],
-      "detectNote": "仅用 GM 存储 → 只能靠 registerPlugin 上报"
+      "detect": []
     },
     {
       "id": "price-converter",
@@ -289,7 +287,7 @@
       "family": "utility",
       "minVersion": "2.0.0",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steam-price-converter/steam-price-converter.user.js",
       "detect": []
     },
@@ -299,7 +297,7 @@
       "family": "utility",
       "minVersion": "1.0.3",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steamdb-freepackages-enhancer/steamdb-freepackages-sorter.user.js",
       "detect": []
     },
@@ -309,7 +307,7 @@
       "family": "utility",
       "minVersion": "1.1.1",
       "required": false,
-      "registry": false,
+      "registry": true,
       "source": "steam-account-cloud/steam-account-cloud-save.user.js",
       "detect": []
     }

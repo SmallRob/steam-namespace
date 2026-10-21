@@ -20,7 +20,7 @@
 (function (root) {
     'use strict';
 
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
     const STORAGE_KEY = 'saa_game_news_sources_v1';   // 用户自定义源（GM 存储键，宿主注入）
 
     const DEFAULTS = {
@@ -303,7 +303,7 @@ align-items:center;justify-content:center;padding:28px;backdrop-filter:blur(4px)
 
 /* ---- 弹窗：定高 + flex column，滚动才有稳定高度 ---- */
 .sa-news-modal{background:#0b1120!important;border:1px solid rgba(139,92,246,.28)!important;
-border-radius:16px;width:min(640px,94vw);height:min(720px,88vh);display:flex;flex-direction:column;overflow:hidden;
+border-radius:16px;width:min(800px,94vw);height:min(780px,90vh);display:flex;flex-direction:column;overflow:hidden;
 box-shadow:0 32px 90px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.4),0 0 46px rgba(139,92,246,.14)!important;
 animation:sa-news-in .2s cubic-bezier(.16,1,.3,1)}
 @keyframes sa-news-in{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
@@ -346,14 +346,23 @@ background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:#fbbf
 .sa-news-body::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:3px}
 .sa-news-body::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,.5)}
 
-/* ---- 来源分组 ---- */
+/* ---- 来源分组（标题可点击折叠） ---- */
 .sa-news-src{margin-bottom:16px}
 .sa-news-src:last-child{margin-bottom:2px}
-.sa-news-src-title{font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.sa-news-src-title{font:inherit;font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:7px;width:100%;
+display:flex;align-items:center;gap:7px;background:none;border:none;padding:0;cursor:pointer;text-align:left;
+border-radius:6px;transition:color .13s ease}
+.sa-news-src-title:hover{color:#c4b5fd}
 .sa-news-src-title::before{content:'';width:3px;height:12px;border-radius:2px;background:linear-gradient(180deg,#8b5cf6,#3b82f6);flex-shrink:0}
 .sa-news-src-title .sa-news-src-n{font-size:10px;font-weight:600;color:#94a3b8;padding:1px 7px;border-radius:9px;
 background:rgba(148,163,184,.12)}
 .sa-news-src-title .sa-news-lang{font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(148,163,184,.14);color:#94a3b8;font-weight:400}
+.sa-news-src-title .sa-news-chev{width:13px!important;height:13px!important;margin-left:auto;color:#64748b;
+transition:transform .18s ease;flex-shrink:0}
+.sa-news-src-title:hover .sa-news-chev{color:#a78bfa}
+.sa-news-src.collapsed .sa-news-src-title{margin-bottom:0;color:#64748b}
+.sa-news-src.collapsed .sa-news-chev{transform:rotate(-90deg)}
+.sa-news-src.collapsed .sa-news-src-items{display:none}
 
 /* ---- 条目卡片 ---- */
 .sa-news-item{display:block;padding:9px 11px;margin-bottom:5px;border-radius:10px;color:#cbd5e1;text-decoration:none!important;
@@ -412,14 +421,17 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
                     const items = sortChineseFirst(s.items);
                     const zhN = items.filter(i => isChinese(i.title)).length;
                     return `
-                    <div class="sa-news-src">
-                        <div class="sa-news-src-title">${esc(s.label)}<span class="sa-news-src-n">${items.length} 条</span>
-                            ${zhN < items.length ? `<span class="sa-news-lang">中文 ${zhN}</span>` : ''}</div>
-                        ${items.map(it => `
+                    <div class="sa-news-src" data-src="${esc(s.id)}">
+                        <button type="button" class="sa-news-src-title" aria-expanded="true" title="点击折叠/展开该来源">
+                            <span>${esc(s.label)}</span><span class="sa-news-src-n">${items.length} 条</span>
+                            ${zhN < items.length ? `<span class="sa-news-lang">中文 ${zhN}</span>` : ''}
+                            <svg class="sa-news-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div class="sa-news-src-items">${items.map(it => `
                             <a class="sa-news-item" href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">
                                 <span class="sa-news-item-title">${esc(it.title)}</span>
                                 ${it.summary ? `<span class="sa-news-item-sum">${esc(it.summary)}</span>` : ''}
-                            </a>`).join('')}
+                            </a>`).join('')}</div>
                     </div>`;
                 }).join('')}
                 ${total ? '' : '<div class="sa-news-empty">暂未取到任何资讯，请稍后刷新重试</div>'}
@@ -458,7 +470,18 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
                     </div>
                     <div class="sa-news-body-holder"><div class="sa-news-loading"><span class="sa-news-loader"></span>正在聚合游戏资讯站…</div></div>
                 </div>`;
-            _overlay.addEventListener('click', (e) => { if (e.target === _overlay) closeWindow(); });
+            _overlay.addEventListener('click', (e) => {
+                if (e.target === _overlay) { closeWindow(); return; }
+                // 来源分组折叠（事件委托：renderBody 重建 innerHTML 后依然有效）
+                const titleBtn = e.target.closest && e.target.closest('.sa-news-src-title');
+                if (titleBtn && _overlay.contains(titleBtn)) {
+                    const group = titleBtn.closest('.sa-news-src');
+                    if (group) {
+                        const collapsed = group.classList.toggle('collapsed');
+                        titleBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                    }
+                }
+            });
             _overlay.querySelector('.sa-news-close').addEventListener('click', closeWindow);
             _overlay.querySelector('.sa-news-refresh').addEventListener('click', () => refreshWindow(true));
             document.body.appendChild(_overlay);

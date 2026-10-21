@@ -1,7 +1,7 @@
 {
   "v": 1,
-  "updatedAt": "2026-10-20T01:30:00Z",
-  "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。",
+  "updatedAt": "2026-10-21T13:05:00Z",
+  "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。2026-10-21 清单瘦身：好友系只保留好友管理器（sfd）与好友动态/社交中心（saf/sac，均由 steam-activity-modern 注册写入），工具系只保留点数商店（points-shop）；移除 friend-days / friend-tools / friend-checker / price-converter / steamdb / cloud-save 六项检测。",
   "registry": {
     "mechanism": "indexedDB",
     "db": "sglv_plugin_host_storage",
@@ -28,7 +28,7 @@
       "IndexedDB 同源全脚本共享 → registerPlugin 写的键对 AI Agent 直接可读",
       "未接入 registerPlugin 的插件：只能靠 detect 信号判断「装没装」，版本显示为「未知」"
     ],
-    "note": "18 个插件全部已接入 registerPlugin（共享宿主 v0.3.0）→ 运行时有精确版本号。detect 段保留作为兜底（万一某插件未注册或注册表被清空，仍能判断「装了没」）。"
+    "note": "12 个插件全部已接入 registerPlugin（共享宿主 v0.3.0）→ 运行时有精确版本号。detect 段保留作为兜底（万一某插件未注册或注册表被清空，仍能判断「装了没」）。"
   },
   "families": {
     "core": {
@@ -37,7 +37,7 @@
     },
     "social": {
       "label": "好友系",
-      "desc": "好友管理器 + 好友监控系列"
+      "desc": "好友管理器 + 好友动态（现代版）"
     },
     "market": {
       "label": "市场系",
@@ -53,7 +53,7 @@
     },
     "utility": {
       "label": "工具系",
-      "desc": "点数商店 / 货币换算 / SteamDB 等"
+      "desc": "点数商店增强"
     },
     "ai": {
       "label": "AI 系",
@@ -228,6 +228,8 @@
       "minVersion": null,
       "required": false,
       "registry": true,
+      "source": "steam-activity/steam-activity-modern-ui/steam-activity-modern.user.js",
+      "note": "数据由 Steam 好友动态现代版（steam-activity-modern）写入：社交中心快照",
       "detect": [
         {
           "type": "idb",
@@ -243,6 +245,8 @@
       "minVersion": null,
       "required": false,
       "registry": true,
+      "source": "steam-activity/steam-activity-modern-ui/steam-activity-modern.user.js",
+      "note": "数据由 Steam 好友动态现代版（steam-activity-modern）写入：好友动态/游戏库/最近游玩/游戏比对",
       "detect": [
         {
           "type": "idb",
@@ -250,66 +254,6 @@
           "store": "kv"
         }
       ]
-    },
-    {
-      "id": "friend-days",
-      "name": "Steam 好友天数增强",
-      "family": "social",
-      "minVersion": "4.2.0",
-      "required": false,
-      "registry": true,
-      "source": "steam-friend-monitor/steam-friend-days-enhancer.user.js",
-      "detect": []
-    },
-    {
-      "id": "friend-tools",
-      "name": "Steam 好友工具合集",
-      "family": "social",
-      "minVersion": "2.0.0",
-      "required": false,
-      "registry": true,
-      "source": "steam-friend-monitor/Steam Friends Tools Merged.user.js",
-      "detect": []
-    },
-    {
-      "id": "friend-checker",
-      "name": "Steam 好友监控 Checker",
-      "family": "social",
-      "minVersion": "1.3.7",
-      "required": false,
-      "registry": true,
-      "source": "steam-friend-monitor/Steam Friends Checker.user.js",
-      "detect": []
-    },
-    {
-      "id": "price-converter",
-      "name": "通用货币转 CNY",
-      "family": "utility",
-      "minVersion": "2.0.0",
-      "required": false,
-      "registry": true,
-      "source": "steam-price-converter/steam-price-converter.user.js",
-      "detect": []
-    },
-    {
-      "id": "steamdb",
-      "name": "SteamDB 免费包排序",
-      "family": "utility",
-      "minVersion": "1.0.3",
-      "required": false,
-      "registry": true,
-      "source": "steamdb-freepackages-enhancer/steamdb-freepackages-sorter.user.js",
-      "detect": []
-    },
-    {
-      "id": "cloud-save",
-      "name": "一键下载 Steam 云存档",
-      "family": "utility",
-      "minVersion": "1.1.1",
-      "required": false,
-      "registry": true,
-      "source": "steam-account-cloud/steam-account-cloud-save.user.js",
-      "detect": []
     }
   ],
   "distribution": {

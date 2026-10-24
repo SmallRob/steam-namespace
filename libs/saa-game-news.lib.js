@@ -1,9 +1,20 @@
 /* =====================================================================
  * Steam AI Agent —— 游戏热点模块（saa-game-news.lib.js）
  * =====================================================================
- * 职责：聚合专业游戏资讯站头条 + 热点浮窗 UI（居中弹窗，入口按钮由宿主面板头部提供）。
+ * 职责：聚合专业游戏资讯站头条 + 热点浮窗 UI（居中弹窗，入口按钮由宿主面板头部提供）
+ *       + **浮窗顶部标题栏右侧的增强搜索框**（v1.3.0 新增）。
+ *
+ * 增强搜索框（v1.3.0）：标题栏右侧输入关键字 → 一次请求产出三组结果，
+ *   以**条目化下拉列表**展示，点条目在浏览器新标签打开原始页面：
+ *   ① 本地热点匹配 —— 零成本，命中已聚合到内存的条目
+ *   ② 网页检索     —— 宿主注入 webSearch（DeepSeek /v1/tools/search），联网拿实时新闻
+ *   ③ AI 速览      —— 宿主注入 chat（模型 API），**以②的检索结果为上下文**做总结并挑页面
+ *                      （把检索结果喂进去，是为了压住模型凭空编造链接）
+ *
  * 设计原则：**与主脚本的 AI Agent 逻辑完全解耦**——本库不引用主脚本任何变量，
  *          只通过 window.SAAGameNews 暴露 API；主脚本侧仅做 loader + 薄工具注册。
+ *          检索能力同样靠注入（setSearchProviders）：宿主不注入时搜索框退化为
+ *          「仅本地匹配」，不报错、不影响其余功能（按能力降级，不整体拒绝挂载）。
  *
  * 导出 API（window.SAAGameNews）：
  *   SOURCES            当前启用的源定义（可运行时增删，便于扩展）
@@ -11,6 +22,10 @@
  *   fetchSource(src)   抓取单个源 → {id,label,items,error}
  *   getDigest(opts)    聚合全部源（带 TTL 缓存 + 并发去重）
  *   clearCache()       清空聚合缓存
+ *   setFetcher(fn)     注入模型侧抓取能力（dsfetch 型源用）
+ *   setSearchProviders(p) 注入检索能力 { webSearch, chat }（标题栏搜索框用）
+ *   search(q, opts)    执行一次增强搜索 → { query, groups[], local[], errors[] }
+ *   runHeaderSearch(q) 跑一次搜索并渲染下拉（UI 层）
  *   mountButton()      [已弃用 v1.1.0] 旧版页面悬浮入口，保留仅为兼容；入口现由宿主面板头部按钮提供
  *   unmountButton()    卸载入口与浮窗
  *   VERSION            库版本
@@ -20,7 +35,7 @@
 (function (root) {
     'use strict';
 
-    const VERSION = '1.2.0';
+    const VERSION = '1.3.0';
     const STORAGE_KEY = 'saa_game_news_sources_v1';   // 用户自定义源（GM 存储键，宿主注入）
 
     const DEFAULTS = {
@@ -30,6 +45,15 @@
         DS_FETCH_TIMEOUT: 45000,
         PER_SOURCE: 8,
         CACHE_MAX_SOURCES: 32,        // 自定义源上限，防刷
+        // ---- v1.3.0 标题栏增强搜索 ----
+        SEARCH_DEBOUNCE_MS: 420,      // 输入防抖（联网检索很贵，别每敲一个字就打一次接口）
+        SEARCH_TOP_N: 10,             // 向下游检索接口要的条数
+        SEARCH_ITEM_LIMIT: 8,         // 下拉列表每组最多展示条数
+        SEARCH_CACHE_TTL: 10 * 60 * 1000, // 同 query 结果缓存 10 分钟（省 Key 额度）
+        SEARCH_CACHE_MAX: 16,         // 缓存条目上限（LRU 近似：超出丢最老的）
+        SEARCH_CTX_MAX: 8,            // 送给模型当上下文的结果条数
+        SEARCH_CTX_CHARS: 400,        // 送给模型时单条摘要裁剪上限
+        SEARCH_AI_CHARS: 1200,        // 模型速览文本展示上限
     };
 
     /* ---------------- 源注册表 ---------------- */
@@ -281,6 +305,524 @@
     }
     function clearCache() { _cache = null; _srcCache.clear(); }
 
+    /* ============================================================
+     *  v1.3.0 增强搜索：浮窗顶部标题栏右侧的搜索框
+     * ============================================================
+     * 与主脚本依旧完全解耦：宿主通过 setSearchProviders 注入两种能力——
+     *   webSearch(query, { topN }) → { ok, items:[{title,url,site,date,summary}], error? }
+     *   chat(prompt, { query })     → { ok, text, error? }
+     * 两者都可缺省：缺 webSearch → 本地匹配 + 模型解读；缺 chat → 本地匹配 + 网页检索。
+     * 宿主两种都不注入 → 搜索框只匹配本地热点，不报错。
+     *
+     * 产出三组结果（渐进渲染，先出快的后出慢的）：
+     *   local 本地热点匹配 → 0ms      （命中已聚合的内存数据）
+     *   web   网页检索      → ~1~3s   （联网，拿实时新闻/页面）
+     *   ai    AI 速览       → ~3~8s   （模型读检索结果做总结 + 挑页面）
+     */
+
+    let _searchProviders = { webSearch: null, chat: null };
+    let _searchCache = new Map();   // query → { at, result }（10 分钟，省 Key 额度）
+    let _searchSeq = 0;             // 竞态守卫：只渲染最后一次请求
+    let _searchTimer = null;
+    let _lastBundle = null;         // 最近一次聚合结果（本地匹配用）
+
+    let _searchAnchor = null;       // .sa-news-hs（下拉的定位上下文）
+    let _searchInput = null;
+    let _searchClear = null;
+    let _searchDrop = null;
+    let _searchActiveIdx = -1;      // 键盘上下键选中的条目下标
+    let _searchOutsideBound = false;
+
+    const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+
+    /** 注入检索能力（宿主调用）。p = { webSearch, chat }，均可缺省 */
+    function setSearchProviders(p) {
+        _searchProviders = Object.assign({}, _searchProviders, p || {});
+    }
+
+    /* ---------------- 小工具 ---------------- */
+    /** 只放行 http/https —— 模型输出 / 外部数据里的 javascript: 等一律丢弃 */
+    function safeHttpUrl(u) {
+        const s = String(u == null ? '' : u).trim();
+        if (!s) return '';
+        let p;
+        try { p = new URL(s); } catch { return ''; }
+        return (p.protocol === 'http:' || p.protocol === 'https:') ? p.href : '';
+    }
+
+    /** 在浏览器新标签打开原始页面（弹窗被拦时用隐藏 a 标签兜底） */
+    function openExternal(url) {
+        const href = safeHttpUrl(url);
+        if (!href) return false;
+        try {
+            if (typeof window !== 'undefined' && typeof window.open === 'function') {
+                const w = window.open(href, '_blank', 'noopener,noreferrer');
+                if (w) { try { w.opener = null; } catch (e) { /* ignore */ } return true; }
+            }
+        } catch (e) { /* ignore */ }
+        try {
+            const a = document.createElement('a');
+            a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { if (a.parentNode) a.parentNode.removeChild(a); }, 0);
+            return true;
+        } catch (e) { return false; }
+    }
+
+    function _tryJson(s) { try { return JSON.parse(s); } catch { return null; } }
+
+    /** 补齐被截断的 JSON（括号计数 + 字符串态识别） */
+    function _salvageJson(s) {
+        const stack = [];
+        let inStr = false, escaped = false;
+        for (const ch of String(s)) {
+            if (escaped) { escaped = false; continue; }
+            if (ch === '\\') { escaped = true; continue; }
+            if (ch === '"') { inStr = !inStr; continue; }
+            if (inStr) continue;
+            if (ch === '{' || ch === '[') stack.push(ch);
+            else if (ch === '}' || ch === ']') stack.pop();
+        }
+        let out = inStr ? s + '"' : s;
+        out = out.replace(/,\s*$/, '');
+        while (stack.length) out += stack.pop() === '{' ? '}' : ']';
+        return out;
+    }
+
+    /** 从模型自由文本里抠出 JSON（容忍代码围栏 / 前后解释 / 被截断） */
+    function extractJson(text) {
+        const raw = String(text == null ? '' : text).trim();
+        if (!raw) return null;
+        const s = raw.replace(/^```(?:json|JSON)?\s*/i, '').replace(/\s*```\s*$/, '');
+        let obj = _tryJson(s);
+        if (obj && typeof obj === 'object') return obj;
+        const i = s.indexOf('{'), j = s.lastIndexOf('}');
+        if (i >= 0 && j > i) {
+            obj = _tryJson(s.slice(i, j + 1)) || _tryJson(_salvageJson(s.slice(i, j + 1)));
+            if (obj && typeof obj === 'object') return obj;
+        }
+        if (i >= 0) {
+            obj = _tryJson(_salvageJson(s.slice(i)));
+            if (obj && typeof obj === 'object') return obj;
+        }
+        return null;
+    }
+
+    /** 关键字切分（与 saa-search.lib.js 同一套语义：空格/逗号分隔，需全部命中） */
+    function splitQuery(q) {
+        return String(q || '').toLowerCase().split(/[\s,，、]+/).map(s => s.trim()).filter(Boolean);
+    }
+    function matchTokens(text, tokens) {
+        const t = String(text == null ? '' : text).toLowerCase();
+        if (!tokens.length) return true;
+        for (const tok of tokens) if (t.indexOf(tok) < 0) return false;
+        return true;
+    }
+
+    /** 本地热点匹配：命中的条目已经聚合在内存里，零成本、零请求 */
+    function matchLocal(query) {
+        const tokens = splitQuery(query);
+        if (!tokens.length || !_lastBundle) return [];
+        const out = [];
+        for (const s of (_lastBundle.sources || [])) {
+            for (const it of (s.items || [])) {
+                if (!it || !it.title) continue;
+                if (!matchTokens(`${it.title} ${it.summary || ''}`, tokens)) continue;
+                const url = safeHttpUrl(it.url);
+                if (!url) continue;
+                out.push({
+                    title: it.title,
+                    url,
+                    site: s.label || '',
+                    date: it.date || '',
+                    summary: it.summary || '',
+                });
+                if (out.length >= DEFAULTS.SEARCH_ITEM_LIMIT) return out;
+            }
+        }
+        return out;
+    }
+
+    /** 统一条目清洗：去重 + 只留 http(s) + 用上下文补齐站点/日期/摘要 */
+    function normalizeItems(list, ctxItems) {
+        const out = [];
+        const seen = new Set();
+        for (const it of (list || [])) {
+            if (!it || typeof it !== 'object') continue;
+            const url = safeHttpUrl(it.url || it.link || it.href || '');
+            const title = String(it.title || it.name || '').replace(/\s+/g, ' ').trim();
+            if (!url || !title || seen.has(url)) continue;
+            seen.add(url);
+            let site = String(it.site || it.site_name || '').trim();
+            let date = String(it.date || '').trim();
+            let summary = String(it.summary || it.snippet || it.content || '').replace(/\s+/g, ' ').trim();
+            if (ctxItems && ctxItems.length) {
+                for (const c of ctxItems) {
+                    if (c && c.url === url) {
+                        if (!site) site = c.site || '';
+                        if (!date) date = c.date || '';
+                        if (!summary) summary = c.summary || '';
+                        break;
+                    }
+                }
+            }
+            out.push({ title, url, site, date, summary });
+        }
+        return out;
+    }
+
+    /** 给模型的提示词：把检索结果当上下文，压住模型编造链接 */
+    function buildSearchPrompt(query, ctxItems) {
+        const lines = [];
+        for (let i = 0; i < (ctxItems || []).length; i++) {
+            const it = ctxItems[i];
+            lines.push(`[${i + 1}] ${it.title || '(无标题)'}`);
+            lines.push(`    来源：${it.site || '未知'}｜日期：${it.date || '未知'}`);
+            lines.push(`    链接：${it.url || ''}`);
+            const sum = String(it.summary || '').replace(/\s+/g, ' ').trim().slice(0, DEFAULTS.SEARCH_CTX_CHARS);
+            if (sum) lines.push(`    摘要：${sum}`);
+        }
+        return [
+            '你是游戏资讯检索助手。请依据下方「网页检索结果」回答用户查询。',
+            '',
+            `用户查询：${query}`,
+            '',
+            '网页检索结果：',
+            lines.length ? lines.join('\n') : '（本次没有检索到任何网页结果）',
+            '',
+            '输出要求：',
+            '1. 只输出一个 JSON 对象，不要任何解释文字，不要用代码围栏包裹。',
+            '2. answer：中文总结，3~6 句，直接回答查询；结果不足以回答时写明「未找到足够信息」。',
+            '3. items：从上面结果里挑出与查询最相关的 0~5 条；url 必须原样复制，不可编造或改写。',
+            '4. title 可以改写得更易读；summary 一句话；site / date 沿用原值。',
+            '',
+            '格式：{"answer":"...","items":[{"title":"...","url":"...","site":"...","date":"...","summary":"..."}]}',
+        ].join('\n');
+    }
+
+    /** 解析模型输出 → { answer, items }（JSON 失败就整段当答案，并从文本里刮链接） */
+    function parseModelResult(text, ctxItems) {
+        const raw = String(text || '').trim();
+        if (!raw) return null;
+        const obj = extractJson(raw);
+        let answer = '';
+        let rawItems = [];
+        if (obj && typeof obj === 'object') {
+            answer = String(obj.answer || obj.summary || obj.text || '');
+            rawItems = Array.isArray(obj.items) ? obj.items
+                : (Array.isArray(obj.results) ? obj.results : (Array.isArray(obj.links) ? obj.links : []));
+        }
+        if (!answer && !rawItems.length) answer = raw;   // 不是 JSON → 整段当速览
+        let items = normalizeItems(rawItems, ctxItems);
+        if (!items.length && !obj) {
+            // 非 JSON 输出：从自由文本里刮出链接，至少还能点开原文
+            const urls = raw.match(/https?:\/\/[^\s<>"'）)，。、]+/g) || [];
+            items = normalizeItems(urls.map(u => ({ title: u, url: u })), ctxItems);
+        }
+        answer = answer.replace(/\s+$/, '');
+        if (!answer && !items.length) return null;
+        return {
+            key: 'ai', type: 'ai', title: 'AI 速览',
+            answer: answer.slice(0, DEFAULTS.SEARCH_AI_CHARS),
+            items,
+        };
+    }
+
+    /* ---------------- 搜索执行 ---------------- */
+    /**
+     * 执行一次增强搜索。
+     * @param {string} q  查询词
+     * @param {object} opts { force, onStage(stage, partial) }
+     *   onStage 会在 local / web / ai / done 四个阶段回调，实现渐进渲染。
+     * @returns {Promise<{query,groups,local,errors,cached,at}>}
+     */
+    async function search(q, opts) {
+        opts = opts || {};
+        const query = String(q || '').trim();
+        const out = { query, groups: [], local: [], errors: [], cached: false, at: Date.now() };
+        if (!query) return out;
+
+        // 同 query 命中 10 分钟缓存（省 Key 额度，也避免重复检索同一问题）
+        const ck = query.toLowerCase().replace(/\s+/g, ' ').trim();
+        const hit = _searchCache.get(ck);
+        if (!opts.force && hit && (Date.now() - hit.at) < DEFAULTS.SEARCH_CACHE_TTL) {
+            out.groups = hit.result.groups;
+            out.errors = hit.result.errors;
+            out.cached = true;
+            out.at = hit.at;
+            // 本地匹配零成本，每次都重算（不受缓存影响：热点列表可能刚刷新过）
+            out.local = matchLocal(query);
+            if (opts.onStage) opts.onStage('done', out);
+            return out;
+        }
+
+        const hasWeb = typeof _searchProviders.webSearch === 'function';
+        const hasChat = typeof _searchProviders.chat === 'function';
+
+        // ① 本地热点匹配（零成本，先出结果）
+        out.local = matchLocal(query);
+        if (opts.onStage) opts.onStage('local', out);
+
+        if (!hasWeb && !hasChat) {
+            out.errors.push('当前宿主未注入检索能力（webSearch / 模型接口）——仅可匹配本地热点');
+            if (opts.onStage) opts.onStage('done', out);
+            return out;
+        }
+
+        // ② 联网检索
+        let webItems = [];
+        if (hasWeb) {
+            try {
+                const r = await _searchProviders.webSearch(query, { topN: DEFAULTS.SEARCH_TOP_N });
+                if (!r || r.ok === false) {
+                    out.errors.push(String((r && r.error) || '联网检索失败'));
+                } else {
+                    webItems = normalizeItems((r && r.items) || []);
+                    if (webItems.length) {
+                        out.groups.push({ key: 'web', type: 'web', title: '网页检索', items: webItems });
+                    }
+                }
+            } catch (e) {
+                out.errors.push(String((e && e.message) || e));
+            }
+            if (opts.onStage) opts.onStage('web', out);
+        }
+
+        // ③ 模型解读（以②的检索结果为上下文）
+        if (hasChat) {
+            try {
+                const prompt = buildSearchPrompt(query, webItems.slice(0, DEFAULTS.SEARCH_CTX_MAX));
+                const r = await _searchProviders.chat(prompt, { query, stage: 'model' });
+                if (!r || r.ok === false) {
+                    out.errors.push(String((r && r.error) || '模型解读失败'));
+                } else {
+                    const ai = parseModelResult(r.text || r.content || '', webItems);
+                    if (ai) out.groups.push(ai);
+                }
+            } catch (e) {
+                out.errors.push(String((e && e.message) || e));
+            }
+            if (opts.onStage) opts.onStage('ai', out);
+        }
+
+        // 只缓存「没有报错」的结果，避免把一次偶发失败缓存住 10 分钟
+        if (out.groups.length && !out.errors.length) {
+            if (_searchCache.size >= DEFAULTS.SEARCH_CACHE_MAX && !_searchCache.has(ck)) {
+                const oldest = _searchCache.keys().next().value;
+                if (oldest !== undefined) _searchCache.delete(oldest);
+            }
+            _searchCache.set(ck, { at: Date.now(), result: { groups: out.groups, local: out.local, errors: out.errors } });
+        }
+        if (opts.onStage) opts.onStage('done', out);
+        return out;
+    }
+
+    /* ---------------- 下拉渲染 ---------------- */
+    /** 把速览正文里的裸 URL 变成可点链接（先转义再匹配，链接本身已是安全 HTML） */
+    function linkify(text) {
+        const t = esc(text);
+        return t.replace(/https?:\/\/[^\s<>"'）)，。、]+/g, (m) => {
+            const tail = m.match(/[.,;:!?。，、）]+$/);
+            const core = tail ? m.slice(0, m.length - tail[0].length) : m;
+            if (!core || !/^https?:\/\//i.test(core)) return m;
+            return `<a href="${core}" target="_blank" rel="noopener noreferrer">${core}</a>${tail ? tail[0] : ''}`;
+        });
+    }
+
+    function searchItemHtml(it, idx) {
+        const url = safeHttpUrl(it.url);
+        const meta = [];
+        if (it.site) meta.push(`<span class="sa-news-sr-site">${esc(it.site)}</span>`);
+        if (it.date) meta.push(`<span>${esc(it.date)}</span>`);
+        const inner = `
+            <span class="sa-news-sr-idx">${idx}</span>
+            <span class="sa-news-sr-main">
+                <span class="sa-news-sr-title">${esc(it.title)}</span>
+                ${meta.length ? `<span class="sa-news-sr-meta">${meta.join('')}</span>` : ''}
+                ${it.summary ? `<span class="sa-news-sr-sum">${esc(it.summary)}</span>` : ''}
+            </span>
+            <span class="sa-news-sr-go" aria-hidden="true">↗</span>`;
+        if (!url) return `<div class="sa-news-sr-item is-nourl">${inner}</div>`;
+        return `<a class="sa-news-sr-item" href="${esc(url)}" target="_blank" rel="noopener noreferrer"`
+            + ` data-sa-news-url="${esc(url)}" title="${esc(it.title)}">${inner}</a>`;
+    }
+
+    function searchGroupHtml(g) {
+        const head = `<div class="sa-news-sr-gh"><span class="sa-news-sr-gt">${esc(g.title)}</span>`
+            + `<span class="sa-news-sr-gn">${g.items.length} 条</span></div>`;
+        let body = '';
+        if (g.type === 'ai' && g.answer) body += `<div class="sa-news-sr-ai">${linkify(g.answer)}</div>`;
+        if (g.items.length) {
+            body += `<div class="sa-news-sr-gi">${g.items.map((it, i) => searchItemHtml(it, i + 1)).join('')}</div>`;
+        }
+        return `<div class="sa-news-sr-g">${head}${body}</div>`;
+    }
+
+    function renderSearchDrop(st) {
+        if (!_searchDrop) return;
+        const parts = [];
+        if (st.status === 'loading') {
+            parts.push(`<div class="sa-news-sr-status"><span class="sa-news-sr-spin"></span>正在检索「${esc(st.query)}」…</div>`);
+        }
+        if (st.errors && st.errors.length) {
+            parts.push(`<div class="sa-news-sr-status sa-news-sr-err">${st.errors.map(e => esc(e)).join('<br>')}</div>`);
+        }
+        if (st.local && st.local.length) {
+            parts.push(searchGroupHtml({ type: 'local', title: '本地热点匹配', items: st.local }));
+        }
+        for (const g of (st.groups || [])) parts.push(searchGroupHtml(g));
+
+        const total = (st.local || []).length
+            + (st.groups || []).reduce((a, g) => a + (g.items ? g.items.length : 0), 0);
+        if (st.status === 'ready') {
+            if (!total && !(st.errors || []).length) {
+                parts.push(`<div class="sa-news-sr-status">未找到与「${esc(st.query)}」相关的结果</div>`);
+            } else if (total) {
+                parts.push(`<div class="sa-news-sr-note">共 ${total} 条 · 点条目在浏览器新标签打开原文`
+                    + `${st.cached ? ' · 命中 10 分钟缓存' : ''}</div>`);
+            }
+        }
+        _searchDrop.innerHTML = parts.join('');
+        _searchDrop.classList.add('sa-show');
+        _searchActiveIdx = -1;
+    }
+
+    function closeSearchDrop() {
+        if (_searchDrop) _searchDrop.classList.remove('sa-show');
+        _searchActiveIdx = -1;
+    }
+
+    /** 跑一次搜索并渲染下拉（渐进渲染：先本地、再网页检索、最后 AI 速览） */
+    async function runHeaderSearch(q, opts) {
+        opts = opts || {};
+        const query = String(q || '').trim();
+        if (!query) { closeSearchDrop(); return null; }
+        const seq = ++_searchSeq;
+        const paint = (st) => { if (seq === _searchSeq) renderSearchDrop(st); };
+        paint({ status: 'loading', query, groups: [], local: [], errors: [] });
+        const res = await search(query, {
+            force: opts.force === true,
+            onStage: (stage, partial) => {
+                if (seq !== _searchSeq) return;
+                paint({
+                    status: stage === 'done' ? 'ready' : 'loading',
+                    query,
+                    groups: partial.groups,
+                    local: partial.local,
+                    errors: partial.errors,
+                    cached: partial.cached,
+                });
+            },
+        });
+        if (seq !== _searchSeq) return res;
+        paint({ status: 'ready', query, groups: res.groups, local: res.local, errors: res.errors, cached: res.cached });
+        return res;
+    }
+
+    /* ---------------- 下拉交互 ---------------- */
+    function searchDropItems() {
+        if (!_searchDrop || typeof _searchDrop.querySelectorAll !== 'function') return [];
+        return Array.prototype.slice.call(_searchDrop.querySelectorAll('a[data-sa-news-url]'));
+    }
+
+    function setActiveSearchItem(idx) {
+        const items = searchDropItems();
+        if (!items.length) { _searchActiveIdx = -1; return; }
+        let i = idx;
+        if (i < 0) i = items.length - 1;
+        if (i >= items.length) i = 0;
+        for (let k = 0; k < items.length; k++) {
+            if (items[k].classList && items[k].classList.remove) items[k].classList.remove('is-active');
+        }
+        _searchActiveIdx = i;
+        const el = items[i];
+        if (el && el.classList && el.classList.add) el.classList.add('is-active');
+        try { if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ }
+    }
+
+    function onSearchDropClick(e) {
+        const t = e && e.target;
+        const a = t && t.closest ? t.closest('a[data-sa-news-url]') : null;
+        if (!a) return;
+        const url = safeHttpUrl(a.getAttribute('data-sa-news-url'));
+        if (!url) { e.preventDefault(); return; }
+        e.preventDefault();          // 自己开，避免被 Steam 页面的点击拦截吞掉
+        openExternal(url);
+        closeSearchDrop();
+    }
+
+    function onSearchKeydown(e) {
+        if (!e) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); setActiveSearchItem(_searchActiveIdx + 1); return; }
+        if (e.key === 'ArrowUp') { e.preventDefault(); setActiveSearchItem(_searchActiveIdx - 1); return; }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            clearTimeout(_searchTimer);
+            const items = searchDropItems();
+            if (_searchActiveIdx >= 0 && items[_searchActiveIdx]) {
+                const url = safeHttpUrl(items[_searchActiveIdx].getAttribute('data-sa-news-url'));
+                if (url) { openExternal(url); closeSearchDrop(); return; }
+            }
+            runHeaderSearch(_searchInput ? _searchInput.value : '');
+            return;
+        }
+        if (e.key === 'Escape') {
+            // document 捕获阶段的 Esc 处理会先跑（先关下拉，别把浮窗也关了）；这里只是兜底
+            e.stopPropagation();
+            closeSearchDrop();
+        }
+    }
+
+    /** 点浮窗外部关下拉（捕获阶段，绑一次即可） */
+    function bindSearchOutside() {
+        if (_searchOutsideBound || typeof document === 'undefined') return;
+        _searchOutsideBound = true;
+        document.addEventListener('click', (e) => {
+            if (!_searchDrop || !_searchDrop.classList.contains('sa-show')) return;
+            const t = e && e.target;
+            if (_searchAnchor && t && _searchAnchor.contains && _searchAnchor.contains(t)) return;
+            closeSearchDrop();
+        }, true);
+    }
+
+    /** 把标题栏搜索框接到浮窗骨架上（openWindow 建遮罩时调用一次） */
+    function bindSearchBox(overlay) {
+        if (!overlay) return;
+        _searchAnchor = overlay.querySelector('.sa-news-hs');
+        _searchInput = overlay.querySelector('.sa-news-hs-input');
+        _searchClear = overlay.querySelector('.sa-news-hs-clear');
+        _searchDrop = overlay.querySelector('.sa-news-hs-drop');
+        if (_searchInput) {
+            _searchInput.addEventListener('input', () => {
+                const v = _searchInput.value;
+                const box = _searchInput.parentNode;
+                if (box && box.classList && box.classList.toggle) {
+                    box.classList.toggle('has-value', !!String(v).trim());
+                }
+                clearTimeout(_searchTimer);
+                if (!String(v).trim()) { closeSearchDrop(); return; }
+                _searchTimer = setTimeout(() => runHeaderSearch(v), DEFAULTS.SEARCH_DEBOUNCE_MS);
+            });
+            _searchInput.addEventListener('keydown', onSearchKeydown);
+        }
+        if (_searchClear) {
+            _searchClear.addEventListener('click', () => {
+                if (_searchInput) {
+                    _searchInput.value = '';
+                    _searchInput.focus();
+                    const box = _searchInput.parentNode;
+                    if (box && box.classList && box.classList.remove) box.classList.remove('has-value');
+                }
+                clearTimeout(_searchTimer);
+                closeSearchDrop();
+            });
+        }
+        if (_searchDrop) _searchDrop.addEventListener('click', onSearchDropClick);
+        bindSearchOutside();
+    }
+
     /* ---------------- 浮窗 UI ---------------- */
     // 滚动链要点：overlay(遮罩,居中) → modal(flex column,定高) → body-holder(flex:1,min-height:0)
     //   → body(flex:1,min-height:0,overflow-y:auto)。
@@ -379,10 +921,80 @@ padding:40px 16px;text-align:center;color:#64748b;font-size:12.5px}
 .sa-news-loading .sa-news-loader{width:26px;height:26px;border-radius:50%;
 border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-news-spin .8s linear infinite}
 
+/* ---- 顶部标题栏右侧：增强搜索框 ---- */
+.sa-news-hs{position:relative;flex-shrink:0;width:clamp(168px,24vw,288px)}
+.sa-news-hs-box{display:flex;align-items:center;gap:6px;height:32px;padding:0 7px 0 10px;border-radius:16px;
+background:rgba(15,23,42,.62)!important;border:1px solid rgba(139,92,246,.26);
+transition:border-color .15s ease,box-shadow .15s ease,background .15s ease}
+.sa-news-hs-box:focus-within{border-color:rgba(139,92,246,.75);box-shadow:0 0 0 3px rgba(139,92,246,.14);background:rgba(15,23,42,.88)!important}
+.sa-news-hs-ic{display:flex;align-items:center;color:#7c8aa5;flex-shrink:0;transition:color .15s ease}
+.sa-news-hs-box:focus-within .sa-news-hs-ic{color:#a78bfa}
+.sa-news-hs-ic svg{width:13px!important;height:13px!important;pointer-events:none}
+.sa-news-hs-input{flex:1;min-width:0;height:100%;border:none!important;outline:none!important;background:transparent!important;
+color:#e2e8f0!important;font-size:12px!important;line-height:1;padding:0!important;margin:0!important;
+box-shadow:none!important;font-family:inherit!important;appearance:none!important;-webkit-appearance:none!important}
+.sa-news-hs-input::placeholder{color:#5b6b85!important;opacity:1}
+.sa-news-hs-input::-webkit-search-cancel-button,.sa-news-hs-input::-webkit-search-decoration{display:none!important}
+.sa-news-hs-clear{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+background:rgba(148,163,184,.14);border:none!important;color:#94a3b8;cursor:pointer;padding:0;opacity:0;pointer-events:none;
+transition:opacity .15s ease,background .15s ease,color .15s ease}
+.sa-news-hs-box.has-value .sa-news-hs-clear{opacity:1;pointer-events:auto}
+.sa-news-hs-clear:hover{background:rgba(248,113,113,.2)!important;color:#f87171!important}
+.sa-news-hs-clear svg{width:9px!important;height:9px!important;pointer-events:none}
+
+/* ---- 检索下拉面板 ---- */
+.sa-news-hs-drop{position:absolute;top:calc(100% + 8px);right:0;width:min(470px,calc(100vw - 40px));
+max-height:min(460px,54vh);overflow-y:auto;overscroll-behavior:contain;display:none;z-index:40;
+background:#0c1425!important;border:1px solid rgba(139,92,246,.3);border-radius:12px;
+box-shadow:0 20px 52px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35)!important;
+scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.35) transparent}
+.sa-news-hs-drop.sa-show{display:block;animation:sa-news-drop .14s cubic-bezier(.16,1,.3,1)}
+@keyframes sa-news-drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sa-news-hs-drop::-webkit-scrollbar{width:6px}
+.sa-news-hs-drop::-webkit-scrollbar-track{background:transparent}
+.sa-news-hs-drop::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:3px}
+.sa-news-hs-drop::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,.5)}
+
+/* ---- 下拉里的分组 / 条目 ---- */
+.sa-news-sr-g{border-bottom:1px solid rgba(148,163,184,.08)}
+.sa-news-sr-g:last-child{border-bottom:none}
+.sa-news-sr-gh{display:flex;align-items:center;gap:7px;padding:6px 10px;font-size:10.5px;font-weight:700;color:#a78bfa;
+letter-spacing:.3px;background:rgba(139,92,246,.09)}
+.sa-news-sr-gt{display:flex;align-items:center;gap:6px}
+.sa-news-sr-gt::before{content:'';width:3px;height:11px;border-radius:2px;background:linear-gradient(180deg,#8b5cf6,#3b82f6);flex-shrink:0}
+.sa-news-sr-gn{margin-left:auto;font-size:9.5px;font-weight:600;color:#94a3b8;padding:1px 7px;border-radius:9px;background:rgba(148,163,184,.14)}
+.sa-news-sr-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;text-decoration:none!important;color:#cbd5e1;
+border-bottom:1px solid rgba(148,163,184,.06);transition:background .12s ease,color .12s ease}
+.sa-news-sr-item:last-child{border-bottom:none}
+.sa-news-sr-item:hover,.sa-news-sr-item.is-active{background:rgba(139,92,246,.13);color:#f1f5f9}
+.sa-news-sr-idx{flex-shrink:0;width:17px;height:17px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+font-size:9.5px;font-weight:700;color:#94a3b8;background:rgba(148,163,184,.12);margin-top:1px}
+.sa-news-sr-main{flex:1;min-width:0}
+.sa-news-sr-title{display:block;font-size:12px;font-weight:600;color:inherit;line-height:1.45;
+white-space:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sa-news-sr-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:#64748b;margin-top:3px}
+.sa-news-sr-site{color:#7c8aa5}
+.sa-news-sr-sum{display:block;font-size:10.5px;color:#64748b;margin-top:3px;line-height:1.5;
+white-space:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sa-news-sr-go{flex-shrink:0;font-size:11px;color:#64748b;opacity:0;transition:opacity .12s ease;margin-top:2px}
+.sa-news-sr-item:hover .sa-news-sr-go,.sa-news-sr-item.is-active .sa-news-sr-go{opacity:1;color:#a78bfa}
+.sa-news-sr-ai{padding:9px 10px;font-size:11.5px;line-height:1.65;color:#cbd5e1;white-space:pre-wrap;word-break:break-word;
+background:rgba(139,92,246,.07)}
+.sa-news-sr-ai a{color:#a78bfa;text-decoration:none}
+.sa-news-sr-ai a:hover{text-decoration:underline}
+.sa-news-sr-note{padding:7px 10px;font-size:10px;color:#64748b;background:rgba(2,6,23,.5)}
+.sa-news-sr-status{display:flex;align-items:center;gap:8px;padding:12px 10px;font-size:11.5px;color:#94a3b8;line-height:1.6}
+.sa-news-sr-err{color:#fca5a5}
+.sa-news-sr-spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;
+animation:sa-news-spin .8s linear infinite;flex-shrink:0}
+
 /* ---- 窄屏：全屏化 ---- */
 @media (max-width:640px){
 .sa-news-overlay{padding:0}
 .sa-news-modal{width:100%;height:100%;max-height:none;border-radius:0;border:none}
+.sa-news-head{flex-wrap:wrap}
+.sa-news-hs{order:10;flex:1 0 100%;width:auto;margin-top:9px}
+.sa-news-hs-drop{width:100%;max-height:min(420px,46vh)}
 }
 `;
 
@@ -446,6 +1058,8 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
         if (force && refreshBtn) refreshBtn.classList.add('is-loading');
         try {
             const bundle = await getDigest({ force });
+            // 记下最近一次聚合结果 —— 标题栏搜索框的「本地热点匹配」用得到
+            _lastBundle = bundle;
             if (!_overlay || !_overlay.classList.contains('sa-show')) return;
             renderBody(holder, bundle);
             if (_btn && !force) { const dot = _btn.querySelector('.sa-news-dot'); if (dot) dot.style.display = 'none'; }
@@ -465,6 +1079,14 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
                     <div class="sa-news-head">
                         <div class="sa-news-head-badge">${ICON_GLOBE}</div>
                         <div class="sa-news-head-title">游戏热点<small>${esc(getSources().map(s => s.label).join(' / '))}</small></div>
+                        <div class="sa-news-hs">
+                            <div class="sa-news-hs-box">
+                                <span class="sa-news-hs-ic">${ICON_SEARCH}</span>
+                                <input class="sa-news-hs-input" type="search" placeholder="搜索游戏新闻 / 网页…" autocomplete="off" spellcheck="false" aria-label="搜索游戏新闻与网页">
+                                <button class="sa-news-hs-clear" type="button" title="清空" aria-label="清空">${ICON_CLOSE}</button>
+                            </div>
+                            <div class="sa-news-hs-drop" role="listbox" aria-label="搜索结果"></div>
+                        </div>
                         <button class="sa-news-refresh" title="跳过 30 分钟缓存，强制重新抓取">${ICON_REFRESH} 刷新</button>
                         <button class="sa-news-close" title="关闭 (Esc)">${ICON_CLOSE}</button>
                     </div>
@@ -484,6 +1106,8 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
             });
             _overlay.querySelector('.sa-news-close').addEventListener('click', closeWindow);
             _overlay.querySelector('.sa-news-refresh').addEventListener('click', () => refreshWindow(true));
+            // v1.3.0：标题栏右侧增强搜索框（联网检索 + 模型速览 + 本地匹配）
+            bindSearchBox(_overlay);
             document.body.appendChild(_overlay);
         }
         _overlay.classList.add('sa-show');
@@ -509,6 +1133,9 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
         if (_btn && _btn.parentNode) _btn.parentNode.removeChild(_btn);
         if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
         _btn = null; _overlay = null;
+        // 搜索框的 DOM 随遮罩一起被移除，这里同步断开引用，避免下次重建时用到旧节点
+        _searchAnchor = null; _searchInput = null; _searchClear = null; _searchDrop = null;
+        _searchActiveIdx = -1;
     }
 
     // Esc 关闭（捕获阶段，先于页面自身处理，且只在浮窗可见时拦截）
@@ -516,7 +1143,15 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
         if (typeof document === 'undefined' || bindEsc._done) return;
         bindEsc._done = true;
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && _overlay && _overlay.classList.contains('sa-show')) closeWindow();
+            if (e.key !== 'Escape' || !_overlay || !_overlay.classList.contains('sa-show')) return;
+            // v1.3.0：检索下拉开着时，Esc 只关下拉（否则在搜索框里按 Esc 会把整个浮窗也关掉）
+            if (_searchDrop && _searchDrop.classList.contains('sa-show')) {
+                closeSearchDrop();
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+            closeWindow();
         }, true);
     }
 
@@ -537,6 +1172,19 @@ border:2.5px solid rgba(139,92,246,.2);border-top-color:#8b5cf6;animation:sa-new
         sortChineseFirst,
         setFetcher,
         srcTtl,
+        // ---- v1.3.0 增强搜索 ----
+        setSearchProviders,
+        get searchProviders() { return Object.assign({}, _searchProviders); },
+        search,
+        runHeaderSearch,
+        matchLocal,
+        normalizeItems,
+        buildSearchPrompt,
+        parseModelResult,
+        extractJson,
+        safeHttpUrl,
+        openExternal,
+        clearSearchCache() { _searchCache.clear(); },
         CSS,
         mountButton,
         unmountButton,

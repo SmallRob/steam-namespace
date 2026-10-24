@@ -26,12 +26,17 @@
  *   unmount()        卸载浮窗与样式
  *   CSS              样式表文本
  *
+ * 数据源契约（v1.1.0 扩展，向后兼容）：
+ *   getLibrary() 可返回数组，也可返回 { games:[...], note:'...' }
+ *   getNews()    可返回数组，也可返回 { items:[...], note:'...' }
+ *   note 会在对应分组上方渲染成一行提示（用于声明数据来源/新鲜度，如「跨域镜像」）。
+ *
  * 依赖：仅需宿主提供 GM_xmlhttpRequest（同沙箱）+ 注入的数据源函数。
  * ===================================================================== */
 (function (root) {
     'use strict';
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
 
     const DEFAULTS = {
         LIB_LIMIT: 50,          // 游戏库最多扫描条数（内存过滤，防大库卡顿）
@@ -125,6 +130,9 @@
 .sa-search-group-head{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#94a3b8;
   letter-spacing:.4px;margin-bottom:7px;text-transform:uppercase;}
 .sa-search-group-head .sa-search-count{font-size:10px;font-weight:600;color:#64748b;margin-left:auto;text-transform:none;letter-spacing:0;}
+/* v1.1.0 分组级提示：数据来源 / 新鲜度声明（如「跨域镜像 · 快照 2 天前」） */
+.sa-search-note{font-size:10px;color:#8fa3bf;line-height:1.5;padding:5px 10px;margin-bottom:5px;border-radius:7px;
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18);}
 .sa-search-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;
   background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);margin-bottom:5px;
   transition:background .15s,border-color .15s;}
@@ -278,6 +286,7 @@
         if (libItems.length) {
             parts.push(`<div class="sa-search-group">
                 <div class="sa-search-group-head">我的游戏库<span class="sa-search-count">${libItems.length} / ${lib.total || libItems.length}</span></div>
+                ${lib.note ? `<div class="sa-search-note">${escapeHtml(lib.note)}</div>` : ''}
                 ${libItems.map((it) => itemRow(it, 'library')).join('')}
             </div>`);
         }
@@ -285,6 +294,7 @@
         if (newsItems.length) {
             parts.push(`<div class="sa-search-group">
                 <div class="sa-search-group-head">新闻热点<span class="sa-search-count">${newsItems.length} / ${news.total || newsItems.length}</span></div>
+                ${news.note ? `<div class="sa-search-note">${escapeHtml(news.note)}</div>` : ''}
                 ${newsItems.map((it) => itemRow(it, 'news')).join('')}
             </div>`);
         }
@@ -301,16 +311,19 @@
     async function search(q, opts) {
         const query = String(q || '').trim();
         const tokens = splitQuery(query);
-        const out = { library: { items: [], total: 0, error: '' }, news: { items: [], total: 0, error: '' } };
+        const out = { library: { items: [], total: 0, error: '', note: '' }, news: { items: [], total: 0, error: '', note: '' } };
         if (!tokens.length) return out;
 
         // ① 我的游戏库
         if (typeof _providers.getLibrary === 'function') {
             try {
                 const raw = await _providers.getLibrary();
+                // v1.1.0：数据源可返回 { games:[...], note } （note 用于声明来源/新鲜度）
                 const arr = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.games) ? raw.games : []);
+                const note = (!Array.isArray(raw) && raw && raw.note) ? String(raw.note) : '';
                 const hits = arr.filter((g) => g && matchTokens(g.name, tokens)).slice(0, DEFAULTS.LIB_LIMIT);
                 out.library.total = hits.length;
+                out.library.note = note;
                 out.library.items = hits.map((g) => ({
                     appid: g.appid,
                     title: g.name || `App ${g.appid}`,
@@ -329,9 +342,12 @@
         if (typeof _providers.getNews === 'function') {
             try {
                 const raw = await _providers.getNews();
-                const arr = Array.isArray(raw) ? raw : [];
+                // v1.1.0：同样支持 { items:[...], note }
+                const arr = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.items) ? raw.items : []);
+                const note = (!Array.isArray(raw) && raw && raw.note) ? String(raw.note) : '';
                 const hits = arr.filter((n) => n && matchTokens(n.title, tokens)).slice(0, DEFAULTS.NEWS_LIMIT);
                 out.news.total = hits.length;
+                out.news.note = note;
                 out.news.items = hits.map((n) => ({
                     title: n.title,
                     url: n.url || n.link || '',

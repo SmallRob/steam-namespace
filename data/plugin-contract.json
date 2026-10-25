@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "updatedAt": "2026-10-25T05:30:00Z",
+  "updatedAt": "2026-10-25T12:00:00Z",
   "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号 + 注册域」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。⚠️ domain 字段：该插件注册写在哪一个域（IndexedDB 按域隔离，跨域读不到注册）——store=商店域 / community=社区域 / both=两域都可能 / steamdb=steamdb.info，面板对「未注册 + 注册在其他域」的插件显示「需在对应域确认」而非「未安装」。2026-10-21 清单瘦身：好友系只保留好友管理器（sfd）与好友动态/社交中心（saf/sac，均由 steam-activity-modern 注册写入），工具系只保留点数商店（points-shop）；移除 friend-days / friend-tools / friend-checker / price-converter / steamdb / cloud-save 六项检测。2026-10-25 收回 Steamdb 增强（id=sfp，family=steamdb，domain=steamdb）：v1.2.0 已接入 registerPlugin。免费包队列镜像在 steamdb.info 的 localStorage __saa_bridge_sfp__，与注册表一样按源隔离；detect 留空，避免在商店/社区页把「探测不到」误判成未安装。",
   "registry": {
     "mechanism": "indexedDB",
@@ -54,6 +54,10 @@
     "utility": {
       "label": "工具系",
       "desc": "点数商店增强"
+    },
+    "calendar": {
+      "label": "日历",
+      "desc": "个人日历换算，以及即将发售 / 近期发售清单"
     },
     "steamdb": {
       "label": "SteamDB",
@@ -215,6 +219,23 @@
         {
           "type": "localStorage",
           "prefix": "__saa_bridge_pts__"
+        }
+      ]
+    },
+    {
+      "id": "spc",
+      "name": "Steam 个人日历增强",
+      "family": "calendar",
+      "domain": "store",
+      "minVersion": "1.1.5",
+      "required": false,
+      "registry": true,
+      "source": "steam-personal-calendar/Steam-Personal-Calendar.user.js",
+      "note": "v1.1.0 起 registerPlugin({ id: 'spc', family: 'calendar' })。打开个人日历后把即将发售、近期发售和愿望单预算镜像到商店域 localStorage __saa_bridge_spc__。readPluginCache 用 plugin=bridge、key=__saa_bridge_spc__；问预算时 fields 传 budget。",
+      "detect": [
+        {
+          "type": "localStorage",
+          "prefix": "__saa_bridge_spc__"
         }
       ]
     },

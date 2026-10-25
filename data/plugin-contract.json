@@ -1,7 +1,7 @@
 {
   "v": 1,
-  "updatedAt": "2026-10-21T14:00:00Z",
-  "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号 + 注册域」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。⚠️ domain 字段：该插件注册写在哪一个域（IndexedDB 按域隔离，跨域读不到注册）——store=商店域 / community=社区域 / both=两域都可能，面板对「未注册 + 注册在其他域」的插件显示「需在对应域确认」而非「未安装」。2026-10-21 清单瘦身：好友系只保留好友管理器（sfd）与好友动态/社交中心（saf/sac，均由 steam-activity-modern 注册写入），工具系只保留点数商店（points-shop）；移除 friend-days / friend-tools / friend-checker / price-converter / steamdb / cloud-save 六项检测。",
+  "updatedAt": "2026-10-25T05:30:00Z",
+  "note": "Steam 插件体系版本契约。AI Agent 读它来回答「装齐了吗」「版本过旧吗」「某个插件装了没」。运行时实际版本由各插件通过共享宿主 registerPlugin() 注册到 IndexedDB，本文件提供「期望清单 + 最低版本 + 探测信号 + 注册域」。⚠️ 三来源分工：契约=期望（装什么/最低版本）｜registerPlugin=实况（精确版本号）｜探测=兜底（装了但没注册的插件）。⚠️ domain 字段：该插件注册写在哪一个域（IndexedDB 按域隔离，跨域读不到注册）——store=商店域 / community=社区域 / both=两域都可能 / steamdb=steamdb.info，面板对「未注册 + 注册在其他域」的插件显示「需在对应域确认」而非「未安装」。2026-10-21 清单瘦身：好友系只保留好友管理器（sfd）与好友动态/社交中心（saf/sac，均由 steam-activity-modern 注册写入），工具系只保留点数商店（points-shop）；移除 friend-days / friend-tools / friend-checker / price-converter / steamdb / cloud-save 六项检测。2026-10-25 收回 Steamdb 增强（id=sfp，family=steamdb，domain=steamdb）：v1.2.0 已接入 registerPlugin。免费包队列镜像在 steamdb.info 的 localStorage __saa_bridge_sfp__，与注册表一样按源隔离；detect 留空，避免在商店/社区页把「探测不到」误判成未安装。",
   "registry": {
     "mechanism": "indexedDB",
     "db": "sglv_plugin_host_storage",
@@ -28,7 +28,7 @@
       "IndexedDB 同源全脚本共享 → registerPlugin 写的键对 AI Agent 直接可读",
       "未接入 registerPlugin 的插件：只能靠 detect 信号判断「装没装」，版本显示为「未知」"
     ],
-    "note": "12 个插件全部已接入 registerPlugin（共享宿主 v0.3.0）→ 运行时有精确版本号。detect 段保留作为兜底（万一某插件未注册或注册表被清空，仍能判断「装了没」）。"
+    "note": "13 个插件全部已接入 registerPlugin（共享宿主 v0.3.0）→ 运行时有精确版本号。detect 段保留作为兜底（万一某插件未注册或注册表被清空，仍能判断「装了没」）。sfp 的注册与桥键都在 steamdb.info，Steam 页读不到，故 detect 为空。"
   },
   "families": {
     "core": {
@@ -54,6 +54,10 @@
     "utility": {
       "label": "工具系",
       "desc": "点数商店增强"
+    },
+    "steamdb": {
+      "label": "SteamDB",
+      "desc": "SteamDB 免费包排序、添加队列预览与价格表中文化"
     },
     "ai": {
       "label": "AI 系",
@@ -266,6 +270,18 @@
           "store": "kv"
         }
       ]
+    },
+    {
+      "id": "sfp",
+      "name": "Steamdb 增强",
+      "family": "steamdb",
+      "domain": "steamdb",
+      "minVersion": "1.2.0",
+      "required": false,
+      "registry": true,
+      "source": "steamdb-freepackages-enhancer/steamdb-freepackages-sorter.user.js",
+      "note": "与脚本 registerPlugin({ id: 'sfp', name: 'Steamdb 增强', family: 'steamdb' }) 对齐。只在 steamdb.info 运行；v1.2.0 起写 localStorage __saa_bridge_sfp__（免费包队列/添加成败）。商店域与社区域都读不到这份注册和桥键。",
+      "detect": []
     }
   ],
   "distribution": {

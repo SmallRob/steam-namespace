@@ -56,24 +56,28 @@
 
 ## 用法
 
-jsDelivr（推荐钉 commit，永久缓存、内容不可变）：
+jsDelivr（**用 `@main`，不要钉 commit**）：
 
 ```
-https://cdn.jsdelivr.net/gh/SmallRob/steam-namespace@<commit>/data/name-cn-index-v1.json
+https://cdn.jsdelivr.net/gh/SmallRob/steam-namespace@main/data/name-cn-index-v1.json
 ```
 
-拿 `main` 也行但要接受 CDN 缓存延迟（jsDelivr 对分支引用约 12 小时）。
+这里是**数据**索引，每天随 hub 同步变化 —— 钉死某个 commit 就等于永远停在发布当天的条数。
+（和 lib 类代码相反：代码要钉 commit 保证行为不变，数据要跟分支才能更新。）
+jsDelivr 对分支引用缓存约 12 小时，配合客户端 7 天 TTL + `digest` 比对，实际最坏晚 7 天跟进，
+对「游戏中文名」这种低频变化的字段完全够。
 
-**不要用 `@require`** —— `@require` 要求 JS，这是纯 JSON；而且 62 KB 的同步阻塞加载
-会拖慢插件启动。正确姿势是运行时异步拉 + 本地缓存（见下）。
+**不要用 `@require`** —— `@require` 要求 JS，这是纯 JSON；而且 85 KB 的同步阻塞加载
+会拖慢插件启动。正确姿势是运行时异步拉 + 本地缓存。
 
-客户端参考实现（SWE 1.4.17 起）：
+客户端参考实现（SWE 1.4.18 起）：
 
 ```js
-// 1) 先读 GM 缓存，同步可用、零请求
+// 1) 先读 GM 缓存，同步可用、零请求（首屏就能用上）
 // 2) 过期（TTL 7 天）后后台静默更新；失败就用旧缓存，绝不阻塞 UI
-// 3) 查名时优先索引，未命中再走 appdetails
-// 4) 缓存里是英文、索引里是中文时 → 用索引覆盖（中文更优）
+// 3) digest 相同 → 只刷新 fetchedAt，不做无谓写盘
+// 4) 查名优先级：缓存中文 > 索引中文 > 缓存英文 > 批量 GetItems
+// 5) 不把整表灌进名字缓存（否则每次 save 都要序列化 200 KB+），只按需单条写
 ```
 
 ## 重新生成

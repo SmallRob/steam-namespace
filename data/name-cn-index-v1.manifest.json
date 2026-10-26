@@ -1,0 +1,26 @@
+{
+  "v": 1,
+  "format": "name-cn-index",
+  "builtAt": "2026-10-26T00:33:28.619Z",
+  "digest": "df195549abd760f2",
+  "encoding": "object appid(string) -> 中文名(string)；只含确证含 CJK 的值",
+  "hot": {
+    "file": "name-cn-index-v1.json",
+    "count": 4535,
+    "bytes": 139227,
+    "gzipBytes": 64055,
+    "digest": "df195549abd760f2",
+    "pool": 9052,
+    "pct": 50.1
+  },
+  "all": {
+    "file": "name-cn-index-v1.all.json",
+    "count": 10738,
+    "bytes": 335067,
+    "gzipBytes": 156028,
+    "digest": "15aca79f4cccba40",
+    "pool": 160704,
+    "pct": 6.7
+  },
+  "note": "hot = owned_game ∪ wishlist（插件首屏默认用这个）；all = 全库。不在表内 = 该 appid 无「确证中文名」，客户端应回退 app.name，不要把缺值当空名显示。"
+}

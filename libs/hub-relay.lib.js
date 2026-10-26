@@ -1,5 +1,5 @@
 /* =====================================================================
- * HubRelay —— relay 数据回流客户端共享库 v0.1.0（hub-relay.lib.js）
+ * HubRelay —— relay 数据回流客户端共享库 v0.1.1（hub-relay.lib.js）
  * =====================================================================
  * 用途：让任意插件以「零额外 Steam 请求」把已拿到的数据回流给 data-hub
  *       （观测中转库），并可选地批量读取 hub 已有详情做首屏预填。
@@ -30,10 +30,15 @@
 (function (root) {
     'use strict';
 
-    const VERSION = '0.1.0';
+    const VERSION = '0.1.1';
 
     const DEFAULTS = {
-        baseUrl: 'http://127.0.0.1:18777',   // M2：seal 绑定本地 hub 注册表；远程 hub 需另发凭据
+        // 生产公网端点（与插件三级回落的兜底常量同口径）。
+        // ★ 127.0.0.1:18777 只是服务器本地调试地址，发布物一律不许用；
+        //   seal 与公网 hub（hub.steamkit.cn 反代到本机生产 hub）同一注册表，直接有效。
+        //   接入方应显式传三级回落解析出的 baseUrl（用户设置 → 远程 hub-endpoint.json → 兜底常量），
+        //   本默认值只在漏传时兜底，保证打到生产而不是调用方自己的 localhost。
+        baseUrl: 'https://hub.steamkit.cn',
         mergeWindowMs: 10 * 60 * 1000,
         flushIntervalMs: 60 * 1000,
         minFlushGapMs: 30 * 1000,

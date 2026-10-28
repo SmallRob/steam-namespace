@@ -310,6 +310,11 @@
                 const batch = rows.sort((a, b) => a.enqueuedAt - b.enqueuedAt)
                     .slice(0, Math.min(DEFAULTS.batchMax, DEFAULTS.requestMax));
                 const A = auth();
+                // 会话可用性预检：无 seal（远程托管）且 state 仍是 idle（从未登录）→ 直接跳过。
+                // 不预检的话每轮都会 ensureSession 抛 NEEDS_STEAM_LOGIN → 计入连败 →
+                // 10 分钟暂停 + 控制台噪音，而真实原因只是「用户还没登录」。
+                const st0 = A.getState ? A.getState() : null;
+                if (!cfg.seal && (!st0 || st0.status === 'idle')) return null;
                 return A.ensureSession().then(() => {
                     const deviceId = (A.getState() && A.getState().deviceId) || '';
                     if (!deviceId) throw new Error('no-device');
@@ -389,7 +394,11 @@
     // 配置 + 定时器
     // ------------------------------------------------------------------
     function configure(opts) {
-        if (!opts || !opts.pluginId || !opts.seal) return;
+        // ★ seal 可以为空：远程托管模式（HUB_AUTH_REQUIRE_STEAM=1）下服务端已关闭裸 seal
+        //   激活通道（/auth/activate 直接回 E_STEAM_REQUIRED），此时唯一通道是
+        //   SAAAuth.loginWithSteam() 换来的 Steam OpenID 会话。要求必须带 seal 等于
+        //   把「只能登录」的部署方式挡在门外。pluginId 仍然是必需的（服务端按它查 kind 契约）。
+        if (!opts || !opts.pluginId) return;
         cfg = Object.assign({}, DEFAULTS, {
             pluginId: String(opts.pluginId),
             pluginVer: String(opts.pluginVer || ''),

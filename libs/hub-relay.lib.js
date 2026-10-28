@@ -1,5 +1,5 @@
 /* =====================================================================
- * HubRelay —— relay 数据回流客户端共享库 v0.1.1（hub-relay.lib.js）
+ * HubRelay —— relay 数据回流客户端共享库 v0.2.0（hub-relay.lib.js）
  * =====================================================================
  * 用途：让任意插件以「零额外 Steam 请求」把已拿到的数据回流给 data-hub
  *       （观测中转库），并可选地批量读取 hub 已有详情做首屏预填。
@@ -8,6 +8,14 @@
  *   · 源在本仓 shared/；分发副本在 SmallRob/steam-namespace（@require 钉 commit）
  *   · 零依赖：鉴权复用宿主 @require 的 window.SAAAuth（设备私钥/会话/签名）
  *   · 缺 SAAAuth / GM_* → 静默禁用（enabled() 恒 false，绝不抛错）
+ *
+ * v0.2.0 新增（个人域 personal_merge，2026-10-28）：
+ *   · `privacy` 开关（**默认关**）：关着时所有 personal kind 一律不入箱；
+ *   · enqueue 第 4 参支持 `{ entitySubject }`：personal kind 的主体（当前页面 steamid）；
+ *   · 本地主体自过滤：会话主体（SAAAuth.getState().subject）与 entitySubject 不一致 → 直接丢弃
+ *     （多账号同浏览器时，小号页面的数据绝不上报进大号名下。★这只是省流量的本地闸，
+ *      真正的安全边界在服务端 A 档 —— 服务端仍然用会话 subject 重算校验）；
+ *   · capabilities()：暴露 privacy / 会话主体 / 可用 personal kind 列表。
  *
  * 限频与限次（v0.1 的第一公民，别裸奔）：
  *   · 出箱合并：同 (kind, entityKey) 在 mergeWindowMs(10min) 内**覆盖**不堆积
@@ -20,25 +28,32 @@
  *
  * 接口（window.HubRelay）：
  *   configure(opts)   { pluginId, pluginVer, seal, baseUrl?, enabledFn?,
- *                       storage? }        —— enabledFn: () => boolean（宿主开关）
- *   enqueue(kind, entityKey, data)         —— 入箱（自动截流/合并，全异步零抛）
+ *                       storage?, privacy?, subjectFn? }
+ *                     —— enabledFn: () => boolean（宿主开关）
+ *                     —— privacy:   true 才上报 personal kind（默认 false）
+ *                     —— subjectFn: () => string（当前页面 steamid，缺省读会话主体）
+ *   enqueue(kind, entityKey, data, opts?)  —— 入箱（opts.entitySubject 供 personal kind）
  *   flushNow()                            —— 立即尝试一次冲刷（受节流约束）
  *   appsBatch(ids, cc) → Promise<obj|null> 读辅助（失败回 null，零回归）
- *   state()                              —— { pending, todayCount, pausedUntil }
+ *   capabilities()                       —— { privacy, subject, personalKinds, ... }
+ *   state()                              —— { pending, todayCount, pausedUntil, privacy }
  *   VERSION
  * ===================================================================== */
 (function (root) {
     'use strict';
 
-    const VERSION = '0.1.1';
+    const VERSION = '0.2.0';
 
     const DEFAULTS = {
         // 生产公网端点（与插件三级回落的兜底常量同口径）。
         // ★ 127.0.0.1:18777 只是服务器本地调试地址，发布物一律不许用；
-        //   seal 与公网 hub（hub.steamkit.cn 反代到本机生产 hub）同一注册表，直接有效。
+        //   seal 与公网 hub（hub.leansoftx.com 反代到本机生产 hub）同一注册表，直接有效。
         //   接入方应显式传三级回落解析出的 baseUrl（用户设置 → 远程 hub-endpoint.json → 兜底常量），
         //   本默认值只在漏传时兜底，保证打到生产而不是调用方自己的 localhost。
-        baseUrl: 'https://hub.steamkit.cn',
+        baseUrl: 'https://hub.leansoftx.com',
+        // ★ 个人域的默认姿态是「关」：库升级不能替用户做主，把个人库/愿望单开始上报。
+        //   宿主必须在设置页给出明确开关，用户勾选后才传 privacy:true。
+        privacy: false,
         mergeWindowMs: 10 * 60 * 1000,
         flushIntervalMs: 60 * 1000,
         minFlushGapMs: 30 * 1000,
@@ -80,6 +95,14 @@
     function auth() {
         try { return (root.SAAAuth && root.SAAAuth.ensureSession) ? root.SAAAuth : null; }
         catch (e) { return null; }
+    }
+    /** 会话主体（Steam OpenID 登录时落定的 steamid；未登录 / 旧版 SAAAuth 无该字段 → 空串） */
+    function sessionSubject() {
+        try {
+            const A = auth();
+            const s = A && A.getState ? A.getState() : null;
+            return s && s.subject ? String(s.subject) : '';
+        } catch (e) { return ''; }
     }
     function httpAvailable() { return typeof root.GM_xmlhttpRequest === 'function'; }
     function enabled() {
@@ -217,13 +240,38 @@
     // ------------------------------------------------------------------
     // 入箱（全异步零抛；截流/合并/超限丢弃都在这里）
     // ------------------------------------------------------------------
-    function enqueue(kind, entityKey, data, _retried) {
+    /**
+     * 入箱（全异步零抛；截流/合并/超限丢弃都在这里）
+     * @param {string} kind
+     * @param {string|number} entityKey
+     * @param {object} data
+     * @param {{entitySubject?:string, _retried?:boolean}} [opts]
+     *        entitySubject：personal kind 的主体（当前页面 steamid），缺省读 cfg.subjectFn()
+     * @returns {Promise<boolean>} true=已入箱
+     */
+    function enqueue(kind, entityKey, data, opts) {
+        const o = opts || {};
         if (!enabled()) return Promise.resolve(false);
-        if (!kindsFor(kind)) {
+        const meta = kindsFor(kind);
+        if (!meta) {
             // 首次：先协商再入。★只重试一次——协商后仍不认识的 kind 直接本地拒；
             //   否则「缓存里有 kinds 但没这个 kind」会无限递归（测试逮住：Map 爆栈）
-            if (_retried) return Promise.resolve(false);
-            return refreshKinds().then(() => enqueue(kind, entityKey, data, true));
+            if (o._retried) return Promise.resolve(false);
+            return refreshKinds().then(() => enqueue(kind, entityKey, data,
+                { entitySubject: o.entitySubject, _retried: true }));
+        }
+        // ── 个人域三道本地闸（省流量与防串号；安全边界在服务端 A 档）────────────
+        //   ① 隐私开关未开 → 不上报（默认姿态：库升级不替用户做主）
+        //   ② 主体必须是 17 位 steamid
+        //   ③ 会话主体已知且与上报主体不一致 → 丢弃（多账号同浏览器，绝不串号）
+        let entitySubject = null;
+        if (meta.dataClass === 'personal') {
+            if (!cfg.privacy) return Promise.resolve(false);
+            entitySubject = o.entitySubject ? String(o.entitySubject)
+                : (cfg.subjectFn ? String(cfg.subjectFn() || '') : '');
+            if (!/^\d{17}$/.test(entitySubject)) return Promise.resolve(false);
+            const sess = sessionSubject();
+            if (sess && sess !== entitySubject) return Promise.resolve(false);
         }
         if (todayCount(kind) >= kindQuota(kind)) return Promise.resolve(false);   // 本地日配额截流
         const st = storage();
@@ -235,12 +283,14 @@
                 prev.data = data;                    // 合并窗口内覆盖（不堆积）
                 prev.observedAt = now;
                 prev.enqueuedAt = now;
+                if (entitySubject) prev.entitySubject = entitySubject;
                 return st.put(prev).then(() => true);
             }
             if (rows.length >= DEFAULTS.maxOutbox) {
                 st.deleteOldest(rows.length - DEFAULTS.maxOutbox + 1);   // 超限丢最旧
             }
-            return st.put({ id, kind, entityKey, data, observedAt: now, enqueuedAt: now })
+            return st.put(Object.assign({ id, kind, entityKey, data, observedAt: now, enqueuedAt: now },
+                entitySubject ? { entitySubject } : {}))
                 .then(() => { bumpToday(kind, 1); return true; });
         }).catch(() => false);
     }
@@ -264,7 +314,15 @@
                     const deviceId = (A.getState() && A.getState().deviceId) || '';
                     if (!deviceId) throw new Error('no-device');
                     return Promise.all(batch.map((r) => obsId(deviceId, r.kind, r.entityKey, r.observedAt)
-                        .then((id) => ({ id, kind: r.kind, entityKey: r.entityKey, observedAt: r.observedAt, data: r.data }))));
+                        .then((id) => {
+                            const rep = {
+                                id, kind: r.kind, entityKey: r.entityKey,
+                                observedAt: r.observedAt, data: r.data,
+                            };
+                            // personal kind 必须带主体（服务端 A 档：会话 subject 重算校验）
+                            if (r.entitySubject) rep.entitySubject = r.entitySubject;
+                            return rep;
+                        })));
                 }).then((reports) => relayRequest('/relay/report', 'POST', {
                     pluginId: cfg.pluginId, pluginVer: cfg.pluginVer, reports,
                 }).then((r) => ({ r, reports }))).then(({ r, reports }) => {
@@ -339,6 +397,9 @@
             enabledFn: opts.enabledFn || null,
             storage: opts.storage || null,
             seal: opts.seal,
+            // 个人域：默认关；只有显式 privacy:true 才上报（★不继承上次状态，避免「升级后自动开启」）
+            privacy: opts.privacy === true,
+            subjectFn: typeof opts.subjectFn === 'function' ? opts.subjectFn : null,
         });
         const A = auth();
         if (A && A.configure) {
@@ -366,12 +427,33 @@
             todayCount: todayCount(),
             pausedUntil,
             configured: !!cfg,
+            privacy: !!(cfg && cfg.privacy),
             kinds: kindsCache ? kindsCache.kinds.length : 0,
         };
     }
 
+    /**
+     * 能力探测（宿主设置页 / 诊断卡用）：告诉用户「这个插件现在能上报什么、
+     * 个人数据开关是开还是关、会话认到的是哪个账号」。
+     */
+    function capabilities() {
+        const list = (kindsCache && kindsCache.kinds) || [];
+        const personalKinds = list.filter((k) => k.dataClass === 'personal').map((k) => k.kind);
+        return {
+            version: VERSION,
+            configured: !!cfg,
+            enabled: enabled(),
+            privacy: !!(cfg && cfg.privacy),
+            subject: sessionSubject() || null,
+            kinds: list.length,
+            personalKinds,
+            supportsPersonal: personalKinds.length > 0,
+            pausedUntil,
+        };
+    }
+
     root.HubRelay = {
-        configure, enqueue, flushNow, appsBatch, state, refreshKinds,
+        configure, enqueue, flushNow, appsBatch, state, refreshKinds, capabilities,
         get pausedUntil() { return pausedUntil; },
         VERSION,
     };

@@ -310,27 +310,38 @@
                 const batch = rows.sort((a, b) => a.enqueuedAt - b.enqueuedAt)
                     .slice(0, Math.min(DEFAULTS.batchMax, DEFAULTS.requestMax));
                 const A = auth();
-                // 会话可用性预检：无 seal（远程托管）且 state 仍是 idle（从未登录）→ 直接跳过。
-                // 不预检的话每轮都会 ensureSession 抛 NEEDS_STEAM_LOGIN → 计入连败 →
-                // 10 分钟暂停 + 控制台噪音，而真实原因只是「用户还没登录」。
-                const st0 = A.getState ? A.getState() : null;
-                if (!cfg.seal && (!st0 || st0.status === 'idle')) return null;
-                return A.ensureSession().then(() => {
-                    const deviceId = (A.getState() && A.getState().deviceId) || '';
-                    if (!deviceId) throw new Error('no-device');
-                    return Promise.all(batch.map((r) => obsId(deviceId, r.kind, r.entityKey, r.observedAt)
-                        .then((id) => {
-                            const rep = {
-                                id, kind: r.kind, entityKey: r.entityKey,
-                                observedAt: r.observedAt, data: r.data,
-                            };
-                            // personal kind 必须带主体（服务端 A 档：会话 subject 重算校验）
-                            if (r.entitySubject) rep.entitySubject = r.entitySubject;
-                            return rep;
-                        })));
-                }).then((reports) => relayRequest('/relay/report', 'POST', {
-                    pluginId: cfg.pluginId, pluginVer: cfg.pluginVer, reports,
-                }).then((r) => ({ r, reports }))).then(({ r, reports }) => {
+                // ① 宿主会话准备钩子（可选）：无 seal 的部署靠它用页面登录态换会话
+                //    （SAAAuth.ensureSessionWithSteamId）。返回 {ok:false} = 宿主知道
+                //    现在没身份 → 本轮跳过，**不计连败**。
+                const hookP = cfg.authHook
+                    ? Promise.resolve().then(() => cfg.authHook()).catch(() => null)
+                    : Promise.resolve(null);
+                return hookP.then((hooked) => {
+                    if (hooked && hooked.ok === false) return null;
+                    // ② 会话可用性预检：既无 seal 也无 attest（远程托管且宿主没配登录态自证）
+                    //    且 state 仍是 idle（从未激活）→ 直接跳过。
+                    //    不预检的话每轮都会 ensureSession 抛 NEEDS_STEAM_LOGIN → 计入连败 →
+                    //    10 分钟暂停 + 控制台噪音，而真实原因只是「用户还没登录」。
+                    //    ★ 有 attest 时**必须放行**：那条路径本来就是 idle 第一次就激活。
+                    const st0 = A.getState ? A.getState() : null;
+                    const canSelfAttest = !!(st0 && st0.hasAttest);
+                    if (!cfg.seal && !canSelfAttest && (!st0 || st0.status === 'idle')) return null;
+                    return A.ensureSession().then(() => {
+                        const deviceId = (A.getState() && A.getState().deviceId) || '';
+                        if (!deviceId) throw new Error('no-device');
+                        return Promise.all(batch.map((r) => obsId(deviceId, r.kind, r.entityKey, r.observedAt)
+                            .then((id) => {
+                                const rep = {
+                                    id, kind: r.kind, entityKey: r.entityKey,
+                                    observedAt: r.observedAt, data: r.data,
+                                };
+                                // personal kind 必须带主体（服务端 A 档：会话 subject 重算校验）
+                                if (r.entitySubject) rep.entitySubject = r.entitySubject;
+                                return rep;
+                            })));
+                    }).then((reports) => relayRequest('/relay/report', 'POST', {
+                        pluginId: cfg.pluginId, pluginVer: cfg.pluginVer, reports,
+                    }).then((r) => ({ r, reports }))).then(({ r, reports }) => {
                     if (r.status === 200 && r.data && r.data.ok) {
                         lastFlushAt = Date.now();
                         consecutiveFails = 0;
@@ -353,7 +364,8 @@
                         }
                     }
                     return { ok: false, status: r.status, code };
-                });
+                    });
+                });   // ← hookP.then（会话准备 + 预检）
             })
             .catch((e) => {
                 consecutiveFails++;
@@ -409,6 +421,10 @@
             // 个人域：默认关；只有显式 privacy:true 才上报（★不继承上次状态，避免「升级后自动开启」）
             privacy: opts.privacy === true,
             subjectFn: typeof opts.subjectFn === 'function' ? opts.subjectFn : null,
+            // 会话准备钩子（可选）：每轮冲刷前先调一次，宿主在这里用当前登录态完成
+            // 激活（如 SAAAuth.ensureSessionWithSteamId(getSteamId())）。
+            // 返回 {ok:false} 表示「宿主明确知道现在拿不到身份」→ 本轮跳过且不计连败。
+            authHook: typeof opts.authHook === 'function' ? opts.authHook : null,
         });
         const A = auth();
         if (A && A.configure) {

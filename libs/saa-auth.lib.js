@@ -31,7 +31,7 @@
 (function (root) {
     'use strict';
 
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
     const STORE_KEY = 'saa_auth_state_v1';       // GM 存储：会话 + installId
     const IDB_NAME = 'saa-auth';
     const IDB_STORE = 'keys';
@@ -44,10 +44,11 @@
     };
 
     let cfg = Object.assign({}, DEFAULTS);
-    let cred = null;                // {seal, baseUrl, subject}
+    let cred = null;                // {seal, baseUrl, subject, attest}
     let device = null;              // {privateKey, publicJwk, jkt}
     let state = null;               // 持久化状态
     let activating = null;          // 并发去重
+    let policyCache = null;         // /auth/policy 快照 { at, data }
 
     // ---------------------------------------------------------------------
     // 基础工具
@@ -270,7 +271,7 @@
     // ---------------------------------------------------------------------
     // 传输
     // ---------------------------------------------------------------------
-    function httpRequest(method, path, { body, headers }) {
+    function httpRequest(method, path, { body, headers } = {}) {
         const url = String(cfg.baseUrl).replace(/\/+$/, '') + path;
         const h = Object.assign({ 'Content-Type': 'application/json' }, headers || {});
 
@@ -344,25 +345,31 @@
         return r.data.nonce;
     }
 
-    async function activate() {
-        if (!cred || !cred.seal) throw new Error('未配置默认凭据（seal）');
+    async function activate(opts = {}) {
+        if (!cred) throw new Error('未调用 configure');
+        const attest = opts.attest || cred.attest || null;
+        const seal = opts.seal || cred.seal || '';
+        // 两条合法凭据路径：签发的 seal（自建/发布机），或登录态自证 attest（远程托管）
+        if (!seal && !attest) throw new Error('未配置凭据：需要 seal，或 attest（登录态自证）');
         if (activating) return activating;
         activating = (async () => {
             const s = loadState();
             const d = await ensureDevice();
-            const subject = cred.subject || s.subject || '';
+            // 主体优先级：attest.steamid（自证里声明的那一个，服务端会校验一致）
+            //   > 显式配置的 cred.subject > 已保存的会话主体
+            const subject = String((attest && attest.steamid) || cred.subject || s.subject || '');
             const nonce = await doChallenge();
             const proof = await signData(proofData('activate', nonce, s.installId, d.jkt, subject));
-            const r = await httpRequest('POST', '/auth/activate', {
-                body: {
-                    seal: cred.seal,
-                    installId: s.installId,
-                    deviceJwk: d.publicJwk,
-                    nonce,
-                    proof,
-                    subject,
-                },
-            });
+            const body = {
+                installId: s.installId,
+                deviceJwk: d.publicJwk,
+                nonce,
+                proof,
+                subject,
+            };
+            if (seal) body.seal = seal;
+            if (attest) body.attest = attest;
+            const r = await httpRequest('POST', '/auth/activate', { body });
             if (r.status !== 200 || !r.data || !r.data.ok) {
                 throw new Error('激活失败：' + ((r.data && (r.data.message || r.data.error)) || r.status));
             }
@@ -373,6 +380,8 @@
             s.refreshExpiresAt = r.data.refreshExpiresAt || 0;
             s.scopes = r.data.scopes || [];
             s.subject = r.data.subject || subject || '';
+            s.subjectSource = r.data.subjectSource || (attest ? 'attested' : '');
+            s.subjectVerified = r.data.subjectVerified == null ? 0 : Number(r.data.subjectVerified) || 0;
             saveState();
             return s;
         })();
@@ -419,10 +428,94 @@
         if (refreshValid()) {
             try { return await doRefresh(); } catch (e) { /* 落到重新激活 */ }
         }
-        // 有密封凭据 → 走 seal 激活（自建/本地部署的通道）
-        if (cred && cred.seal) return activate();
-        // 没有 seal → 远程托管模式：必须先绑定 Steam 账号（loginWithSteam）
+        // 有 seal → 公开封装凭据激活；有 attest → 登录态自证激活（远程托管免登录）
+        if (cred && (cred.seal || cred.attest)) return activate();
         throw new Error('NEEDS_STEAM_LOGIN');
+    }
+
+    // ---------------------------------------------------------------------
+    // 策略探测 + 登录态自证
+    // ---------------------------------------------------------------------
+    /**
+     * 服务端认证策略快照（GET /auth/policy，公开无鉴权），缓存 10 分钟。
+     * 宿主据此决定：subjectTrust='attested' 就不必弹 Steam 登录，直接用当前
+     * 页面登录态激活；'steam' 才需要走 loginWithSteam。
+     * 失败回 null（调用方按「需要登录」处理，绝不因为探测失败就放行）。
+     */
+    async function probePolicy(force) {
+        const now = Date.now();
+        if (!force && policyCache && (now - policyCache.at) < 10 * 60 * 1000) return policyCache.data;
+        try {
+            const r = await httpRequest('GET', '/auth/policy');
+            if (r.status !== 200 || !r.data || r.data.ok !== true) return policyCache ? policyCache.data : null;
+            policyCache = { at: now, data: r.data };
+            return r.data;
+        } catch (e) {
+            return policyCache ? policyCache.data : null;
+        }
+    }
+
+    /**
+     * 用「当前页面登录态」的 steamid 构造 attest（服务端校验结构 + 时间窗）。
+     * 判据：steamid 必须来自**登录后才有**的页面变量 / cookie。
+     *   · 'steam-page-ssr' —— 页面里的 g_steamID（未登录页面没有）
+     *   · 'steam-cookie'   —— steamLoginSecure cookie（HttpOnly 时读不到，回退用前者）
+     *   · 'community-my'   —— 请求 /my/profile 后从 HTML 里解析
+     * ★ 这不是密码学证明：服务端只把它当「声明 + 一致性检查」。真正的隔离仍靠
+     *   服务端把 subject 钉在设备上（一设备一账号）+ 个人域 A 档。
+     */
+    function buildAttest(steamid, opts = {}) {
+        const sid = String(steamid || '').trim();
+        if (!/^\d{17}$/.test(sid)) return null;
+        let host = String(opts.host || '');
+        if (!host) {
+            try { host = String(root.location && root.location.hostname || ''); } catch (e) { host = ''; }
+        }
+        return {
+            via: String(opts.via || 'steam-page-ssr'),
+            host,
+            steamid: sid,
+            capturedAt: Number(opts.capturedAt) || Date.now(),
+        };
+    }
+
+    /**
+     * 一步到位：探测策略 → 需要就用手上的 steamid 生成 attest 并激活。
+     * @returns {Promise<{ok:boolean, needLogin?:boolean, reason?:string, subject?:string, subjectVerified?:number}>}
+     */
+    async function ensureSessionWithSteamId(steamid) {
+        const sid = String(steamid || '').trim();
+        // 已有可用会话 → 直接复用。hub-relay 每轮冲刷前都会调这个钩子，
+        // 不做早退的话会变成「每 30 秒重新激活一次」，纯浪费配额。
+        if (accessValid()) {
+            const s = loadState();
+            return {
+                ok: true, subject: s.subject || '', subjectVerified: Number(s.subjectVerified) || 0,
+                source: s.subjectSource || '', reused: true,
+            };
+        }
+        const pol = await probePolicy();
+        const trust = pol && pol.subjectTrust === 'attested' ? 'attested' : 'steam';
+        if (trust !== 'attested') {
+            return { ok: false, needLogin: true, reason: '服务端要求 Steam OpenID 登录（subjectTrust=steam）' };
+        }
+        if (!/^\d{17}$/.test(sid)) {
+            return { ok: false, needLogin: true, reason: '未取到当前 Steam 登录态（页面无 g_steamID）' };
+        }
+        const attest = buildAttest(sid);
+        if (!attest) return { ok: false, needLogin: true, reason: 'attest 构造失败' };
+        // 把 attest 交给 activate；重试时 capturedAt 会更新（时间窗 15min 足够）
+        try {
+            const s = await activate({ attest });
+            return {
+                ok: true,
+                subject: s.subject,
+                subjectVerified: Number(s.subjectVerified) || 0,
+                source: s.subjectSource || attest.via,
+            };
+        } catch (e) {
+            return { ok: false, needLogin: false, reason: e.message || String(e) };
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -564,14 +657,22 @@
     }
 
     function configure(opts = {}) {
+        // ★ 合并语义，不是替换：多个库（如 hub-relay）会各自调 configure 补自己的
+        //   baseUrl，如果这里是「整体覆盖」，后调用的那个会把前一个配好的 attest
+        //   或 seal 清掉 —— 表现为「明明配了却一直走未登录分支」，极难排查。
+        const prev = cred || {};
         cred = {
-            seal: String(opts.seal || ''),
-            baseUrl: String(opts.baseUrl || cfg.baseUrl || ''),
-            subject: opts.subject ? String(opts.subject) : '',
+            seal: opts.seal !== undefined ? String(opts.seal || '') : String(prev.seal || ''),
+            baseUrl: String(opts.baseUrl || prev.baseUrl || cfg.baseUrl || ''),
+            subject: opts.subject !== undefined ? String(opts.subject || '') : String(prev.subject || ''),
+            // 登录态自证（可选）：传了就代表「本插件用登录态替身份」，不再需要 seal
+            attest: opts.attest !== undefined
+                ? ((opts.attest && typeof opts.attest === 'object') ? opts.attest : null)
+                : (prev.attest || null),
         };
         if (opts.baseUrl) cfg.baseUrl = String(opts.baseUrl);
-        if (opts.accessTtlMs) cfg.accessTtlMs = opts.accessTtlMs;
-        return { ok: true, hasSeal: !!cred.seal, baseUrl: cfg.baseUrl };
+        if (opts.accessTtlMs) cfg.accessTtlMs = Number(opts.accessTtlMs) || cfg.accessTtlMs;
+        return { ok: true, hasSeal: !!cred.seal, hasAttest: !!cred.attest, baseUrl: cfg.baseUrl };
     }
 
     function getState() {
@@ -581,9 +682,12 @@
             deviceId: s.deviceId,
             scopes: s.scopes || [],
             subject: s.subject || '',
+            subjectSource: s.subjectSource || '',
+            subjectVerified: Number(s.subjectVerified) || 0,
             expiresAt: s.expiresAt || 0,
             baseUrl: cfg.baseUrl,
             hasSeal: !!(cred && cred.seal),
+            hasAttest: !!(cred && cred.attest),
         };
     }
 
@@ -597,6 +701,9 @@
         VERSION,
         configure,
         ensureSession,
+        ensureSessionWithSteamId,
+        probePolicy,
+        buildAttest,
         activate,
         refresh: doRefresh,
         request,

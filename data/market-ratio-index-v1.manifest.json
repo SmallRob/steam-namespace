@@ -1,0 +1,21 @@
+{
+  "v": 1,
+  "builtAt": "2026-10-28T13:36:05.887Z",
+  "source": "SteamTradingSite-ID-Mapper @ 093adde1f9f3b0a5fd14957cd52fb988154251c3",
+  "files": [
+    {
+      "appid": "570",
+      "file": "market-ratio-index-v1.570.json",
+      "count": 45172,
+      "bytes": 2128773,
+      "buffOnly": true
+    },
+    {
+      "appid": "730",
+      "file": "market-ratio-index-v1.730.json",
+      "count": 34402,
+      "bytes": 2262614,
+      "buffOnly": false
+    }
+  ]
+}

@@ -2,9 +2,9 @@
 // @name         Nexus Mods 增强
 // @name:en      Nexus Mods Enhancer
 // @namespace    nexusmods-enhancer
-// @version      1.2.2
-// @description  Nexus Mods 列表/搜索页增强：每页条数 20→80、无限滚动、快捷中文筛选（简中/繁中/翻译）、下载量·点赞·文件大小区间、9 种排序、关键词检索、中文游戏名转英文并直达游戏页、界面中文化、模组语言徽章；模组页支持 AI 翻译描述、AI 分析模组、AI 解读当前列表。v1.2.2 新增视图状态明确指示：右下角常驻模式开关（增强/原生）、切换提示，菜单项直接显示当前状态与勾选。
-// @description:en  Nexus Mods listing/search enhancer: 20→80 items per page, infinite scroll, one-click Chinese filters, range filters, 9 sort modes, keyword search, Chinese→English game resolution, Chinese UI, language badges, AI translation/analysis, download tools (one-click file download, interstitial skip, collection batch download), and an explicit enhanced/native view indicator with a persistent mode switch and state-aware menu entries.
+// @version      1.3.0
+// @description  Nexus Mods 列表/搜索页增强：每页条数 20→80、无限滚动、快捷中文筛选（简中/繁中/翻译）、下载量·点赞·文件大小区间、9 种排序、关键词检索、中文游戏名转英文并直达游戏页、界面中文化、模组语言徽章；模组页支持 AI 翻译描述、AI 分析模组、AI 解读当前列表，以及一键下载文件、合集批量下载。v1.2.2 新增视图状态明确指示：右下角常驻模式开关（增强/原生）、切换提示，菜单项直接显示当前状态与勾选。v1.3.0 新增下载历史更新检查（橙色高亮 +「有更新」徽章 + 只看有更新/重新检查），用独立类名与 !important 实现，可与同类脚本共存。
+// @description:en  Nexus Mods listing/search enhancer: 20→80 items per page, infinite scroll, one-click Chinese filters, range filters, 9 sort modes, keyword search, Chinese→English game resolution, Chinese UI, language badges, AI translation/analysis, download tools, an explicit enhanced/native view indicator, and an update check for the download-history page (orange highlight, update badge, filter-only-updates).
 // @author       SmallRob
 // @match        https://www.nexusmods.com/*
 // @grant        GM_addStyle
@@ -26,7 +26,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '1.2.2';
+    const VERSION = '1.3.0';
     const API = 'https://api.nexusmods.com/v2/graphql';
     const LOG_PREFIX = '[N网增强]';
     const AI_DEFAULT_URL = 'https://api.deepseek.com/v1/chat/completions';
@@ -1920,7 +1920,9 @@
         dlPaused: false,
         dlStop: false,
         dlDone: 0,
-        dlCount: 0
+        dlCount: 0,
+        // 下载历史
+        histOnly: false
     };
 
     function buildVariables(offset) {
@@ -2449,6 +2451,24 @@
             '#nme-toast.nme-toast-native b{color:#e0a33c;}',
             '#nme-toast span{opacity:.75;}',
 
+            // —— 下载历史更新检查 ——
+            // 用 !important 覆盖，避免其他脚本写入的内联背景色把高亮擦掉
+            '#nme-hist-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.6rem 0;padding:.55rem .7rem;',
+            '  border:1px solid rgba(217,143,64,.45);border-radius:.4rem;background:rgba(217,143,64,.08);',
+            '  color:#e6c79a;font-size:.8125rem;}',
+            '#nme-hist-bar b{color:#f0b267;font-size:.875rem;}',
+            '#nme-hist-bar #nme-hist-count{opacity:.8;}',
+            '#nme-hist-bar button{padding:.2rem .55rem;border:1px solid rgba(217,143,64,.5);border-radius:.3rem;',
+            '  background:rgba(217,143,64,.14);color:#f0c37a;font-size:.75rem;cursor:pointer;}',
+            '#nme-hist-bar button:hover{background:rgba(217,143,64,.26);}',
+            '#nme-hist-bar .nme-hist-tip{flex-basis:100%;opacity:.6;font-size:.75rem;}',
+            'tr.nme-hist-row > td{background-color:rgba(217,143,64,.15)!important;}',
+            'tr.nme-hist-row > td:first-child{box-shadow:inset 3px 0 0 #d98f40;}',
+            'tr.nme-hist-row.nme-hist-noedge > td:first-child{box-shadow:none;}',
+            '.nme-hist-badge{display:inline-block;margin-left:.4rem;padding:0 .35rem;border-radius:.25rem;',
+            '  background:#d98f40;color:#1b1206;font-size:.6875rem;font-weight:700;vertical-align:middle;}',
+            'table.datatable.nme-hist-only tbody tr:not(.nme-hist-row){display:none!important;}',
+
             // —— 中文找游戏 ——
             '#nme-panel .nme-bar-cn{margin-top:.1rem;}',
             '#nme-panel .nme-cn-input{flex:1 1 18rem;}',
@@ -2703,6 +2723,172 @@
         }
     }
 
+    // ==================== 下载历史更新检查 ====================
+    // 站点「下载历史」页：模组更新时间晚于你的最后下载时间时，标橙并加「有更新」徽章。
+    // 与同类脚本共存：不写内联样式（用 class + !important），不改表格结构，
+    // 也不读写对方使用的「最后下载 / 更新时间」两列文本，徽章只插到首列末尾。
+
+    const HIST_SEL = 'table.datatable';
+    let histObs = null;
+    let histTable = null;
+
+    function isDownloadHistoryPage() {
+        return /\/users\/myaccount/i.test(location.pathname) && !!$(HIST_SEL);
+    }
+
+    const HIST_MONTHS = {
+        jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+        jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+    };
+
+    /** 兼容 "12 November 2024, 3:45PM" / "Nov 12 2024" / "2024-11-12" */
+    function parseHistText(txt) {
+        const s = String(txt || '').replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!s) return null;
+        const quick = new Date(s);
+        if (isFinite(quick.getTime())) return quick;
+        const m = s.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
+        if (m) {
+            const mon = HIST_MONTHS[m[2].slice(0, 3).toLowerCase()];
+            if (mon !== undefined) {
+                const time = s.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AaPp][Mm])?/);
+                let hh = time ? Number(time[1]) : 0;
+                const mm = time ? Number(time[2]) : 0;
+                if (time && time[4]) {
+                    const pm = /p/i.test(time[4]);
+                    if (pm && hh < 12) hh += 12;
+                    if (!pm && hh === 12) hh = 0;
+                }
+                const d = new Date(Number(m[3]), mon, Number(m[1]), hh, mm);
+                return isFinite(d.getTime()) ? d : null;
+            }
+        }
+        return null;
+    }
+
+    /** 优先取 data-sort 时间戳，其次解析单元格文本 */
+    function histDate(td) {
+        if (!td) return null;
+        const raw = (td.getAttribute('data-sort') || td.getAttribute('data-date') || '').trim();
+        if (/^\d{10}$/.test(raw)) return new Date(Number(raw) * 1000);
+        if (/^\d{13}$/.test(raw)) return new Date(Number(raw));
+        if (raw) {
+            const d = new Date(raw);
+            if (isFinite(d.getTime())) return d;
+        }
+        return parseHistText(td.textContent);
+    }
+
+    /** 表头识别列；识别失败时退回旧站惯例（1=最后下载，4=更新时间） */
+    function histColumns(table) {
+        const ths = $$('thead th', table);
+        if (!ths.length) return { dl: 1, up: 4 };
+        const idxOf = function (re) {
+            for (let i = 0; i < ths.length; i++) {
+                if (re.test((ths[i].textContent || '').trim())) return i;
+            }
+            return -1;
+        };
+        const dl = idxOf(/(last\s*)?downloaded|下载时间|最后下载/i);
+        const up = idxOf(/(last\s*)?updated|file\s*updated|更新时间|最近更新/i);
+        return (dl >= 0 && up >= 0) ? { dl: dl, up: up } : { dl: 1, up: 4 };
+    }
+
+    function ensureHistBar(table) {
+        let bar = $('#nme-hist-bar');
+        if (bar) return bar;
+        if (!table.parentElement) return null;
+        bar = document.createElement('div');
+        bar.id = 'nme-hist-bar';
+        bar.innerHTML = '<div class="nme-hist-head"><b>下载历史更新检查</b><span id="nme-hist-count">检查中…</span></div>' +
+            '<button id="nme-hist-only" type="button">只看有更新</button>' +
+            '<button id="nme-hist-recheck" type="button">重新检查</button>' +
+            '<div class="nme-hist-tip">橙色 = 模组更新时间晚于你的最后下载时间</div>';
+        table.parentElement.insertBefore(bar, table);
+
+        const only = $('#nme-hist-only', bar);
+        const recheck = $('#nme-hist-recheck', bar);
+        if (only) {
+            only.addEventListener('click', function () {
+                state.histOnly = !state.histOnly;
+                only.textContent = state.histOnly ? '显示全部' : '只看有更新';
+                const t = $(HIST_SEL);
+                if (t) t.classList.toggle('nme-hist-only', state.histOnly);
+            });
+        }
+        if (recheck) {
+            recheck.addEventListener('click', function () {
+                scanHistory();
+                showToast('下载历史检查完成', $('#nme-hist-count') ? $('#nme-hist-count').textContent : '', 'enhanced');
+            });
+        }
+        return bar;
+    }
+
+    function scanHistory() {
+        const table = $(HIST_SEL);
+        if (!table) return;
+        const cols = histColumns(table);
+        const rows = $$('tbody tr', table);
+        const minCells = Math.max(cols.dl, cols.up) + 1;
+        let updates = 0;
+
+        rows.forEach(function (row) {
+            const cells = row.children;
+            if (!cells || cells.length < minCells) return;
+            const dl = histDate(cells[cols.dl]);
+            const up = histDate(cells[cols.up]);
+            const isUpd = !!(dl && up && up.getTime() > dl.getTime());
+
+            row.classList.toggle('nme-hist-row', isUpd);
+            const first = cells[0];
+            const badge = first ? first.querySelector('.nme-hist-badge') : null;
+            if (isUpd) {
+                updates++;
+                row.setAttribute('data-nme-upd', '1');
+                // 同类脚本可能已经给首列加了内联左边框，避免出现两条竖线
+                if (first) row.classList.toggle('nme-hist-noedge', !!(first.style && first.style.borderLeftWidth));
+                if (first && !badge) {
+                    const b = document.createElement('span');
+                    b.className = 'nme-hist-badge';
+                    b.textContent = '有更新';
+                    first.appendChild(b);
+                }
+            } else {
+                row.removeAttribute('data-nme-upd');
+                if (badge) badge.remove();
+            }
+        });
+
+        const count = $('#nme-hist-count');
+        if (count) {
+            const now = new Date();
+            const hh = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
+            const text = '共 ' + rows.length + ' 条 · ' + updates + ' 个有更新 · ' + hh;
+            // 内容没变就不写，避免自身触发的 MutationObserver 反复扫描
+            if (count.textContent !== text) count.textContent = text;
+        }
+        return updates;
+    }
+
+    function mountHistoryCheck() {
+        const table = $(HIST_SEL);
+        if (!table) return false;
+        ensureHistBar(table);
+        if (state.histOnly) table.classList.add('nme-hist-only');
+
+        // 表被 React 重绘后需要重新挂钩
+        if (histTable !== table) {
+            if (histObs) histObs.disconnect();
+            histTable = table;
+            histObs = new MutationObserver(debounce(function () { scanHistory(); }, 300));
+            histObs.observe(table, { childList: true, subtree: true });
+        }
+        scanHistory();
+        return true;
+    }
+
+
     // 菜单项要能反映当前状态，所以每次变更后反注册再注册。
     // 个别管理器不返回菜单 id，此时退化为只注册一次，避免菜单堆叠。
     const CAN_UNREG_MENU = typeof GM_unregisterMenuCommand === 'function';
@@ -2778,6 +2964,14 @@
                     CFG.skipWait ? '下次进入下载等待页时自动跳转' : '下次进入下载等待页时保持原样', 'enhanced');
             });
 
+            reg('下载历史：重新检查更新', function () {
+                if (mountHistoryCheck()) {
+                    showToast('下载历史：已重新检查', $('#nme-hist-count') ? $('#nme-hist-count').textContent : '', 'enhanced');
+                } else {
+                    showToast('下载历史：请先打开下载历史页', '路径为 /users/myaccount?tab=downloads', 'native');
+                }
+            });
+
             reg('AI 接口配置（翻译 / 分析）', openAiSettings);
 
             menuRegistered = true;
@@ -2831,6 +3025,17 @@
             }
         }
 
+        if (!ctx) {
+            // 下载历史页：表是异步渲染的，等它出现
+            let triesHist = 0;
+            const tryHist = function () {
+                triesHist++;
+                if (mountHistoryCheck()) return;
+                if (triesHist < 40 && /\/users\/myaccount/i.test(location.pathname)) setTimeout(tryHist, 250);
+            };
+            tryHist();
+        }
+
         // 站点是 React 客户端渲染，后续内容需要持续处理（中文化 + 徽章 + 详情页 AI 条）
         const obs = new MutationObserver(debounce(function () {
             if (CFG.zhUI) translateTree(document.body);
@@ -2843,6 +3048,7 @@
                 mountCollectionDownload(state.ctx);
             } else {
                 ensureNativeHidden();
+                if (isDownloadHistoryPage()) mountHistoryCheck();
             }
         }, 250));
         try { obs.observe(document.body, { childList: true, subtree: true }); } catch (e) { /* 忽略 */ }

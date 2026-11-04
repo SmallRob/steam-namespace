@@ -2,15 +2,16 @@
 // @name         Nexus Mods 增强
 // @name:en      Nexus Mods Enhancer
 // @namespace    nexusmods-enhancer
-// @version      1.2.0
-// @description  Nexus Mods 列表/搜索页增强：每页条数 20→80、无限滚动、快捷中文筛选（简中/繁中/翻译）、下载量·点赞·文件大小区间、9 种排序、关键词检索、中文游戏名转英文并直达游戏页、界面中文化、模组语言徽章；模组页支持 AI 翻译描述、AI 分析模组、AI 解读当前列表。v1.2.0 新增下载增强：模组页文件列表一键下载（官方 GenerateDownloadUrl 直链）、下载等待页自动跳过、合集页批量下载（进度/暂停/限速/断点历史）。
-// @description:en  Nexus Mods listing/search enhancer: 20→80 items per page, infinite scroll, one-click Chinese filters, range filters, 9 sort modes, keyword search, Chinese→English game resolution, Chinese UI, language badges, AI translation/analysis. v1.2.0 adds download tools: one-click per-file download on mod pages via the official GenerateDownloadUrl endpoint, automatic interstitial skipping, and collection batch downloading with progress/pause/rate-limit/resume history.
+// @version      1.2.2
+// @description  Nexus Mods 列表/搜索页增强：每页条数 20→80、无限滚动、快捷中文筛选（简中/繁中/翻译）、下载量·点赞·文件大小区间、9 种排序、关键词检索、中文游戏名转英文并直达游戏页、界面中文化、模组语言徽章；模组页支持 AI 翻译描述、AI 分析模组、AI 解读当前列表。v1.2.2 新增视图状态明确指示：右下角常驻模式开关（增强/原生）、切换提示，菜单项直接显示当前状态与勾选。
+// @description:en  Nexus Mods listing/search enhancer: 20→80 items per page, infinite scroll, one-click Chinese filters, range filters, 9 sort modes, keyword search, Chinese→English game resolution, Chinese UI, language badges, AI translation/analysis, download tools (one-click file download, interstitial skip, collection batch download), and an explicit enhanced/native view indicator with a persistent mode switch and state-aware menu entries.
 // @author       SmallRob
 // @match        https://www.nexusmods.com/*
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // @grant        GM_xmlhttpRequest
 // @grant        GM_deleteValue
 // @connect      api.nexusmods.com
@@ -25,7 +26,7 @@
 (function () {
     'use strict';
 
-    const VERSION = '1.2.0';
+    const VERSION = '1.2.2';
     const API = 'https://api.nexusmods.com/v2/graphql';
     const LOG_PREFIX = '[N网增强]';
     const AI_DEFAULT_URL = 'https://api.deepseek.com/v1/chat/completions';
@@ -423,6 +424,7 @@
         else if (tags.indexOf('Chinese') >= 0) badges.push({ cls: 'nme-badge-zh', text: '中文' });
 
         if (tags.indexOf('Translation') >= 0) badges.push({ cls: 'nme-badge-tr', text: '翻译' });
+        if (mod.directDownloadEnabled === true) badges.push({ cls: 'nme-badge-direct', text: '直链' });
         return badges;
     }
 
@@ -445,6 +447,7 @@
       modCategory { categoryId name }
       uploader { name memberId avatar }
       tags { name }
+      directDownloadEnabled
       viewerDownloaded
       viewerEndorsed
       viewerTracked
@@ -1174,6 +1177,30 @@
     const DL_RATE_LIMIT = 150;   // 连续下载多少个后强制冷却
     const DL_COOLDOWN = 300;     // 冷却秒数
     const DL_MAX_LOG = 80;
+    const DL_REPEAT_GUARD = 30000;  // 同一文件 30 秒内不重复触发，避免重复扣次数
+
+    /**
+     * 下载错误分类（借鉴 Vortex 的边界处理）：
+     * 可重试的（网络/接口偶发）与必须停下的（未登录/被拦截/限流/无权限）分开。
+     */
+    class DlError extends Error {
+        constructor(code, message) {
+            super(message);
+            this.name = 'DlError';
+            this.code = code;
+        }
+        get fatal() {
+            return this.code === 'AUTH' || this.code === 'FORBIDDEN' ||
+                this.code === 'CLOUDFLARE' || this.code === 'RATE_LIMIT';
+        }
+    }
+
+    const dlRecent = {};  // fileId → 最近一次触发时间
+    function dlTooSoon(fileId) {
+        const t = dlRecent[fileId];
+        return !!t && (Date.now() - t) < DL_REPEAT_GUARD;
+    }
+    function markDl(fileId) { dlRecent[fileId] = Date.now(); }
 
     const Q_MOD_FILES = `query ModFiles($modId: ID!, $gameId: ID!) {
   modFiles(modId: $modId, gameId: $gameId) {
@@ -1208,18 +1235,30 @@
 
     /** 官方接口：fid + game_id → { url } */
     async function generateDownloadUrl(fileId, gameId) {
-        const res = await fetch(DL_GEN, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: 'fid=' + encodeURIComponent(fileId) + '&game_id=' + encodeURIComponent(gameId)
-        });
-        if (!res.ok) throw new Error('生成下载链接失败（HTTP ' + res.status + '）');
-        const data = await res.json();
-        if (!data || !data.url) throw new Error('接口没有返回下载地址');
+        let res;
+        try {
+            res = await fetch(DL_GEN, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'fid=' + encodeURIComponent(fileId) + '&game_id=' + encodeURIComponent(gameId)
+            });
+        } catch (e) {
+            throw new DlError('NETWORK', '网络错误，无法连接 Nexus');
+        }
+        if (!res.ok) {
+            if (res.status === 401 || res.status === 403) {
+                throw new DlError('AUTH', '没有下载权限（登录失效、需要 Premium，或作者未开放该文件）');
+            }
+            if (res.status === 429) throw new DlError('RATE_LIMIT', '请求过于频繁，Nexus 已限流');
+            throw new DlError('API', '生成下载链接失败（HTTP ' + res.status + '）');
+        }
+        let data;
+        try { data = await res.json(); } catch (e) { throw new DlError('API', '接口返回不是有效 JSON'); }
+        if (!data || !data.url) throw new DlError('API', '接口没有返回下载地址');
         return data.url;
     }
 
@@ -1248,27 +1287,60 @@
 
     /** 统一取直链：官方接口优先，HTML 兜底 */
     async function resolveDownloadUrl(domain, modId, fileId, gameId) {
-        if (!isLoggedIn()) throw new Error('请先登录 Nexus Mods 账号');
+        if (!isLoggedIn()) throw new DlError('AUTH', '请先登录 Nexus Mods 账号');
 
+        let apiError = null;
         try {
-            const url = await generateDownloadUrl(fileId, gameId);
-            if (url) return url;
-        } catch (e) { /* 回退到文件页解析 */ }
+            return await generateDownloadUrl(fileId, gameId);
+        } catch (e) {
+            apiError = e;
+            if (e && e.code === 'NETWORK') await sleep(800);
+        }
 
         const pageUrl = 'https://www.nexusmods.com/' + encodeURIComponent(domain) + '/mods/' + modId +
             '?tab=files&file_id=' + encodeURIComponent(fileId) + '&nmm=1';
-        let html = '';
+        let html = '', status = 0;
         try {
             const res = await fetch(pageUrl, { credentials: 'include' });
+            status = res.status;
             html = res.ok ? await res.text() : '';
-        } catch (e) { /* 忽略 */ }
+        } catch (e) {
+            throw new DlError('NETWORK', '网络错误，无法打开文件页');
+        }
 
-        if (html.includes('class="replaced-login-link"')) throw new Error('请先登录 Nexus Mods 账号');
-        if (html.includes('Just a moment')) throw new Error('触发 Cloudflare 校验，请手动打开该文件页完成校验');
-        if (html.includes('temporarily suspended')) throw new Error('Nexus 临时限制了下载，请稍后再试');
+        if (!html) {
+            if (status === 429) throw new DlError('RATE_LIMIT', '请求过于频繁，Nexus 已限流');
+            if (status === 401 || status === 403) {
+                throw new DlError('FORBIDDEN', '没有下载权限（登录失效、需要 Premium，或作者未开放该文件）');
+            }
+            throw apiError || new DlError('API', '文件页返回空内容（HTTP ' + status + '）');
+        }
+
+        if (html.includes('class="replaced-login-link"')) throw new DlError('AUTH', '请先登录 Nexus Mods 账号');
+        if (html.includes('Just a moment')) {
+            throw new DlError('CLOUDFLARE', '触发 Cloudflare 校验，请手动打开该文件页完成校验');
+        }
+        if (html.includes('temporarily suspended')) throw new DlError('RATE_LIMIT', 'Nexus 临时限制了下载，请稍后再试');
+
         const url = extractDownloadUrl(html);
-        if (!url) throw new Error('未取到下载地址（该文件可能需要手动确认）');
+        if (!url) {
+            if (apiError) throw apiError;
+            throw new DlError('NO_URL', '未取到下载地址（该文件可能需要手动确认或 Premium）');
+        }
         return url;
+    }
+
+    /** 网络类错误重试一次；被拦截/无权限不重试 */
+    async function resolveWithRetry(domain, modId, fileId, gameId) {
+        try {
+            return await resolveDownloadUrl(domain, modId, fileId, gameId);
+        } catch (e) {
+            if (e && e.code === 'NETWORK') {
+                await sleep(1500);
+                return await resolveDownloadUrl(domain, modId, fileId, gameId);
+            }
+            throw e;
+        }
     }
 
     /** 触发下载：a[download] 点击，不离开当前页；nxm:// 交给 Vortex */
@@ -1276,7 +1348,9 @@
         if (/^nxm:\/\//i.test(url)) { location.href = url; return; }
         const a = document.createElement('a');
         a.href = url;
-        if (fileName) a.download = fileName;
+        // 没有扩展名时交给 Content-Disposition 决定，避免存成无后缀文件
+        const name = (fileName || '').trim();
+        if (name && /\.[a-z0-9]{1,8}$/i.test(name)) a.download = name;
         a.rel = 'noopener';
         a.style.display = 'none';
         document.body.appendChild(a);
@@ -1370,13 +1444,18 @@
     }
 
     async function runSingleDownload(ctx, file, btn) {
+        if (dlTooSoon(file.fileId)) {
+            dlStatus('刚刚已触发过该文件，请 30 秒后再试', 'warn');
+            return;
+        }
         const old = btn.textContent;
         btn.disabled = true;
         btn.textContent = '获取中…';
         dlStatus('正在获取「' + (file.name || file.fileId) + '」的下载地址…', 'busy');
         try {
-            const url = await resolveDownloadUrl(ctx.domain, ctx.modId, file.fileId, state.dlGameId);
+            const url = await resolveWithRetry(ctx.domain, ctx.modId, file.fileId, state.dlGameId);
             triggerDownload(url, file.name);
+            markDl(file.fileId);
             dlStatus('已开始下载：' + (file.name || file.fileId), 'ok');
         } catch (e) {
             dlStatus((e && e.message) || String(e), 'err');
@@ -1561,6 +1640,12 @@
                 setDlProgress(state.dlDone, queue.length);
                 continue;
             }
+            if (dlTooSoon(f.fileId)) {
+                dlLog('[' + (i + 1) + '/' + queue.length + '] 跳过（刚刚已手动触发）：' + f.name);
+                state.dlDone++;
+                setDlProgress(state.dlDone, queue.length);
+                continue;
+            }
 
             if (state.dlCount >= DL_RATE_LIMIT) {
                 dlLog('已连续下载 ' + DL_RATE_LIMIT + ' 个，冷却 ' + DL_COOLDOWN + ' 秒…', 'warn');
@@ -1576,8 +1661,9 @@
 
             dlStatus('[' + (i + 1) + '/' + queue.length + '] 正在获取：' + f.name, 'busy');
             try {
-                const url = await resolveDownloadUrl(f.domain, f.modId, f.fileId, f.gameId);
+                const url = await resolveWithRetry(f.domain, f.modId, f.fileId, f.gameId);
                 triggerDownload(url, f.name);
+                markDl(f.fileId);
                 done.push(f.fileId);
                 history[key] = done;
                 dlHistorySave(history);
@@ -1587,11 +1673,12 @@
                 dlLog('[' + (i + 1) + '/' + queue.length + '] 已开始下载：' + f.name, 'ok');
             } catch (e) {
                 const msg = (e && e.message) || String(e);
+                const fatal = !!(e && e.fatal);
                 fails++;
                 dlLog('[' + (i + 1) + '/' + queue.length + '] 失败：' + f.name + ' — ' + msg, 'err');
                 dlStatus(msg, 'err');
-                if (/登录|Cloudflare|限制/.test(msg) || fails >= 3) {
-                    dlLog(fails >= 3 ? '连续 3 个文件失败，已停止批量下载' : '遇到阻断，已停止批量下载', 'err');
+                if (fatal || fails >= 3) {
+                    dlLog(fatal ? '遇到「' + msg + '」，已停止批量下载' : '连续 3 个文件失败，已停止批量下载', 'err');
                     state.dlStop = true;
                     break;
                 }
@@ -2109,7 +2196,10 @@
             '<div id="nme-status" class="nme-status"><span id="nme-msg">准备中…</span> <span id="nme-counts">共 <b id="nme-total">—</b> 条结果 · 已加载 <b id="nme-loaded">0</b> 条</span></div>',
             '<div id="nme-grid" class="nme-grid"></div>',
             '<div id="nme-sentinel" class="nme-sentinel">滚动到底部自动加载更多</div>',
-            '<button id="nme-fab" type="button" title="N网增强：切换增强视图 / 原生视图">N</button>'
+            '<button id="nme-fab" type="button" aria-pressed="true" title="当前：增强视图；点击切回原生视图">',
+            '  <span class="nme-fab-dot" aria-hidden="true"></span><span id="nme-fab-text">增强视图</span>',
+            '  <span class="nme-fab-swap" aria-hidden="true">⇄</span>',
+            '</button>'
         ].join('');
 
         // 快捷筛选状态回显
@@ -2246,16 +2336,64 @@
         }
     }
 
+    let toastTimer = null;
+    /** 右下角提示，用于视图切换与菜单操作的结果反馈 */
+    function showToast(title, detail, kind) {
+        if (!document.body) return;
+        let t = $('#nme-toast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'nme-toast';
+            t.setAttribute('role', 'status');
+            t.setAttribute('aria-live', 'polite');
+            document.body.appendChild(t);
+        }
+        t.className = 'nme-toast nme-toast-' + (kind || 'enhanced') + ' nme-toast-on';
+        t.innerHTML = '<b>' + escapeHtml(title) + '</b><span>' + escapeHtml(detail || '') + '</span>';
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { t.classList.remove('nme-toast-on'); }, 3200);
+    }
+
+    /** 切换视图后给一次明确反馈，避免用户不知道刚才动了什么 */
+    function showModeToast(view) {
+        if (view === 'enhanced') {
+            showToast('增强视图已开启', CFG.pageSize + ' 条/页 · 无限滚动 · 中文筛选 · 中文找游戏', 'enhanced');
+        } else {
+            showToast('已切回原生视图', '使用站点默认 20 条/页与自带筛选，增强工具条已隐藏', 'native');
+        }
+    }
+
     function setView(view) {
+        const prev = CFG.view;
         CFG.view = view;
         saveCfg();
         const body = document.body;
         if (!body) return;
         body.classList.toggle('nme-view-enhanced', view === 'enhanced');
         body.classList.toggle('nme-view-native', view === 'native');
+
         const btn = $('#nme-view');
-        if (btn) btn.textContent = (view === 'enhanced') ? '切换到原生视图' : '切换到增强视图';
-        if (view === 'enhanced' && state.loaded === 0) loadPage(true);
+        if (btn) btn.textContent = (view === 'enhanced') ? '切换到原生视图' : '开启增强视图';
+
+        const fab = $('#nme-fab');
+        const fabText = $('#nme-fab-text');
+        if (fab) {
+            fab.setAttribute('aria-pressed', view === 'enhanced' ? 'true' : 'false');
+            fab.setAttribute('title', view === 'enhanced'
+                ? '当前：增强视图（已开启），点击切回原生视图'
+                : '当前：原生视图（增强已关闭），点击开启增强视图');
+        }
+        if (fabText) fabText.textContent = (view === 'enhanced') ? '增强视图' : '原生视图 · 开启增强';
+
+        if (view === 'enhanced' && state.loaded === 0 && state.ctx &&
+            (state.ctx.mode === 'list' || state.ctx.mode === 'search')) {
+            loadPage(true);
+        }
+        if (prev !== view) {
+            if ($('#nme-panel')) showModeToast(view);
+            else showToast('视图设置已保存', '回到列表或搜索页后生效', 'native');
+        }
+        refreshMenu();
     }
 
     // ==================== 样式 ====================
@@ -2290,10 +2428,26 @@
             '#nme-panel .nme-badge-hant{color:#d68b3c;}',
             '#nme-panel .nme-badge-zh{color:#e05c5c;}',
             '#nme-panel .nme-badge-tr{color:#5ca0e0;}',
-            '#nme-fab{position:fixed;right:16px;bottom:16px;z-index:9999;width:36px;height:36px;border-radius:50%;',
-            '  border:1px solid rgba(255,255,255,.28);background:rgba(20,20,22,.92);color:#d34a4a;font-weight:700;',
-            '  font-size:16px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.45);}',
-            '#nme-fab:hover{background:rgba(40,40,44,.96);}',
+            '#nme-panel .nme-badge-direct{color:#3fa66a;}',
+            '#nme-fab{position:fixed;right:16px;bottom:16px;z-index:9999;display:inline-flex;align-items:center;gap:.45rem;',
+            '  height:34px;padding:0 .8rem;border-radius:999px;border:1px solid rgba(255,255,255,.28);',
+            '  background:rgba(20,20,22,.94);color:#e8e8e8;font-weight:600;font-size:.8125rem;cursor:pointer;',
+            '  box-shadow:0 3px 14px rgba(0,0,0,.5);backdrop-filter:blur(6px);}',
+            '#nme-fab:hover{background:rgba(44,44,48,.98);border-color:rgba(255,255,255,.46);}',
+            '#nme-fab .nme-fab-dot{width:8px;height:8px;border-radius:50%;background:#3fa66a;box-shadow:0 0 0 3px rgba(63,166,106,.18);}',
+            '#nme-fab .nme-fab-swap{opacity:.6;font-size:.95em;line-height:1;}',
+            '#nme-fab:hover .nme-fab-swap{opacity:1;}',
+            'body.nme-view-native #nme-fab{border-color:rgba(224,163,60,.65);color:#f0c37a;}',
+            'body.nme-view-native #nme-fab .nme-fab-dot{background:#e0a33c;box-shadow:0 0 0 3px rgba(224,163,60,.2);}',
+            '#nme-toast{position:fixed;right:16px;bottom:62px;z-index:10000;max-width:min(22rem,80vw);',
+            '  padding:.6rem .8rem;border-radius:.55rem;border:1px solid rgba(255,255,255,.2);',
+            '  background:rgba(20,20,22,.96);color:#eee;font-size:.8125rem;line-height:1.45;',
+            '  box-shadow:0 6px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(8px);',
+            '  transition:opacity .18s ease,transform .18s ease;pointer-events:none;}',
+            '#nme-toast.nme-toast-on{opacity:1;transform:translateY(0);}',
+            '#nme-toast b{display:block;font-size:.875rem;margin-bottom:.15rem;color:#d34a4a;}',
+            '#nme-toast.nme-toast-native b{color:#e0a33c;}',
+            '#nme-toast span{opacity:.75;}',
 
             // —— 中文找游戏 ——
             '#nme-panel .nme-bar-cn{margin-top:.1rem;}',
@@ -2549,28 +2703,84 @@
         }
     }
 
+    // 菜单项要能反映当前状态，所以每次变更后反注册再注册。
+    // 个别管理器不返回菜单 id，此时退化为只注册一次，避免菜单堆叠。
+    const CAN_UNREG_MENU = typeof GM_unregisterMenuCommand === 'function';
+    let menuIds = [];
+    let menuRegistered = false;
+    let menuRefreshable = CAN_UNREG_MENU;
+
+    function refreshMenu() {
+        if (!menuRefreshable) return;
+        // 异步重建：避免在菜单回调里同步反注册正在执行的那一条
+        setTimeout(function () { setupMenu(); }, 0);
+    }
+
     function setupMenu() {
         if (typeof GM_registerMenuCommand !== 'function') return;
+        if (menuRegistered && !menuRefreshable) return;
         try {
-            GM_registerMenuCommand('切换增强视图 / 原生视图', function () {
+            if (CAN_UNREG_MENU) {
+                for (let i = 0; i < menuIds.length; i++) {
+                    try { GM_unregisterMenuCommand(menuIds[i]); } catch (e) { /* 忽略单个失败 */ }
+                }
+            }
+            menuIds = [];
+            const reg = function (label, fn) {
+                const id = GM_registerMenuCommand(label, fn);
+                if (id === undefined || id === null) menuRefreshable = false;
+                else menuIds.push(id);
+            };
+
+            const enhanced = CFG.view === 'enhanced';
+            reg(enhanced ? '视图：增强视图（点击切到原生）' : '视图：原生视图（点击切到增强）', function () {
                 setView(CFG.view === 'enhanced' ? 'native' : 'enhanced');
             });
-            GM_registerMenuCommand('每页条数：20', function () { CFG.pageSize = 20; saveCfg(); loadPage(true); });
-            GM_registerMenuCommand('每页条数：40', function () { CFG.pageSize = 40; saveCfg(); loadPage(true); });
-            GM_registerMenuCommand('每页条数：80', function () { CFG.pageSize = 80; saveCfg(); loadPage(true); });
-            GM_registerMenuCommand('界面中文化：开/关', function () {
-                CFG.zhUI = !CFG.zhUI; saveCfg();
-                if (CFG.zhUI) translateTree(document.body);
+
+            [20, 40, 60, 80].forEach(function (n) {
+                reg('每页条数：' + n + (CFG.pageSize === n ? ' ✓' : ''), function () {
+                    CFG.pageSize = n;
+                    saveCfg();
+                    refreshMenu();
+                    if (CFG.view === 'enhanced') {
+                        showToast('每页条数：' + n, '正在重新加载列表…', 'enhanced');
+                        loadPage(true);
+                    } else {
+                        showToast('每页条数：' + n, '当前为原生视图，切回增强视图后生效', 'native');
+                    }
+                });
             });
-            GM_registerMenuCommand('语言徽章：开/关', function () {
-                CFG.badges = !CFG.badges; saveCfg();
+
+            reg('界面中文化：' + (CFG.zhUI ? '开 ✓' : '关'), function () {
+                CFG.zhUI = !CFG.zhUI;
+                saveCfg();
+                refreshMenu();
+                if (CFG.zhUI) {
+                    translateTree(document.body);
+                    showToast('界面中文化：已开启', '站点界面文本已替换为中文', 'enhanced');
+                } else {
+                    showToast('界面中文化：已关闭', '已翻译的文本需刷新页面才会恢复英文', 'native');
+                }
+            });
+
+            reg('语言徽章：' + (CFG.badges ? '开 ✓' : '关'), function () {
+                CFG.badges = !CFG.badges;
+                saveCfg();
+                refreshMenu();
                 decorateNativeTiles(document.body);
             });
-            GM_registerMenuCommand('AI 接口配置（翻译 / 分析）', openAiSettings);
-            GM_registerMenuCommand('下载等待页自动跳过：开/关', function () {
-                CFG.skipWait = !CFG.skipWait; saveCfg();
-                console.log(LOG_PREFIX, '下载等待页自动跳过：' + (CFG.skipWait ? '开' : '关'));
+
+            reg('下载等待页自动跳过：' + (CFG.skipWait ? '开 ✓' : '关'), function () {
+                CFG.skipWait = !CFG.skipWait;
+                saveCfg();
+                refreshMenu();
+                showToast('下载等待页自动跳过：' + (CFG.skipWait ? '开' : '关'),
+                    CFG.skipWait ? '下次进入下载等待页时自动跳转' : '下次进入下载等待页时保持原样', 'enhanced');
             });
+
+            reg('AI 接口配置（翻译 / 分析）', openAiSettings);
+
+            menuRegistered = true;
         } catch (e) { /* 忽略 */ }
     }
 

@@ -1,24 +1,24 @@
 {
   "v": 1,
   "format": "name-cn-index",
-  "builtAt": "2026-10-26T00:33:28.619Z",
-  "digest": "df195549abd760f2",
+  "builtAt": "2026-11-20T15:24:37.906Z",
+  "digest": "04f6300990ae51c7",
   "encoding": "object appid(string) -> 中文名(string)；只含确证含 CJK 的值",
   "hot": {
     "file": "name-cn-index-v1.json",
-    "count": 4535,
-    "bytes": 139227,
-    "gzipBytes": 64055,
-    "digest": "df195549abd760f2",
+    "count": 4595,
+    "bytes": 141018,
+    "gzipBytes": 64892,
+    "digest": "04f6300990ae51c7",
     "pool": 9052,
-    "pct": 50.1
+    "pct": 50.8
   },
   "all": {
     "file": "name-cn-index-v1.all.json",
-    "count": 10738,
-    "bytes": 335067,
-    "gzipBytes": 156028,
-    "digest": "15aca79f4cccba40",
+    "count": 10814,
+    "bytes": 337353,
+    "gzipBytes": 157099,
+    "digest": "6be1826c0ef0476b",
     "pool": 160704,
     "pct": 6.7
   },
